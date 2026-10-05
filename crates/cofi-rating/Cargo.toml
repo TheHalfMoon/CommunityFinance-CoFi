@@ -1,0 +1,15 @@
+[package]
+name = "cofi-rating"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+cofi-billing = { path = "../cofi-billing" }
+cofi-ledger = { path = "../cofi-ledger" }
+cofi-metering = { path = "../cofi-metering" }
+
+[lints]
+workspace = true

@@ -1,0 +1,18 @@
+[package]
+name = "cofi-invoicing"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+cofi-billing = { path = "../cofi-billing" }
+cofi-ledger = { path = "../cofi-ledger" }
+cofi-rating = { path = "../cofi-rating" }
+
+[dev-dependencies]
+cofi-metering = { path = "../cofi-metering" }
+
+[lints]
+workspace = true

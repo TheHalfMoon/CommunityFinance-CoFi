@@ -1,0 +1,19 @@
+[package]
+name = "cofi-provider-contract"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+cofi-ledger = { path = "../cofi-ledger" }
+cofi-spending = { path = "../cofi-spending" }
+cofi-disbursements = { path = "../cofi-disbursements" }
+
+[dev-dependencies]
+cofi-community = { path = "../cofi-community" }
+cofi-governance = { path = "../cofi-governance" }
+
+[lints]
+workspace = true

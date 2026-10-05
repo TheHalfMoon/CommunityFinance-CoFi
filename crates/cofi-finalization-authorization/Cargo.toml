@@ -1,0 +1,22 @@
+[package]
+name = "cofi-finalization-authorization"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+cofi-billing = { path = "../cofi-billing" }
+cofi-invoice-authorization = { path = "../cofi-invoice-authorization" }
+cofi-invoicing = { path = "../cofi-invoicing" }
+
+[dev-dependencies]
+cofi-ledger = { path = "../cofi-ledger" }
+cofi-metering = { path = "../cofi-metering" }
+cofi-rating = { path = "../cofi-rating" }
+cofi-rating-authorization = { path = "../cofi-rating-authorization" }
+cofi-subscriptions = { path = "../cofi-subscriptions" }
+
+[lints]
+workspace = true

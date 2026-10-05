@@ -1,0 +1,27 @@
+[package]
+name = "cofi-fund-transfer-authorization"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+cofi-community = { path = "../cofi-community" }
+cofi-fund-allocation-authorization = { path = "../cofi-fund-allocation-authorization" }
+cofi-ledger = { path = "../cofi-ledger" }
+
+[dev-dependencies]
+cofi-billing = { path = "../cofi-billing" }
+cofi-finalization-authorization = { path = "../cofi-finalization-authorization" }
+cofi-invoice-authorization = { path = "../cofi-invoice-authorization" }
+cofi-metering = { path = "../cofi-metering" }
+cofi-payment-authorization = { path = "../cofi-payment-authorization" }
+cofi-payments = { path = "../cofi-payments" }
+cofi-payout-authorization = { path = "../cofi-payout-authorization" }
+cofi-rating = { path = "../cofi-rating" }
+cofi-rating-authorization = { path = "../cofi-rating-authorization" }
+cofi-subscriptions = { path = "../cofi-subscriptions" }
+
+[lints]
+workspace = true

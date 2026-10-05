@@ -1,0 +1,16 @@
+[package]
+name = "cofi-disbursements"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+cofi-ledger = { path = "../cofi-ledger" }
+cofi-community = { path = "../cofi-community" }
+cofi-governance = { path = "../cofi-governance" }
+cofi-spending = { path = "../cofi-spending" }
+
+[lints]
+workspace = true

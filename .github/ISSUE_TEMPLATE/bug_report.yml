@@ -1,0 +1,52 @@
+name: Bug report
+description: Report a reproducible defect in CoFi
+title: "[Bug] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a defect. Do not include secrets, payment data, or vulnerability details here.
+  - type: input
+    id: version
+    attributes:
+      label: CoFi version
+      placeholder: v1.0.0 or commit SHA
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Ledger
+        - Billing
+        - Metering / Rating
+        - Invoicing / Subscriptions
+        - Payments / Payouts
+        - Community funds
+        - Governance / Spending
+        - Disbursements / Reconciliation
+        - Audit
+        - Tooling / CI
+        - Documentation
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
