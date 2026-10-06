@@ -5,6 +5,12 @@ All notable changes to CoFi are documented here.
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [1.1.0] - 2026-10-07
+
+Native CoFi Desktop release with local-first Windows distribution.
+
 ### Added
 
 - native Tauri 2 + React/TypeScript desktop shell linked directly to the canonical `cofi-ledger` crate;

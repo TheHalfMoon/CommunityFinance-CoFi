@@ -8,7 +8,7 @@
 [![Rust](https://img.shields.io/badge/Rust-1.85%2B-000000?logo=rust)](https://www.rust-lang.org/)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
-CoFi is an open-source Rust workspace for building auditable financial systems where billing, payments, shared funds, governance, settlement, and reconciliation must remain deterministic and explainable.
+CoFi is an open-source financial platform built around a deterministic Rust workspace and a local-first desktop shell for auditable billing, payments, shared funds, governance, settlement, and reconciliation.
 
 The project is built around a native double-entry ledger, typed financial identities, checked integer money, exact replay semantics, fail-closed validation, and explicit authorization lineage.
 
@@ -25,6 +25,7 @@ The project is built around a native double-entry ledger, typed financial identi
 | Disbursements | Vendor payment lifecycle, provider-neutral contracts, reconciliation |
 | Audit | Tamper-evident event chains and deterministic verification |
 | Authorization | End-to-end commercial lineage from subscription through fund movement |
+| Desktop | Local-first Tauri shell, typed IPC to the canonical ledger core, Windows MSI/NSIS distribution |
 
 ## Architecture
 
@@ -107,7 +108,7 @@ cargo +1.85.0 check --workspace --all-targets --all-features
 
 ## Release
 
-The current stable release is **v1.0.2**. See the [latest release](https://github.com/TheHalfMoon/CommunityFinance-CoFi/releases/latest).
+The current stable release is **v1.1.0**. Windows desktop MSI and NSIS installers are published with SHA-256 checksums in the [latest release](https://github.com/TheHalfMoon/CommunityFinance-CoFi/releases/latest).
 
 ## Security
 
