@@ -1,6 +1,10 @@
 <div align="center">
 
-<img src="site/assets/cofi-mark.svg" width="88" alt="CoFi logo" />
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/cofi-mark-dark.svg" />
+  <source media="(prefers-color-scheme: light)" srcset="docs/assets/cofi-mark-light.svg" />
+  <img src="docs/assets/cofi-mark-light.svg" width="88" alt="CoFi logo" />
+</picture>
 
 # CoFi
 
@@ -18,12 +22,6 @@ Double-entry accounting · billing · payments · shared funds · governance · 
 
 </div>
 
-<p align="center">
-  <img src="docs/assets/cofi-desktop-preview.png" width="1120" alt="CoFi desktop product preview" />
-</p>
-
-<p align="center"><sub>CoFi desktop product preview. Sample values in the preview are illustrative; the application does not seed financial records.</sub></p>
-
 ---
 
 CoFi is an open-source financial platform built around a deterministic Rust core and a local-first desktop application. The accounting model is explicit: money is represented in checked integer minor units, journal entries balance by currency, exact replay is idempotent, and invalid financial state fails before mutation.
@@ -31,6 +29,10 @@ CoFi is an open-source financial platform built around a deterministic Rust core
 The current stable release is **v1.1.0**.
 
 ## Desktop
+
+<p align="center">
+  <img src="docs/assets/cofi-desktop-icon.png" width="240" alt="CoFi Desktop icon" />
+</p>
 
 CoFi Desktop is a Tauri 2 application linked directly to the canonical `cofi-ledger` crate through typed native IPC.
 
