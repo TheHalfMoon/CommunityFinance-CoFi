@@ -7,7 +7,7 @@
 **MSRV:** 1.85
 **License:** Apache-2.0
 
-CoFi v1.0.2 is the current stable release of the Community Finance core.
+CoFi v1.0.2 is the current stable release of the Community Finance core. Desktop v1.1.0 is the current release candidate and is not yet published as the stable release.
 
 ## Stable capabilities
 

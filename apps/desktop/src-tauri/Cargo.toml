@@ -1,0 +1,27 @@
+[package]
+name = "cofi-desktop"
+version = "1.1.0"
+edition = "2024"
+rust-version = "1.85"
+license = "Apache-2.0"
+repository = "https://github.com/TheHalfMoon/CommunityFinance-CoFi"
+
+[lib]
+name = "cofi_desktop_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+cofi-ledger = { path = "../../../crates/cofi-ledger" }
+serde = { version = "1", features = ["derive"] }
+tauri = { version = "2", features = [] }
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"

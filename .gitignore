@@ -1,6 +1,7 @@
 # Rust
 /target/
 Cargo.lock
+!/apps/desktop/src-tauri/Cargo.lock
 
 # Local environment
 .env
@@ -17,3 +18,13 @@ Thumbs.db
 *.log
 *.tmp
 *.profraw
+
+# CoFi desktop
+/apps/desktop/node_modules/
+/apps/desktop/dist/
+/apps/desktop/*.tsbuildinfo
+/apps/desktop/vite.config.js
+/apps/desktop/vite.config.d.ts
+/apps/desktop/src-tauri/gen/
+/apps/desktop/src-tauri/target/
+!/apps/desktop/src-tauri/Cargo.lock

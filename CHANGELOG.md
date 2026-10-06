@@ -5,7 +5,18 @@ All notable changes to CoFi are documented here.
 
 ## [Unreleased]
 
-No unreleased changes.
+### Added
+
+- native Tauri 2 + React/TypeScript desktop shell linked directly to the canonical `cofi-ledger` crate;
+- typed IPC for runtime manifest and ledger-backed currency validation;
+- Windows MSI and NSIS packaging with SHA-256 release checksums;
+- Windows desktop CI and tag-gated release publishing;
+- high-contrast purple CoFi application icon for taskbar and installer visibility.
+
+### Changed
+
+- public landing download flow now has a real desktop packaging target to consume from GitHub Releases;
+- unavailable desktop surfaces remain explicit empty states instead of showing fabricated financial data.
 
 ## [1.0.2] - 2026-10-06
 
