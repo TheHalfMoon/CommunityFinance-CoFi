@@ -3,6 +3,12 @@ import { execFileSync } from "node:child_process";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 
+import {
+  isGeneratedLockfile,
+  siblingPackageJsonPath,
+  validateGeneratedLockfile,
+} from "./jev-lockfile-validation.mjs";
+
 const [baseArg, headArg, repository, jevDirectory] = process.argv.slice(2);
 const report = {
   schema_version: "1",
@@ -59,6 +65,30 @@ function git(args) {
   });
 }
 
+function gitObjectExists(ref, path) {
+  try {
+    git(["cat-file", "-e", `${ref}:${path}`]);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function validateLockfileAtRef(ref, path) {
+  const content = git(["show", `${ref}:${path}`]);
+  let packageJsonContent = null;
+
+  if (path.endsWith("package-lock.json")) {
+    const packageJsonPath = siblingPackageJsonPath(path);
+    if (!gitObjectExists(ref, packageJsonPath)) {
+      throw new Error(`package.json missing beside generated lockfile: ${path}`);
+    }
+    packageJsonContent = git(["show", `${ref}:${packageJsonPath}`]);
+  }
+
+  return validateGeneratedLockfile({ path, content, packageJsonContent });
+}
+
 function splitHunks(patch) {
   const lines = patch.split("\n");
   const firstHunk = lines.findIndex((line) => line.startsWith("@@ "));
@@ -102,6 +132,33 @@ try {
     const fileResult = { path, hunks: hunks.length, reviewed_hunks: 0 };
     report.changed_files.push(fileResult);
     report.coverage.expected_hunks += hunks.length;
+
+    if (isGeneratedLockfile(path)) {
+      const validatedRefs = [];
+      if (gitObjectExists(baseArg, path)) {
+        validatedRefs.push({ ref: "base", ...validateLockfileAtRef(baseArg, path) });
+      }
+      validatedRefs.push({ ref: "head", ...validateLockfileAtRef(headArg, path) });
+
+      for (const [index, hunk] of hunks.entries()) {
+        fileResult.reviewed_hunks += 1;
+        report.coverage.reviewed_hunks += 1;
+        report.hunk_judgments.push({
+          file: path,
+          hunk: index + 1,
+          line: hunk.startLine,
+          review_mode: "deterministic_generated_lockfile_validation",
+          validation: validatedRefs,
+          screening: Object.fromEntries(
+            Object.keys(dimensions).map((dimension) => [
+              dimension,
+              { probability: 0, confidence: 1 },
+            ]),
+          ),
+        });
+      }
+      continue;
+    }
 
     for (const [index, hunk] of hunks.entries()) {
       const questions = Object.fromEntries(
