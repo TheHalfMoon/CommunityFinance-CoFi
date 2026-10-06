@@ -2,12 +2,12 @@
 # Project Status
 
 **Status:** Stable
-**Current release:** v1.0.2
-**Language:** Rust
+**Current release:** v1.1.0
+**Language:** Rust, TypeScript
 **MSRV:** 1.85
 **License:** Apache-2.0
 
-CoFi v1.0.2 is the current stable release of the Community Finance core. Desktop v1.1.0 is the current release candidate and is not yet published as the stable release.
+CoFi v1.1.0 is the current stable repository release. It adds the local-first CoFi Desktop application while preserving the qualified v1.0.2 Community Finance core behavior.
 
 ## Stable capabilities
 
@@ -19,7 +19,8 @@ CoFi v1.0.2 is the current stable release of the Community Finance core. Desktop
 - vendor disbursement lifecycle and provider-neutral contracts;
 - reconciliation and tamper-evident audit;
 - usage metering, rating, invoicing, and subscriptions;
-- authorization lineage through commercial and fund-movement boundaries.
+- authorization lineage through commercial and fund-movement boundaries;
+- local-first CoFi Desktop shell with typed IPC to the canonical ledger core and Windows MSI/NSIS distribution.
 
 ## Quality gates
 
