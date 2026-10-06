@@ -81,8 +81,12 @@ jobs:
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$BASE_SHA"
           git cat-file -e "$BASE_SHA:.github/scripts/jev-exact-diff.mjs"
+          git cat-file -e "$BASE_SHA:.github/scripts/jev-lockfile-validation.mjs"
           BASE_ADAPTER="$RUNNER_TEMP/cofi-jev-exact-diff.mjs"
+          BASE_LOCKFILE_HELPER="$RUNNER_TEMP/jev-lockfile-validation.mjs"
           git show "$BASE_SHA:.github/scripts/jev-exact-diff.mjs" > "$BASE_ADAPTER"
+          git show "$BASE_SHA:.github/scripts/jev-lockfile-validation.mjs" > "$BASE_LOCKFILE_HELPER"
+          node --check "$BASE_LOCKFILE_HELPER"
           node --check "$BASE_ADAPTER"
 
       - name: Run genuine Jev exact-diff review
