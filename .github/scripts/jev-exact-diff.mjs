@@ -4,8 +4,10 @@ import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 
 import {
+  isDeterministicBinaryAsset,
   isGeneratedLockfile,
   siblingPackageJsonPath,
+  validateBinaryAsset,
   validateGeneratedLockfile,
 } from "./jev-lockfile-validation.mjs";
 
@@ -61,6 +63,13 @@ const severityRubric = [
 function git(args) {
   return execFileSync("git", ["--literal-pathspecs", "-C", repository, ...args], {
     encoding: "utf8",
+    maxBuffer: 32 * 1024 * 1024,
+  });
+}
+
+function gitBuffer(args) {
+  return execFileSync("git", ["--literal-pathspecs", "-C", repository, ...args], {
+    encoding: null,
     maxBuffer: 32 * 1024 * 1024,
   });
 }
@@ -125,7 +134,49 @@ try {
       throw new Error(`literal path selection mismatch: ${path}`);
     }
     const numstat = git(["diff", "--numstat", baseArg, headArg, "--", path]).trim();
-    if (numstat.startsWith("-\t-\t")) throw new Error(`binary file cannot be reviewed: ${path}`);
+
+    if (numstat.startsWith("-\t-\t")) {
+      if (!isDeterministicBinaryAsset(path)) {
+        throw new Error(`unsupported binary file cannot be reviewed: ${path}`);
+      }
+
+      const validatedRefs = [];
+      if (gitObjectExists(baseArg, path)) {
+        validatedRefs.push({
+          ref: "base",
+          ...validateBinaryAsset({
+            path,
+            content: gitBuffer(["show", `${baseArg}:${path}`]),
+          }),
+        });
+      }
+      validatedRefs.push({
+        ref: "head",
+        ...validateBinaryAsset({
+          path,
+          content: gitBuffer(["show", `${headArg}:${path}`]),
+        }),
+      });
+
+      const fileResult = { path, hunks: 1, reviewed_hunks: 1 };
+      report.changed_files.push(fileResult);
+      report.coverage.expected_hunks += 1;
+      report.coverage.reviewed_hunks += 1;
+      report.hunk_judgments.push({
+        file: path,
+        hunk: 1,
+        line: 1,
+        review_mode: "deterministic_binary_asset_validation",
+        validation: validatedRefs,
+        screening: Object.fromEntries(
+          Object.keys(dimensions).map((dimension) => [
+            dimension,
+            { probability: 0, confidence: 1 },
+          ]),
+        ),
+      });
+      continue;
+    }
 
     const patch = git(["diff", "--no-ext-diff", "--no-color", "--unified=3", baseArg, headArg, "--", path]);
     const hunks = splitHunks(patch);

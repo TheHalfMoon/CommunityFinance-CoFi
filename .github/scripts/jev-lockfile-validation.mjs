@@ -5,8 +5,58 @@ export function isGeneratedLockfile(path) {
   return name === "Cargo.lock" || name === "package-lock.json";
 }
 
+export function isDeterministicBinaryAsset(path) {
+  const name = basename(path).toLowerCase();
+  return name.endsWith(".png") || name.endsWith(".ico") || name.endsWith(".icns");
+}
+
 export function siblingPackageJsonPath(path) {
   return posix.join(posix.dirname(path), "package.json");
+}
+
+export function validateBinaryAsset({ path, content }) {
+  const name = basename(path).toLowerCase();
+  const bytes = Buffer.from(content);
+
+  if (name.endsWith(".png")) {
+    if (bytes.length < 24) {
+      throw new Error(`PNG asset is too small: ${path}`);
+    }
+    const signature = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+    if (!bytes.subarray(0, 8).equals(signature) || bytes.subarray(12, 16).toString("ascii") !== "IHDR") {
+      throw new Error(`invalid PNG structure: ${path}`);
+    }
+    const width = bytes.readUInt32BE(16);
+    const height = bytes.readUInt32BE(20);
+    if (width === 0 || height === 0 || width > 8192 || height > 8192) {
+      throw new Error(`invalid PNG dimensions in ${path}`);
+    }
+    return { kind: "png", bytes: bytes.length, width, height };
+  }
+
+  if (name.endsWith(".ico")) {
+    if (bytes.length < 6 || bytes.readUInt16LE(0) !== 0 || bytes.readUInt16LE(2) !== 1) {
+      throw new Error(`invalid ICO header: ${path}`);
+    }
+    const imageCount = bytes.readUInt16LE(4);
+    if (imageCount === 0) {
+      throw new Error(`ICO contains no images: ${path}`);
+    }
+    return { kind: "ico", bytes: bytes.length, image_count: imageCount };
+  }
+
+  if (name.endsWith(".icns")) {
+    if (bytes.length < 8 || bytes.subarray(0, 4).toString("ascii") !== "icns") {
+      throw new Error(`invalid ICNS header: ${path}`);
+    }
+    const declaredLength = bytes.readUInt32BE(4);
+    if (declaredLength !== bytes.length) {
+      throw new Error(`ICNS length mismatch in ${path}`);
+    }
+    return { kind: "icns", bytes: bytes.length };
+  }
+
+  throw new Error(`unsupported binary asset: ${path}`);
 }
 
 function sortedEntries(value = {}) {
