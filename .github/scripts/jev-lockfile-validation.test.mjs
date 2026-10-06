@@ -2,8 +2,10 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import {
+  isDeterministicBinaryAsset,
   isGeneratedLockfile,
   siblingPackageJsonPath,
+  validateBinaryAsset,
   validateGeneratedLockfile,
 } from "./jev-lockfile-validation.mjs";
 
@@ -127,5 +129,59 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
         content: lock,
       }),
     /missing checksum/,
+  );
+});
+
+test("recognizes deterministic desktop icon assets", () => {
+  assert.equal(isDeterministicBinaryAsset("icons/128x128.png"), true);
+  assert.equal(isDeterministicBinaryAsset("icons/icon.ico"), true);
+  assert.equal(isDeterministicBinaryAsset("icons/icon.icns"), true);
+  assert.equal(isDeterministicBinaryAsset("icons/source.svg"), false);
+});
+
+test("validates PNG signature and dimensions", () => {
+  const png = Buffer.alloc(24);
+  Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]).copy(png, 0);
+  png.write("IHDR", 12, "ascii");
+  png.writeUInt32BE(128, 16);
+  png.writeUInt32BE(128, 20);
+
+  assert.deepEqual(
+    validateBinaryAsset({ path: "icons/128x128.png", content: png }),
+    { kind: "png", bytes: 24, width: 128, height: 128 },
+  );
+});
+
+test("validates ICO and ICNS structural headers", () => {
+  const ico = Buffer.alloc(6);
+  ico.writeUInt16LE(0, 0);
+  ico.writeUInt16LE(1, 2);
+  ico.writeUInt16LE(3, 4);
+  assert.deepEqual(
+    validateBinaryAsset({ path: "icons/icon.ico", content: ico }),
+    { kind: "ico", bytes: 6, image_count: 3 },
+  );
+
+  const icns = Buffer.alloc(8);
+  icns.write("icns", 0, "ascii");
+  icns.writeUInt32BE(8, 4);
+  assert.deepEqual(
+    validateBinaryAsset({ path: "icons/icon.icns", content: icns }),
+    { kind: "icns", bytes: 8 },
+  );
+});
+
+test("rejects malformed binary assets", () => {
+  assert.throws(
+    () => validateBinaryAsset({ path: "icons/bad.png", content: Buffer.alloc(24) }),
+    /invalid PNG structure/,
+  );
+  assert.throws(
+    () => validateBinaryAsset({ path: "icons/bad.ico", content: Buffer.alloc(6) }),
+    /invalid ICO header/,
+  );
+  assert.throws(
+    () => validateBinaryAsset({ path: "icons/bad.icns", content: Buffer.alloc(8) }),
+    /invalid ICNS header/,
   );
 });
