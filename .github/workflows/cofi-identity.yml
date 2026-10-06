@@ -1,0 +1,31 @@
+name: CoFi Repository Identity
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cofi-identity-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  identity:
+    name: Canonical CoFi identity
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+
+      - name: Verify identity checker syntax
+        run: python3 -m py_compile .github/scripts/check-repository-identity.py
+
+      - name: Verify canonical repository identity
+        run: python3 .github/scripts/check-repository-identity.py
