@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Community Finance (CoFi) is a local-first desktop app for deterministic, auditable financial workflows." />
+    <meta name="theme-color" content="#f8f7ff" />
+    <meta property="og:title" content="Community Finance — CoFi" />
+    <meta property="og:description" content="Open financial infrastructure on your desktop. Private by default, open source, and built for real-world use." />
+    <meta property="og:type" content="website" />
+    <title>Community Finance — CoFi</title>
+    <link rel="icon" href="./assets/cofi-mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./app.js"></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header" aria-label="Primary navigation">
+        <a class="brand" href="./" aria-label="Community Finance home">
+          <img class="brand-mark" src="./assets/cofi-mark.svg" alt="" />
+          <span class="brand-wordmark" aria-hidden="true"><strong>Community</strong><span>Finance</span></span>
+        </a>
+
+        <nav class="desktop-nav" aria-label="Main">
+          <a href="#features">Features</a>
+          <a href="https://github.com/TheHalfMoon/CommunityFinance-CoFi/blob/main/SECURITY.md" target="_blank" rel="noreferrer">Security</a>
+          <a href="https://github.com/TheHalfMoon/CommunityFinance-CoFi" target="_blank" rel="noreferrer">Open source</a>
+          <a href="https://github.com/TheHalfMoon/CommunityFinance-CoFi/tree/main/docs" target="_blank" rel="noreferrer">Docs</a>
+          <a href="https://github.com/TheHalfMoon/CommunityFinance-CoFi/blob/main/README.md" target="_blank" rel="noreferrer">About</a>
+        </nav>
+
+        <div class="header-actions">
+          <a class="github-link" href="https://github.com/TheHalfMoon/CommunityFinance-CoFi" target="_blank" rel="noreferrer">GitHub</a>
+          <a class="button button-dark button-compact" href="https://github.com/TheHalfMoon/CommunityFinance-CoFi/releases/latest" data-download-link target="_blank" rel="noreferrer">
+            <span data-download-label data-compact-label>Release</span><span aria-hidden="true">→</span>
+          </a>
+          <button class="menu-button" type="button" aria-expanded="false" aria-controls="mobile-menu">
+            <span class="sr-only">Toggle navigation</span><span></span><span></span><span></span>
+          </button>
+        </div>
+
+        <nav class="mobile-menu" id="mobile-menu" aria-label="Mobile" hidden>
+          <a href="#features">Features</a>
+          <a href="https://github.com/TheHalfMoon/CommunityFinance-CoFi/blob/main/SECURITY.md">Security</a>
+          <a href="https://github.com/TheHalfMoon/CommunityFinance-CoFi">Open source</a>
+          <a href="https://github.com/TheHalfMoon/CommunityFinance-CoFi/tree/main/docs">Docs</a>
+          <a href="https://github.com/TheHalfMoon/CommunityFinance-CoFi/blob/main/README.md">About</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div class="hero-copy">
+            <div class="eyebrow">DESKTOP APP</div>
+            <h1>The open<br />financial<br /><span>infrastructure.</span></h1>
+            <p class="hero-lede">
+              Run Community Finance locally on your desktop.<br />
+              Private by default, open source, and built for real-world use.
+            </p>
+            <div class="hero-actions">
+              <a class="button button-dark button-primary" href="https://github.com/TheHalfMoon/CommunityFinance-CoFi/releases/latest" data-download-link target="_blank" rel="noreferrer">
+                <span data-download-label>Latest release</span><span aria-hidden="true">→</span>
+              </a>
+              <a class="button button-light button-primary" href="https://github.com/TheHalfMoon/CommunityFinance-CoFi" target="_blank" rel="noreferrer">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path fill="currentColor" d="M12 .7a11.5 11.5 0 0 0-3.64 22.4c.58.1.79-.25.79-.56v-2.2c-3.22.7-3.9-1.37-3.9-1.37-.53-1.34-1.28-1.7-1.28-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.57-.3-5.28-1.29-5.28-5.7 0-1.26.45-2.3 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.16 1.18A11 11 0 0 1 12 6.3c.98 0 1.96.13 2.88.39 2.2-1.49 3.16-1.18 3.16-1.18.63 1.59.23 2.77.11 3.07.74.8 1.19 1.83 1.19 3.09 0 4.43-2.71 5.4-5.29 5.69.42.36.79 1.07.79 2.16v3.02c0 .31.2.67.8.56A11.5 11.5 0 0 0 12 .7Z" />
+                </svg>
+                <span>View on GitHub</span>
+              </a>
+            </div>
+            <p class="download-note" data-download-note>Checking the latest desktop release…</p>
+          </div>
+
+          <div class="product-stage" aria-hidden="true">
+            <div class="product-window">
+              <aside class="preview-sidebar">
+                <div class="preview-brand">
+                  <img src="./assets/cofi-mark.svg" alt="" />
+                  <span><strong>Community</strong><span>Finance</span></span>
+                </div>
+                <div class="preview-search"><span class="search-icon" aria-hidden="true"></span><span>Search...</span></div>
+                <nav class="preview-nav" aria-label="Product preview navigation">
+                  <span class="active"><i class="nav-icon home"></i>Home</span>
+                  <span><i class="nav-icon card"></i>Payments</span>
+                  <span><i class="nav-icon bill"></i>Billing</span>
+                  <span><i class="nav-icon user"></i>Customers</span>
+                  <span><i class="nav-icon bars"></i>Analytics</span>
+                  <span><i class="nav-icon report"></i>Reports</span>
+                </nav>
+                <div class="preview-sidebar-footer"><span>Settings</span><span>Developer</span></div>
+              </aside>
+
+              <section class="preview-content">
+                <div class="preview-toolbar">
+                  <div><h2>Overview</h2><small>Product preview · sample data</small></div>
+                  <span class="preview-period">Last 30 days <span>⌄</span></span>
+                </div>
+
+                <div class="metric-grid">
+                  <article class="metric-card"><span>Total volume</span><strong>$1,240,432</strong><small>↑ 12%</small></article>
+                  <article class="metric-card"><span>Active customers</span><strong>8,421</strong><small>↑ 8%</small></article>
+                  <article class="metric-card"><span>Revenue</span><strong>$12,480</strong><small>↑ 14%</small></article>
+                  <article class="metric-card"><span>Success rate</span><strong>99.8%</strong><small>↑ 0.2%</small></article>
+                </div>
+
+                <article class="chart-card">
+                  <div class="card-heading"><strong>Volume</strong><span>Daily</span></div>
+                  <div class="chart">
+                    <span class="grid-line grid-one"></span><span class="grid-line grid-two"></span>
+                    <div class="bars" aria-hidden="true">
+                      <i style="--h:32%"></i><i style="--h:45%"></i><i style="--h:56%"></i><i style="--h:72%"></i><i style="--h:88%"></i><i style="--h:62%"></i><i style="--h:49%"></i><i style="--h:65%"></i><i style="--h:82%"></i><i style="--h:70%"></i><i style="--h:93%"></i><i style="--h:76%"></i><i style="--h:55%"></i><i style="--h:66%"></i><i style="--h:83%"></i><i style="--h:73%"></i><i style="--h:86%"></i><i style="--h:51%"></i><i style="--h:43%"></i><i style="--h:61%"></i><i style="--h:78%"></i><i style="--h:95%"></i><i style="--h:59%"></i><i style="--h:48%"></i><i style="--h:64%"></i><i style="--h:80%"></i><i style="--h:72%"></i>
+                    </div>
+                    <div class="chart-labels"><span>Sep 1</span><span>Sep 8</span><span>Sep 15</span><span>Sep 22</span><span>Sep 30</span></div>
+                  </div>
+                </article>
+
+                <article class="activity-card">
+                  <h3>Recent activity</h3>
+                  <div class="activity-table">
+                    <div class="activity-row activity-head"><span>Type</span><span>Customer</span><span>Status</span><span>Amount</span><span>Time</span></div>
+                    <div class="activity-row"><span>Payment</span><span>Acme Co.</span><span class="status success">● Succeeded</span><span>$349.00</span><span>2m ago</span></div>
+                    <div class="activity-row"><span>Subscription</span><span>Luna Health</span><span class="status success">● Succeeded</span><span>$99.00</span><span>12m ago</span></div>
+                    <div class="activity-row"><span>Payout</span><span>Mada Clinic</span><span class="status processing">● Processing</span><span>$1,250.00</span><span>1h ago</span></div>
+                    <div class="activity-row"><span>Refund</span><span>Riyadh Labs</span><span class="status success">● Succeeded</span><span>$49.00</span><span>3h ago</span></div>
+                    <div class="activity-row"><span>Invoice</span><span>Noor Care</span><span class="status success">● Succeeded</span><span>$199.00</span><span>4h ago</span></div>
+                  </div>
+                </article>
+              </section>
+            </div>
+          </div>
+        </section>
+
+        <section class="feature-strip" id="features" aria-label="CoFi principles">
+          <article><span class="feature-icon layers" aria-hidden="true"></span><div><strong>Open source</strong><p>Full source code, no vendor lock-in.</p></div></article>
+          <article><span class="feature-icon lock" aria-hidden="true"></span><div><strong>Local-first</strong><p>Keep your financial data on your machine.</p></div></article>
+          <article><span class="feature-icon code" aria-hidden="true"></span><div><strong>API first</strong><p>Build and integrate without friction.</p></div></article>
+          <article><span class="feature-icon people" aria-hidden="true"></span><div><strong>Built for communities</strong><p>Flexible, modular, and extensible.</p></div></article>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
