@@ -1,0 +1,82 @@
+name: CoFi Desktop CI
+
+on:
+  push:
+    paths:
+      - apps/desktop/**
+      - crates/cofi-ledger/**
+      - .github/workflows/cofi-desktop.yml
+  pull_request:
+    paths:
+      - apps/desktop/**
+      - crates/cofi-ledger/**
+      - .github/workflows/cofi-desktop.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cofi-desktop-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    name: Windows desktop qualification
+    runs-on: windows-latest
+    timeout-minutes: 40
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - name: Install Node 24
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "24.19.0"
+          cache: npm
+          cache-dependency-path: apps/desktop/package-lock.json
+
+      - name: Install Rust 1.85
+        uses: dtolnay/rust-toolchain@89b12181fb390509a0842a86cc55eeb8eb928c1d
+        with:
+          toolchain: 1.85.0
+          components: rustfmt, clippy
+
+      - name: Install desktop dependencies
+        working-directory: apps/desktop
+        run: npm ci
+
+      - name: Audit desktop dependencies
+        working-directory: apps/desktop
+        run: npm audit --audit-level=high
+
+      - name: Build webview frontend
+        working-directory: apps/desktop
+        run: npm run build
+
+      - name: Test desktop IPC contract
+        working-directory: apps/desktop
+        run: npm run test:ipc
+
+      - name: Format native host
+        run: cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml -- --check
+
+      - name: Lint native host
+        run: cargo clippy --locked --manifest-path apps/desktop/src-tauri/Cargo.toml --all-targets -- -D warnings
+
+      - name: Test native host
+        run: cargo test --locked --manifest-path apps/desktop/src-tauri/Cargo.toml
+
+      - name: Build Windows installers
+        working-directory: apps/desktop
+        run: npm run desktop:build
+
+      - name: Verify installer artifacts
+        shell: pwsh
+        run: |
+          $msi = Get-ChildItem apps/desktop/src-tauri/target/release/bundle/msi/*.msi
+          $nsis = Get-ChildItem apps/desktop/src-tauri/target/release/bundle/nsis/*-setup.exe
+          if ($msi.Count -ne 1 -or $nsis.Count -ne 1) {
+            throw "Expected exactly one MSI and one NSIS installer."
+          }
+          Write-Host "MSI=$($msi.FullName)"
+          Write-Host "NSIS=$($nsis.FullName)"
