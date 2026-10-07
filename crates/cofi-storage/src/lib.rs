@@ -8,8 +8,8 @@ use std::error::Error;
 use std::fmt::{Display, Formatter};
 
 use cofi_ledger::{
-    Account, AccountId, AccountKind, Currency, EntryMetadata, JournalEntry, JournalEntryId,
-    Ledger, LedgerScopeId, Posting, Side,
+    Account, AccountId, AccountKind, Currency, EntryMetadata, JournalEntry, JournalEntryId, Ledger,
+    LedgerScopeId, Posting, Side,
 };
 use serde::{Deserialize, Serialize};
 
@@ -65,14 +65,18 @@ pub fn parse_u128_exact(value: &str) -> Result<u128, CodecError> {
     if !is_canonical_integer(value, false) {
         return Err(CodecError::InvalidInteger("u128"));
     }
-    value.parse().map_err(|_| CodecError::InvalidInteger("u128"))
+    value
+        .parse()
+        .map_err(|_| CodecError::InvalidInteger("u128"))
 }
 
 pub fn parse_i128_exact(value: &str) -> Result<i128, CodecError> {
     if !is_canonical_integer(value, true) {
         return Err(CodecError::InvalidInteger("i128"));
     }
-    value.parse().map_err(|_| CodecError::InvalidInteger("i128"))
+    value
+        .parse()
+        .map_err(|_| CodecError::InvalidInteger("i128"))
 }
 
 pub fn parse_i64_exact(value: &str) -> Result<i64, CodecError> {
@@ -232,8 +236,8 @@ pub fn encode_entry(entry: &JournalEntry) -> Result<Vec<u8>, CodecError> {
 /// Reject unknown fact types and versions, then route all decoded values
 /// through the domain's existing checked public constructors.
 pub fn decode_fact(bytes: &[u8]) -> Result<LedgerFact, CodecError> {
-    let header: Envelope<serde_json::Value> = serde_json::from_slice(bytes)
-        .map_err(|err| CodecError::InvalidPayload(err.to_string()))?;
+    let header: Envelope<serde_json::Value> =
+        serde_json::from_slice(bytes).map_err(|err| CodecError::InvalidPayload(err.to_string()))?;
     if header.schema_version != CURRENT_VERSION {
         return Err(CodecError::UnsupportedVersion(header.schema_version));
     }
@@ -292,9 +296,7 @@ pub fn decode_fact(bytes: &[u8]) -> Result<LedgerFact, CodecError> {
 
 /// The input stream must be in canonical dependency order: account
 /// registrations before entries. Indexes/balances are rebuilt by the domain.
-pub fn replay_ledger<'a>(
-    facts: impl IntoIterator<Item = &'a [u8]>,
-) -> Result<Ledger, CodecError> {
+pub fn replay_ledger<'a>(facts: impl IntoIterator<Item = &'a [u8]>) -> Result<Ledger, CodecError> {
     let mut ledger = Ledger::new();
     for fact in facts {
         match decode_fact(fact)? {
