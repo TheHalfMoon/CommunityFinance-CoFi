@@ -2,12 +2,12 @@
 # Project Status
 
 **Status:** Stable
-**Current release:** v1.1.1
+**Current release:** v1.2.0
 **Language:** Rust, TypeScript
 **MSRV:** 1.85
 **License:** Apache-2.0
 
-CoFi v1.1.1 is the current stable repository release. It is a desktop branding patch over v1.1.0 and preserves the qualified Community Finance core behavior.
+CoFi v1.2.0 is the current stable repository release. It adds bundled multilingual Desktop support while preserving the qualified Community Finance core behavior.
 
 ## Stable capabilities
 
