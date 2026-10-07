@@ -395,3 +395,92 @@ pub fn replay_audit_events<'a>(
     }
     Ok(log)
 }
+
+/// A final digest and sequence that the caller obtained through an
+/// **independent, trusted** authority. This type does not authenticate the
+/// authority or store/sign the anchor: the caller must establish that trust.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct AuditStreamAnchor {
+    stream_id: AuditStreamId,
+    final_sequence: u64,
+    final_digest: AuditDigest,
+}
+impl AuditStreamAnchor {
+    pub fn new(
+        stream_id: AuditStreamId,
+        final_sequence: u64,
+        final_digest: AuditDigest,
+    ) -> Result<Self, AuditCodecError> {
+        if final_sequence == 0 || final_digest == AuditDigest::GENESIS {
+            return Err(AuditCodecError::InvalidRecord(
+                "a nonempty audit anchor requires a nonzero sequence and digest".to_owned(),
+            ));
+        }
+        Ok(Self {
+            stream_id,
+            final_sequence,
+            final_digest,
+        })
+    }
+
+    #[must_use]
+    pub const fn stream_id(&self) -> &AuditStreamId {
+        &self.stream_id
+    }
+    #[must_use]
+    pub const fn final_sequence(&self) -> u64 {
+        self.final_sequence
+    }
+    #[must_use]
+    pub const fn final_digest(&self) -> AuditDigest {
+        self.final_digest
+    }
+}
+
+/// Require *all and only* the independently anchored nonempty streams,
+/// checking both the sequence and terminal digest. An internally consistent
+/// rewritten or truncated stream cannot match an unchanged trusted anchor.
+///
+/// WARNING: A malicious/untrusted caller can simply supply an attacker-owned
+/// matching anchor. Upstream root anchoring, tenant binding, signature checks
+/// and durable atomic association are future requirements, not provided here.
+pub fn replay_audit_events_anchored<'a>(
+    facts: impl IntoIterator<Item = &'a [u8]>,
+    anchors: &[AuditStreamAnchor],
+) -> Result<AuditLog, AuditCodecError> {
+    if anchors.is_empty() {
+        return Err(AuditCodecError::InvalidRecord(
+            "trusted audit stream anchors cannot be empty".to_owned(),
+        ));
+    }
+    let log = replay_audit_events(facts)?;
+    if log.stream_count() != anchors.len() {
+        return Err(AuditCodecError::InvalidRecord(
+            "provided stream count differs from trusted anchor set".to_owned(),
+        ));
+    }
+    let mut seen = BTreeSet::new();
+    for anchor in anchors {
+        if !seen.insert(anchor.stream_id.clone()) {
+            return Err(AuditCodecError::InvalidRecord(
+                "duplicated trusted stream anchor".to_owned(),
+            ));
+        }
+        let Some(stream) = log.stream(&anchor.stream_id) else {
+            return Err(AuditCodecError::InvalidRecord(
+                "trusted audit stream is missing".to_owned(),
+            ));
+        };
+        let Some(last) = stream.last() else {
+            return Err(AuditCodecError::InvalidRecord(
+                "trusted audit stream is empty".to_owned(),
+            ));
+        };
+        if last.sequence() != anchor.final_sequence || last.digest() != anchor.final_digest {
+            return Err(AuditCodecError::InvalidRecord(
+                "audit stream differs from independently trusted anchor".to_owned(),
+            ));
+        }
+    }
+    Ok(log)
+}

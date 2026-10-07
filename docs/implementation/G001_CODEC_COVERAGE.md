@@ -120,7 +120,16 @@ strictly typed and 1 MiB limited individually; unsupported versions, invalid
 hex, duplicate JSON keys, invalid payload-outcome shapes, missing ancestry,
 sequence gaps and changed duplicate identities fail closed.
 
-**This verifies consistency, not authenticity.** A forged coherent chain
+**A second G001 slice adds typed caller-provided AuditStreamAnchor and
+replay_audit_events_anchored, comparing **all and only** expected streams to
+both their known terminal sequence and digest. This detects a truncated or
+coherently rewritten chain when the original trusted anchor is retained
+independently. The API **does not acquire, authenticate, sign, persist, or
+assign tenant scope to the anchor**. A malicious caller who supplies a forged
+matching digest defeats it. This remains a local verification primitive,
+not a production source-of-truth or a completed G001 provenance chain.
+
+This verifies consistency, not authenticity.** A forged coherent chain
 can compute entirely valid SHA-256 hashes. This first audit slice does not
 persist a trusted digest anchor, external signatures, a verified tenant-bound
 canonical provider/reconciliation event history, or proof that the source
