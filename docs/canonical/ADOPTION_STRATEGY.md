@@ -1,0 +1,42 @@
+# Adoption strategy
+
+The first sale is reduced operational uncertainty for a developer-led SaaS/platform team already using a processor. CoFi is an additional system and must earn that cost. Start read-only, prove a missing reconciliation/approval/billing benefit, then own new economic cohorts. Do not ask an early customer to replace successful checkout, merchant-of-record tax coverage and acquiring simultaneously.
+
+## Segment decisions
+
+| Segment | Killer use case | Onboarding and migration minimum | Reason to choose CoFi / reason to reject / mitigation |
+|---|---|---|---|
+| Individual developers | Reproduce usage-to-invoice and bounded payment failures locally | No live account; seeded sandbox, TS/Python quickstart | Understandable money trace / too much infrastructure / packaged PostgreSQL/dev runtime and honest prerequisites |
+| SaaS/startups **initial** | Tie usage revenue, invoices and vendor/agent budgets to one audited history | Read-only Stripe import, one-cycle shadow comparison, new cohort write cutover | Avoid disconnected spreadsheets/state / Stripe or Chargebee already sufficient / prove fewer unresolved cases and no checkout rewrite |
+| Enterprises | Verified provider/account migration, multi-entity authority and audit exports | Residency/retention, scoped SSO, RBAC, recovery/upgrade drills, procurement and migration sponsor | Control/portability / new vendor operational risk / support contract, measured SLOs and gradual cohorts; pursue after pilot evidence |
+| Marketplaces/platforms | Revenue allocation, reserves, refund liability and contributor payouts | Qualified Connect/platform provider account, onboarding mappings, liability rules | Coherent attribution/governance / provider Connect handles more legal/operations work / keep provider custody and onboarding, add control layer |
+| Communities/cooperatives | Budget-to-approved-disbursement trace and transparent redacted reporting | One legal operator, shared fund, member roles/quorum, licensed payout account | Member accountability / spreadsheets are cheaper / usable approver queue and evidence export; validate two budget cycles before broad investment |
+| AI builders/operators | Shared parent budget across agents/providers with live revocation and UNKNOWN safety | Workload identity, bounded grants, verified beneficiaries and sandbox policy cases | Deterministic budget control / provider agent tokens already enough / show shared multi-party/multi-provider constraint and audit lineage |
+| Self-host/infrastructure teams | Portable durable state with inspectable operations | PostgreSQL + service/worker, secrets, backups and upgrade runbook | Control/deployability / recovery burden / one supported stack, restore qualification and paid managed option |
+| Connector/integration authors | Qualify one regional method/processor for multiple applications | Contract spec, offline fixtures, scoped sandbox credentials, maintainer and licence record | Distribution/reusable assurance / expensive support and PCI scope / certification tooling, constrained permissions and visible capability status |
+
+These segments are not simultaneous launch markets. SaaS/platform shadow pilots lead; community and agent policies test whether the shared authority model matters. Enterprise and broad regional execution follow evidence. Do not spend the first year rebuilding consumer wallets, POS hardware, lending, bank sponsorship or a worldwide merchant-of-record service.
+
+## Alternative selection, supported by current sources
+
+Stripe remains the sensible default when integrated payments, Billing/Metronome, tax, checkout, provider onboarding and its emerging agent capabilities meet the user's needs. Adyen provides global/local payments, web/mobile checkout, authentication, recurring tokens and omnichannel operations; CoFi is not a competing acquiring network. [Adyen's current integration architecture](https://docs.adyen.com/online-payments/) includes server, client and webhook components, a useful reminder that a Rust connector alone is not a complete payment product.
+
+Paddle's [SaaS product](https://developer.paddle.com/get-started/how-paddle-works/saas/) and [embedded billing](https://developer.paddle.com/partners/embed-billing/) emphasize merchant-of-record obligations, tax and recurring billing. A software control layer does not remove that reason to choose Paddle; partner/interoperate and keep legal obligations explicit. Chargebee's [metered features API](https://apidocs.chargebee.com/docs/api/metered_features) and [usage model](https://www.chargebee.com/docs/billing/2.0/usage-based-billing/understanding-usages) include entitlements/aggregation, so CoFi cannot differentiate merely by exposing a usage endpoint. Current access/feature eligibility still needs account-level confirmation.
+
+Lago/OpenMeter are credible usage/billing choices; Hyperswitch is a credible orchestration choice. CoFi should interoperate where a collector/processor already works and replace only fragmented canonical economic/authority state. The switching claim is falsified if the resulting application needs as many manual reconciliations and policy exceptions as before. Product coverage is based on docs/source inspection; no comparative price, latency or approval-rate benchmark was run.
+
+## Acquisition and distribution
+
+Ship an excellent runnable example for AI SaaS with token usage, a prepaid/promotional-credit distinction, bounded service spend and an UNKNOWN payment scenario. Publish a second cooperative-budget example after the flow is usable. Docs, SDK package registries, clear source/licensing, release notes and deterministic fixtures drive developer acquisition. Integrations should appear where developers already work: provider webhooks, CI, CLI, framework examples, accounting exports and workload/MCP tooling. Arabic/RTL and regional-provider support can matter where qualified demand exists; they are not a substitute for operation correctness.
+
+Maintain a public capability/qualification registry for connectors with clear supported/restricted/experimental states, maintainers, pins, tests and issue ownership. Accept a few well-maintained integrations before a marketplace of unchecked plugins. Contributors receive reproducible fixtures and bounded grains; money/authority changes require deeper review. Publish provenance and security response, not donor logos. No outreach/messages or growth campaigns are sent by this planning task.
+
+Migration incentives: free shadow validation, transparent export format, a migration assessment showing nonportable methods/mandates, and assistance for one new-write cohort. Avoid a price promise based on nominal processor fees: include infrastructure, support, risk, settlement, failure recovery and developer time. Do not paywall safety, export or source transparency. A managed service/support/qualified-connector offering can fund operations; proposed pricing is a hypothesis until pilot cost is measured. No sellable plan or percentage-of-payment charge is asserted here.
+
+## Pilot, funnel and stopping criteria
+
+Run three design-partner pilots with actual legal operators, scoped provider accounts and no CoFi dispatch initially. Measure install/quickstart success, time to first verified trace, import mapping failures, unexplained balance differences, unresolved case age, operator hours/week, budget exception rate, export/recovery completion and retained weekly use. Count economic effects and ambiguity resolution, not API volume as a success proxy.
+
+Advancement gates: >=80% unassisted sandbox quickstart among ten developers; at least three pilots find a material problem their existing stack does not solve; full billing/settlement cycle shadow data reconciles with zero unexplained economic delta; restore/export drills pass; first qualified live cohort has zero duplicate economic effects and every UNKNOWN case has an assigned owner and resolution procedure. These are target experiments. Do not claim results before running them.
+
+Stop or narrow if pilots primarily request a better dashboard, cannot identify a payable control/portability benefit, cannot operate the minimum stack, or need regulated coverage CoFi cannot obtain. If unified billing and agent/community authority do not produce demand together, expose the durable core/control API as a smaller platform instead of forcing the financial-operating-system narrative. The north star can remain ambitious while the initial product remains tightly bounded.
