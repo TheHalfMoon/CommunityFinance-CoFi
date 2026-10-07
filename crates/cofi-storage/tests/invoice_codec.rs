@@ -129,7 +129,7 @@ fn duplicate_receipt_or_missing_line_fails_closed() {
     let (a, ra) = rating("a", 7);
     let (b, rb) = rating("b", 8);
     let req = request("1", vec![a, b]);
-    assert!(encode_draft_invoice(&req, &[ra.clone()]).is_err());
+    assert!(encode_draft_invoice(&req, std::slice::from_ref(&ra)).is_err());
     assert!(encode_draft_invoice(&req, &[ra.clone(), ra]).is_err());
     assert!(encode_draft_invoice(&req, &[rb]).is_err());
 }
@@ -171,7 +171,7 @@ fn corrupted_receipt_scope_and_total_fail_closed() {
 fn conflicting_draft_id_invoice_id_and_rebound_charge_fail_closed() {
     let (a, ra) = rating("a", 7);
     let first = request("1", vec![a.clone()]);
-    let encoded = encode_draft_invoice(&first, &[ra.clone()]).unwrap();
+    let encoded = encode_draft_invoice(&first, std::slice::from_ref(&ra)).unwrap();
     assert_eq!(
         replay_draft_invoices([encoded.as_slice(), encoded.as_slice()])
             .unwrap()
