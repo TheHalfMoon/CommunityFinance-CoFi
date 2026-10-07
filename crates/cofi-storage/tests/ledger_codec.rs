@@ -82,7 +82,7 @@ fn account_and_journal_roundtrip_through_checked_domain_ctors() {
 #[test]
 fn replay_rebuilds_indexes_balances_and_exact_identity() {
     let (receivable, revenue, original) = accounts_and_entry();
-    let facts = vec![
+    let facts = [
         encode_account(&receivable).unwrap(),
         encode_account(&revenue).unwrap(),
         encode_entry(&original).unwrap(),
@@ -120,7 +120,7 @@ fn replay_rebuilds_indexes_balances_and_exact_identity() {
 fn replay_rejects_duplicate_changed_identity() {
     let (receivable, revenue, original) = accounts_and_entry();
     let other = entry("entry-002", "idem-001", 1);
-    let facts = vec![
+    let facts = [
         encode_account(&receivable).unwrap(),
         encode_account(&revenue).unwrap(),
         encode_entry(&original).unwrap(),
