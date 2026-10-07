@@ -16,6 +16,30 @@ Version contracts by explicit API date plus schema revision, not donor API versi
 
 Pagination uses signed opaque keyset cursors bound to scope, filters and stable ordering; never mutable offset pagination for accounting history. Lists expose a snapshot watermark or explain ongoing updates. Expansions are allowlisted and bounded in depth/cost. No expansion bypasses resource authorization. Search/analytics may lag and display their watermark; authoritative mutation/readback uses the primary database.
 
+## Proposed first API contract and SDK journey
+
+The initial collection surface is `POST /v1/payment_intents`, `GET /v1/payment_intents/{id}`, flow-specific capture/cancel/refund commands, and `GET /v1/attempts/{id}`. `payments.create` is the SDK convenience name for creating that intent, not for directly posting cash. Authentication resolves scope/environment; an API-version header and idempotency key bind the accepted request. Response includes intent ID, exact amount/currency, status, accepted command ID, current attempt ID (if any), required next action and request ID. Only supported fields/flows are accepted.
+
+Illustrative **future sandbox** TypeScript contract:
+
+```typescript
+const cofi = new CoFi({ apiKey: process.env.COFI_SANDBOX_KEY });
+const payment = await cofi.payments.create({
+  amount: "10000",
+  currency: "SAR",
+  customer: "party_example",
+  paymentMethod: "pm_sandbox_example",
+}, { idempotencyKey: "example-order-001" });
+// Inspect payment.status and nextAction; acceptance is not settlement.
+const usage = await cofi.usage.ingest({
+  sourceEventId: "usage-example-001", subject: "party_example",
+  meter: "input_tokens_v1", quantity: "1200",
+  occurredAt: "2026-10-07T00:00:00Z",
+}, { idempotencyKey: "usage-example-001" });
+```
+
+The example requires seeded sandbox parties/methods/price contracts; it does not imply SAR eligibility for a live processor. Subsequent examples create a subscription from a published price contract, simulate/finalize an invoice with separately authorized authority, and submit `funds.proposeSpend`/`agent.proposeSpend`. An agent receives a proposal/needs_approval result rather than an approval token. If the payment returns outcome_unknown, SDK guidance is to retrieve the same intent/attempt or retry the same logical API key, never create a replacement charge. All these endpoints/methods are proposed and must be generated/tested from one released contract before appearing in runnable docs.
+
 ## SDK and CLI priorities
 
 TypeScript and Python SDKs first; Rust next for infrastructure users; Go, Java, .NET, PHP and Ruby based on integration demand. Generate resource DTOs and basic transport, handwrite the small layer for safe retry, typed ambiguous outcomes, pagination, event verification and decimal values. Shared conformance fixtures must produce identical wire bytes and semantic results across languages. Do not ship seven shallow SDKs before two usable ones. Publish signed packages with provenance and dependency policies.
