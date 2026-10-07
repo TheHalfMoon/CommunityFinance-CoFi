@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f8fcff"/><stop offset=".48" stop-color="#dce8f2"/><stop offset="1" stop-color="#b9cad8"/></linearGradient>
+<radialGradient id="glow" cx=".24" cy=".14" r=".88"><stop offset="0" stop-color="#ffffff" stop-opacity=".84"/><stop offset=".62" stop-color="#ffffff" stop-opacity=".10"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient>
+<filter id="blur"><feGaussianBlur stdDeviation="22"/></filter>
+<filter id="shadow"><feDropShadow dx="0" dy="18" stdDeviation="28" flood-color="#587185" flood-opacity=".18"/></filter>
+<clipPath id="clip"><rect x="36" y="36" width="952" height="952" rx="205"/></clipPath>
+</defs>
+<rect x="36" y="36" width="952" height="952" rx="205" fill="url(#bg)" filter="url(#shadow)"/>
+<rect x="36" y="36" width="952" height="952" rx="205" fill="url(#glow)"/>
+<g clip-path="url(#clip)" fill="#ffffff" opacity=".28"><ellipse cx="185" cy="820" rx="250" ry="92"/><ellipse cx="390" cy="890" rx="300" ry="120"/><ellipse cx="720" cy="875" rx="280" ry="112"/><ellipse cx="930" cy="790" rx="185" ry="78"/></g><g clip-path="url(#clip)" fill="#c5d8e8" opacity=".16"><ellipse cx="280" cy="760" rx="210" ry="66"/><ellipse cx="650" cy="805" rx="240" ry="76"/><ellipse cx="860" cy="700" rx="170" ry="58"/></g>
+<rect x="42" y="42" width="940" height="940" rx="199" fill="none" stroke="#f8fcff" stroke-opacity=".82" stroke-width="10"/>
+<g transform="translate(234 245) scale(2.85)">
+<path d="M 70.017 161.890 C 70.027 151.775 70.463 139.450 70.987 134.500 C 74.016 105.890 92.635 81.160 119.000 70.730 C 128.591 66.936 134.909 66.157 162.250 65.397 L 187.000 64.709 L 187.000 69.749 C 187.000 85.814 174.545 103.089 159.065 108.493 C 156.626 109.345 149.876 110.289 144.065 110.591 C 131.480 111.246 126.055 112.987 120.422 118.179 C 114.914 123.256 112.208 129.833 111.059 140.935 C 110.318 148.096 109.432 151.299 106.823 156.245 C 100.385 168.450 86.913 178.534 75.468 179.715 L 70.000 180.280 L 70.017 161.890 Z M 50.892 139.646 C 43.576 136.636 40.540 134.401 33.403 126.771 C 22.791 115.426 17.548 101.400 17.603 84.500 C 17.641 72.495 19.536 64.496 24.946 53.500 C 33.579 35.952 48.354 23.532 68.500 16.889 C 75.211 14.676 77.037 14.566 112.750 14.225 L 150.000 13.869 L 149.980 18.184 C 149.944 26.147 148.008 36.108 145.443 41.528 C 142.315 48.141 134.647 55.251 128.316 57.408 C 124.768 58.617 119.537 59.003 106.572 59.012 C 88.746 59.024 83.011 59.900 75.460 63.761 C 69.455 66.831 63.144 73.462 60.151 79.845 L 57.500 85.500 L 57.773 113.750 C 57.923 129.287 57.698 141.989 57.273 141.976 C 56.848 141.963 53.977 140.914 50.892 139.646 Z" fill="#16191e" fill-rule="evenodd"/>
+</g>
+</svg>
