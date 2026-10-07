@@ -1,9 +1,9 @@
-# G001 codec coverage — ledger, metering, rating and subscription evidence slices
+# G001 codec coverage — ledger, metering, rating, subscription and draft-invoice evidence slices
 
 Status: **PARTIAL IMPLEMENTATION / NOT G001 QUALIFIED**.
 
 This file records the actual delivered codec slices in issue #22. G001 requires
-**all** economic and authority registries, not just ledger, metering, rating and subscriptions. No database,
+**all** economic and authority registries, not just ledger, metering, rating, subscriptions and draft invoices. No database,
 API, provider execution, or live-money capability is introduced here.
 
 ## Implemented now
@@ -21,6 +21,8 @@ API, provider execution, or live-money capability is introduced here.
 | Historical accepted rating | cofi-rating::RatingRequest / RatedCharge | rating.acceptance v1 | Frozen original meter/usage/plan; canonical aggregate and rate; verify every charge field | Late-arrival nonretroactivity, altered source, mismatched receipt, identity/key conflict, overflow |
 | Accepted subscription request | cofi-subscriptions::SubscriptionRequest | subscription.create v1 | Checked IDs, organization scope, customer, subject, embedded immutable plan snapshot, original effective interval; SubscriptionRequest::new and SubscriptionRegistry::create | Exact request and schedule parity, adjacent valid periods, overlap rejection, source-event identity and temporal failures |
 | Derived subscription indexes/status | cofi-subscriptions::SubscriptionRegistry | Derived, never persisted directly | Existing create, status_at and resolve_for_window | Reference and window boundary parity |
+| Accepted draft invoice with frozen rating-line receipts | cofi-invoicing::DraftInvoiceRequest | invoice.draft v1 | Reconstruct every RatedCharge through original rating.acceptance; exact original billing event, invoice, customer/scope and interval; checked DraftInvoiceRequest::new and DraftInvoiceRegistry::assemble | Two-line amount parity, duplicate/missing receipt, changed identity, scope, total and charge-bound conflict tests |
+| Derived draft invoice indexes/charge bindings | cofi-invoicing::DraftInvoiceRegistry | Never persisted directly | Existing canonical assemble method, plus to_billing_event projection | Parity of invoices/events/charge binding count and replay semantics |
 
 Record payloads use typed JSON with required version/type, unknown-field rejection,
 canonical decimal **strings** for monetary amounts and timestamps, and a checked
@@ -46,7 +48,7 @@ will be specified before G003. Record type/version rejection is fail-closed.
 | `cofi-disbursements`, `cofi-provider-contract` | lifecycle, request, observation and evidence bindings |
 | `cofi-reconciliation`, `cofi-audit` | cases/outcomes and authenticated audit streams |
 | cofi-rating production admission | Authenticated complete source-event cutoff, tenant scope and authorization lineage remain unproven |
-| cofi-billing and cofi-invoicing; remaining subscription integration | Receivables, invoice lifecycle, authenticated schedule lineage, snapshot provenance and runtime interactions. Subscription request codec implemented separately |
+| cofi-billing, finalization and remaining invoicing | Ledger posting/receivables, authorized invoice finalization and lifecycle, authenticated rating checkpoint, complete accepted commercial history and payment integration remain unqualified |
 | `cofi-payments` | capture and payout accounting source events |
 | `cofi-rating-authorization`, `cofi-invoice-authorization`, `cofi-finalization-authorization` | lineage, immutable authorization results and consumed keys |
 | `cofi-payment-authorization`, `cofi-payout-authorization` | capture/payout authorization and exact source-event binding |
@@ -84,6 +86,25 @@ Pstack RED-before-GREEN: unresolved codec/dependency compiler errors preceded
 the implementation. Four focused tests now pass, covering request and schedule
 parity, original plan, adjacent intervals, overlapping intervals and conflicts.
 Graft blast-radius and exact-head reviews are required for merger.
+
+### Draft-invoice evidence limits
+
+The invoice.draft codec carries the exact original draft request data and
+one immutable rating.acceptance evidence bundle per rated charge, then
+recomputes every charge through the original RatingRegistry. It reconstructs
+the draft through DraftInvoiceRequest and DraftInvoiceRegistry, preserving
+original source-event, invoice, rated-charge binding and idempotent replay
+semantics. Missing/extra evidence and mismatched totals reject.
+
+This is **not** an authenticated complete billing ledger. The embedded rating
+evidence cannot establish the true cutoff/completeness of the external usage
+stream; a coherent forgery rewriting both upstream receipts and source
+information still requires durable, signed/verified event provenance.
+Invoice finalization and ledger posting are not part of this draft-only
+codec. Tenant-scoped atomic stream acceptance is blocked until G002-G004.
+Pstack RED-before-GREEN produced missing module/dependency errors, and the
+focused draft roundtrip/replay/failure tests now pass; Graft and exact-head
+review must qualify the slice before merge.
 
 This summary is a coverage *frontier*, not a proof of complete domain transitions.
 The metering slice uses Pstack's narrow TDD/review workflow: first the missing-module
