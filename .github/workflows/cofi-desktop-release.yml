@@ -113,7 +113,7 @@ jobs:
         if: env.CREATE_TAG == 'false'
         shell: pwsh
         run: |
-          git fetch origin "refs/tags/$env:RELEASE_TAG:refs/tags/$env:RELEASE_TAG" --force
+          git fetch origin "refs/tags/${env:RELEASE_TAG}:refs/tags/${env:RELEASE_TAG}" --force
           if ($LASTEXITCODE -ne 0) {
             throw "Failed to fetch existing release tag $env:RELEASE_TAG."
           }
@@ -198,7 +198,7 @@ jobs:
       - name: Verify release tag target
         shell: pwsh
         run: |
-          git fetch origin "refs/tags/$env:RELEASE_TAG:refs/tags/$env:RELEASE_TAG" --force
+          git fetch origin "refs/tags/${env:RELEASE_TAG}:refs/tags/${env:RELEASE_TAG}" --force
           if ($LASTEXITCODE -ne 0) {
             throw "Failed to fetch release tag $env:RELEASE_TAG."
           }
