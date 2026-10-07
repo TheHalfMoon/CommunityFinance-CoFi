@@ -38,6 +38,7 @@ CoFi Desktop is a Tauri 2 application linked directly to the canonical `cofi-led
 
 - **Windows x64:** MSI and NSIS installers
 - **Runtime:** local-first; no cloud service is required by the desktop shell
+- **Languages:** English, Arabic (RTL), French, German, Spanish, Italian, and Simplified Chinese
 - **Release integrity:** SHA-256 checksums are published with every Windows release
 - **Download:** [latest GitHub release](https://github.com/TheHalfMoon/CommunityFinance-CoFi/releases/latest)
 
@@ -115,7 +116,7 @@ Requirements: Node.js 24, Rust 1.85+, and the platform prerequisites for Tauri 2
 ```bash
 cd apps/desktop
 npm ci
-npm run test:ipc
+npm test
 npm run desktop:dev
 ```
 
