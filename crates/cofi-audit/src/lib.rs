@@ -1,3 +1,5 @@
+pub mod codec;
+
 use std::collections::BTreeMap;
 use std::error::Error;
 use std::fmt::{Display, Formatter};

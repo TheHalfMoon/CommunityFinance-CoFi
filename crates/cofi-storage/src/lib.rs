@@ -4,6 +4,7 @@
 //! All other financial and authorization registries remain blocked until
 //! dedicated codecs, complete inventories, and parity proofs are reviewed.
 
+pub mod audit;
 pub mod invoice;
 pub mod metering;
 pub mod rating;
