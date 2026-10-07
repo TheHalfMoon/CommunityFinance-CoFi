@@ -21,6 +21,7 @@ API, provider execution, or live-money capability is introduced here.
 | Historical accepted rating | cofi-rating::RatingRequest / RatedCharge | rating.acceptance v1 | Frozen original meter/usage/plan; canonical aggregate and rate; verify every charge field | Late-arrival nonretroactivity, altered source, mismatched receipt, identity/key conflict, overflow |
 | Accepted subscription request | cofi-subscriptions::SubscriptionRequest | subscription.create v1 | Checked IDs, organization scope, customer, subject, embedded immutable plan snapshot, original effective interval; SubscriptionRequest::new and SubscriptionRegistry::create | Exact request and schedule parity, adjacent valid periods, overlap rejection, source-event identity and temporal failures |
 | Derived subscription indexes/status | cofi-subscriptions::SubscriptionRegistry | Derived, never persisted directly | Existing create, status_at and resolve_for_window | Reference and window boundary parity |
+| Authorized rating from accepted subscription and frozen metering evidence | cofi-rating-authorization::AuthorizedRatingRegistry | authorized.rating v1 (cofi-storage) | Reconstruct original subscription.create and rating.acceptance via domain constructors and meters; reapply AuthorizedRatingRegistry::rate; compare source IDs, scoped plan and full original charge | Exact authorization replay, altered plan/scope/source membership/charge, conflicting same-ID subscription and missing history tests |
 | Accepted draft invoice with frozen rating-line receipts | cofi-invoicing::DraftInvoiceRequest | invoice.draft v1 | Reconstruct every RatedCharge through original rating.acceptance; exact original billing event, invoice, customer/scope and interval; checked DraftInvoiceRequest::new and DraftInvoiceRegistry::assemble | Two-line amount parity, duplicate/missing receipt, changed identity, scope, total and charge-bound conflict tests |
 | Derived draft invoice indexes/charge bindings | cofi-invoicing::DraftInvoiceRegistry | Never persisted directly | Existing canonical assemble method, plus to_billing_event projection | Parity of invoices/events/charge binding count and replay semantics |
 | Accepted reconciliation audit event | cofi-audit::AuditEvent | audit.reconciliation v1 (cofi-audit canonical codec; cofi-storage re-export) | Original audit position/attribution/times/action/resource/typed reconciliation projection; AuditEvent::new and recomputed canonical SHA-256 digest parity | 6 targeted tests: two interleaved streams, original event/digest parity, bad digest/IDs/time/version/type/payload, changed duplicate, missing ancestor, oversized and duplicate JSON keys |
@@ -143,6 +144,33 @@ Pstack tests were written before implementation and failed on the missing
 codec/serde; after implementation the six focused tests and workspace lint
 checks passed locally. Graft source graph/blast plus exact-head CI, Jev and
 OCR accounting are required before normal merge.
+
+### Authorized rating G001 slice boundary
+
+The authorized.rating acceptance envelope binds the original immutable
+subscription.create and frozen rating.acceptance source evidence and its
+usage-event identifier list. Replay rebuilds the actual UsageAggregate from
+original checked meter events and invokes the **original**
+AuthorizedRatingRegistry::rate, which resolves the canonical subscription and
+produces a scoped authorized charge. Source identities, plan/price, scope,
+event ID, amount and accepted charge must match the recorded snapshot.
+Duplicate identical replay is a no-op; a changed subscription or rating
+source under the same rating-event ID fails closed.
+
+**Trust limit:** Both embedded sources and the expected event-ID list live
+inside the *same* untrusted record. An attacker who rewrites all of them
+coherently may still pass internal checks. The accepted-history record itself
+does not authenticate the authoritative organization scope, exact eligible
+usage-event completeness, tamper-resistant external source roots, or atomic
+tenant-specific acceptance. G002-G004 must bind these independently to
+trusted storage and the canonical source cutoff. P22 authorized drafts and
+P23 authorized finalization remain separate *unimplemented* source-registry
+codecs. This slice is not production-eligible billing.
+
+Pstack TDD found an equal-amount changed-source-ID acceptance and the
+auth record now binds the exact original event-ID list. Four tests cover
+source ancestry/replay and negative corruption. Graft diff analysis and
+exact-head CI/Jev/OCR are required before merging this slice.
 
 This summary is a coverage *frontier*, not a proof of complete domain transitions.
 The metering slice uses Pstack's narrow TDD/review workflow: first the missing-module
