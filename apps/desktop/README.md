@@ -52,4 +52,4 @@ The current zero-cost Windows pipeline produces unsigned MSI and NSIS installers
 
 ## Release rule
 
-A release tag must exactly match the version in `package.json` (for example, `v1.1.0`). The release workflow builds Windows installers, creates SHA-256 checksums, and publishes the artifacts to GitHub Releases. The public landing page then discovers the installer from the latest release.
+A release tag must exactly match the version in `package.json` (for example, `v1.1.1`). The release workflow builds Windows installers, creates SHA-256 checksums, and publishes the artifacts to GitHub Releases. The public landing page then discovers the installer from the latest release.

@@ -26,7 +26,7 @@ Double-entry accounting · billing · payments · shared funds · governance · 
 
 CoFi is an open-source financial platform built around a deterministic Rust core and a local-first desktop application. The accounting model is explicit: money is represented in checked integer minor units, journal entries balance by currency, exact replay is idempotent, and invalid financial state fails before mutation.
 
-The current stable release is **v1.1.0**.
+The current stable release is **v1.1.1**.
 
 ## Desktop
 

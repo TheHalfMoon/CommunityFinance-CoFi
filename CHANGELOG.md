@@ -7,6 +7,16 @@ All notable changes to CoFi are documented here.
 
 No unreleased changes.
 
+## [1.1.1] - 2026-10-07
+
+Desktop branding patch release.
+
+### Changed
+
+- refreshed the official CoFi mark for reliable visibility across GitHub light and dark themes;
+- replaced the Windows and macOS desktop icon assets with the approved cool silver/blue-gray CoFi tile;
+- preserved all qualified financial-core behavior from v1.1.0.
+
 ## [1.1.0] - 2026-10-07
 
 Native CoFi Desktop release with local-first Windows distribution.
