@@ -20,7 +20,8 @@ CoFi v1.1.1 is the current stable repository release. It is a desktop branding p
 - reconciliation and tamper-evident audit;
 - usage metering, rating, invoicing, and subscriptions;
 - authorization lineage through commercial and fund-movement boundaries;
-- local-first CoFi Desktop shell with typed IPC to the canonical ledger core and Windows MSI/NSIS distribution.
+- local-first CoFi Desktop shell with typed IPC to the canonical ledger core and Windows MSI/NSIS distribution;
+- bundled desktop localization for English, Arabic (RTL), French, German, Spanish, Italian, and Simplified Chinese.
 
 ## Quality gates
 

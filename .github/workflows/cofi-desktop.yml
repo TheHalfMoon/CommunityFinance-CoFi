@@ -55,7 +55,7 @@ jobs:
 
       - name: Test desktop IPC contract
         working-directory: apps/desktop
-        run: npm run test:ipc
+        run: npm test
 
       - name: Format native host
         run: cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml -- --check

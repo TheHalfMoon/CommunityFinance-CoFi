@@ -5,7 +5,12 @@ All notable changes to CoFi are documented here.
 
 ## [Unreleased]
 
-No unreleased changes.
+### Added
+
+- bundled CoFi Desktop localization for English, Arabic, French, German, Spanish, Italian, and Simplified Chinese;
+- right-to-left desktop layout support for Arabic;
+- operating-system locale detection with local preference persistence;
+- localization completeness tests enforced by Desktop CI and release qualification.
 
 ## [1.1.1] - 2026-10-07
 
