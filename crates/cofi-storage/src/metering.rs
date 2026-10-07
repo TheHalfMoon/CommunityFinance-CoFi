@@ -5,12 +5,12 @@
 //! derived aggregates or enable a durable production acceptance boundary.
 
 use cofi_metering::{
-    Aggregation, EventType, MeterDefinition, MeterId, MeteringEngine, SubjectId,
-    UsageEvent, UsageEventId, UsageValue, WindowSize,
+    Aggregation, EventType, MeterDefinition, MeterId, MeteringEngine, SubjectId, UsageEvent,
+    UsageEventId, UsageValue, WindowSize,
 };
 use serde::{Deserialize, Serialize};
 
-use crate::{CodecError, parse_i128_exact, parse_i64_exact};
+use crate::{CodecError, parse_i64_exact, parse_i128_exact};
 
 const VERSION: u64 = 1;
 const DEFINITION_KIND: &str = "meter.definition";
@@ -90,7 +90,7 @@ struct MeterDefinitionRecord {
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 enum UsageValueRecord {
-    Count,
+    Count {},
     Sum { quantity: String },
 }
 
@@ -129,7 +129,9 @@ pub fn encode_meter_definition(definition: &MeterDefinition) -> Result<Vec<u8>, 
             event_type: definition.event_type().as_str().to_owned(),
             aggregation: definition.aggregation().into(),
             window_size: definition.window_size().into(),
-            active_from_unix_ms: definition.active_from_unix_ms().map(|time| time.to_string()),
+            active_from_unix_ms: definition
+                .active_from_unix_ms()
+                .map(|time| time.to_string()),
         },
     )
 }
@@ -147,7 +149,7 @@ pub fn encode_usage_event(event: &UsageEvent) -> Result<Vec<u8>, CodecError> {
             occurred_at_unix_ms: event.occurred_at_unix_ms().to_string(),
             observed_at_unix_ms: event.observed_at_unix_ms().to_string(),
             value: match event.value() {
-                UsageValue::Count => UsageValueRecord::Count,
+                UsageValue::Count => UsageValueRecord::Count {},
                 UsageValue::Sum(quantity) => UsageValueRecord::Sum {
                     quantity: quantity.to_string(),
                 },
@@ -189,7 +191,7 @@ pub fn decode_metering_fact(bytes: &[u8]) -> Result<MeteringFact, CodecError> {
                 .map_err(|e| CodecError::InvalidPayload(e.to_string()))?;
             let p = record.payload;
             let value = match p.value {
-                UsageValueRecord::Count => UsageValue::Count,
+                UsageValueRecord::Count {} => UsageValue::Count,
                 UsageValueRecord::Sum { quantity } => UsageValue::Sum(parse_i128_exact(&quantity)?),
             };
             let event = UsageEvent::new(

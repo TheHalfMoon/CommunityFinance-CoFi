@@ -2,14 +2,13 @@
 
 use cofi_metering::{
     Aggregation, EventType, IngestionOutcome, MeterDefinition, MeterId, MeteringEngine,
-    RegistrationOutcome, SubjectId, UsageEvent, UsageEventId, UsageValue,
-    WindowSize,
+    RegistrationOutcome, SubjectId, UsageEvent, UsageEventId, UsageValue, WindowSize,
 };
+use cofi_storage::CodecError;
 use cofi_storage::metering::{
     MeteringFact, decode_metering_fact, encode_meter_definition, encode_usage_event,
     replay_metering,
 };
-use cofi_storage::CodecError;
 
 fn meter(id: &str, aggregation: Aggregation, active_from: Option<i64>) -> MeterDefinition {
     MeterDefinition::new(
@@ -55,10 +54,7 @@ fn roundtrip_preserves_meter_definition_and_usage_exactly() {
 
     // Money/usage values must never silently round through JSON floating point.
     let json: serde_json::Value = serde_json::from_slice(&event_encoded).unwrap();
-    assert_eq!(
-        json["payload"]["value"]["quantity"],
-        i128::MAX.to_string()
-    );
+    assert_eq!(json["payload"]["value"]["quantity"], i128::MAX.to_string());
 }
 
 #[test]
@@ -71,21 +67,26 @@ fn replay_preserves_aggregate_and_exact_source_replay() {
     ];
 
     let mut reference = MeteringEngine::new();
-    assert_eq!(reference.register_meter(definition.clone()), Ok(RegistrationOutcome::Registered));
-    assert_eq!(reference.ingest(usage.clone()), Ok(IngestionOutcome::Accepted));
+    assert_eq!(
+        reference.register_meter(definition.clone()),
+        Ok(RegistrationOutcome::Registered)
+    );
+    assert_eq!(
+        reference.ingest(usage.clone()),
+        Ok(IngestionOutcome::Accepted)
+    );
 
     let mut recovered = replay_metering(facts.iter().map(Vec::as_slice)).unwrap();
     assert_eq!(recovered.meter_count(), reference.meter_count());
     assert_eq!(recovered.event_count(), reference.event_count());
-    assert_eq!(recovered.meter(definition.id()), reference.meter(definition.id()));
+    assert_eq!(
+        recovered.meter(definition.id()),
+        reference.meter(definition.id())
+    );
     assert_eq!(recovered.event(usage.id()), reference.event(usage.id()));
     assert_eq!(
-        recovered.aggregate(
-            definition.id(), usage.subject_id(), 60_000, 120_000
-        ),
-        reference.aggregate(
-            definition.id(), usage.subject_id(), 60_000, 120_000
-        ),
+        recovered.aggregate(definition.id(), usage.subject_id(), 60_000, 120_000),
+        reference.aggregate(definition.id(), usage.subject_id(), 60_000, 120_000),
     );
     assert_eq!(
         recovered.register_meter(definition),
@@ -112,7 +113,9 @@ fn count_shape_roundtrip_remains_count_not_sum() {
         encode_usage_event(&usage).unwrap(),
     ];
     let recovered = replay_metering(facts.iter().map(Vec::as_slice)).unwrap();
-    let agg = recovered.aggregate(definition.id(), usage.subject_id(), 0, 60_000).unwrap();
+    let agg = recovered
+        .aggregate(definition.id(), usage.subject_id(), 0, 60_000)
+        .unwrap();
     assert_eq!(agg.event_count(), 1);
     assert_eq!(agg.aggregate_value(), 1);
 }
@@ -190,7 +193,14 @@ fn malformed_values_types_and_versions_fail_closed() {
     let usage = event("usage-1", "meter-1", 1);
     let original: serde_json::Value =
         serde_json::from_slice(&encode_usage_event(&usage).unwrap()).unwrap();
-    for malformed in ["01", "1e3", "1.0", "+1", "-1", "170141183460469231731687303715884105728"] {
+    for malformed in [
+        "01",
+        "1e3",
+        "1.0",
+        "+1",
+        "-1",
+        "170141183460469231731687303715884105728",
+    ] {
         let mut changed = original.clone();
         changed["payload"]["value"]["quantity"] = serde_json::json!(malformed);
         assert!(decode_metering_fact(&serde_json::to_vec(&changed).unwrap()).is_err());
