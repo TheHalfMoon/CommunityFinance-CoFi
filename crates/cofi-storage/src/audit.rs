@@ -4,5 +4,6 @@
 //! No hash or private audit-index reimplementation is introduced.
 
 pub use cofi_audit::codec::{
-    AuditCodecError, decode_audit_event, encode_audit_event, replay_audit_events,
+    AuditCodecError, AuditStreamAnchor, decode_audit_event, encode_audit_event,
+    replay_audit_events, replay_audit_events_anchored,
 };

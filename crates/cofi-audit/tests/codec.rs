@@ -251,3 +251,96 @@ fn oversized_and_duplicate_json_object_keys_fail_closed() {
     assert_ne!(duplicated, s);
     assert!(decode_audit_event(duplicated.as_bytes()).is_err());
 }
+
+#[test]
+fn trusted_external_stream_tail_detects_truncation_and_coherent_rewrite() {
+    use cofi_audit::codec::{AuditStreamAnchor, replay_audit_events_anchored};
+    let first = event("e1", "s", 1, AuditDigest::GENESIS, "original", pending());
+    let second = event("e2", "s", 2, first.digest(), "original", pending());
+    let records = [
+        encode_audit_event(&first).unwrap(),
+        encode_audit_event(&second).unwrap(),
+    ];
+    let anchored =
+        AuditStreamAnchor::new(AuditStreamId::new("s").unwrap(), 2, second.digest()).unwrap();
+    assert_eq!(
+        replay_audit_events_anchored(
+            records.iter().map(Vec::as_slice),
+            std::slice::from_ref(&anchored)
+        )
+        .unwrap()
+        .event_count(),
+        2
+    );
+    // A valid two-event chain with its terminal record lost still verifies
+    // internally, but must fail against a trusted externally retained anchor.
+    assert!(
+        replay_audit_events_anchored([records[0].as_slice()], std::slice::from_ref(&anchored))
+            .is_err()
+    );
+
+    // An attacker can recompute a perfectly coherent changed hash chain.
+    // The old externally held tail digest must detect that replacement.
+    let rewritten_first = event("e1", "s", 1, AuditDigest::GENESIS, "attacker", pending());
+    let rewritten_second = event(
+        "e2",
+        "s",
+        2,
+        rewritten_first.digest(),
+        "attacker",
+        pending(),
+    );
+    let altered = [
+        encode_audit_event(&rewritten_first).unwrap(),
+        encode_audit_event(&rewritten_second).unwrap(),
+    ];
+    assert_eq!(
+        replay_audit_events(altered.iter().map(Vec::as_slice))
+            .unwrap()
+            .event_count(),
+        2
+    );
+    assert!(replay_audit_events_anchored(altered.iter().map(Vec::as_slice), &[anchored]).is_err());
+}
+
+#[test]
+fn missing_extra_duplicate_or_zero_audit_anchors_fail_closed() {
+    use cofi_audit::codec::{AuditStreamAnchor, replay_audit_events_anchored};
+    let one = event("a", "stream-a", 1, AuditDigest::GENESIS, "actor", pending());
+    let two = event("b", "stream-b", 1, AuditDigest::GENESIS, "actor", pending());
+    let records = [
+        encode_audit_event(&one).unwrap(),
+        encode_audit_event(&two).unwrap(),
+    ];
+    let a =
+        AuditStreamAnchor::new(AuditStreamId::new("stream-a").unwrap(), 1, one.digest()).unwrap();
+    let b =
+        AuditStreamAnchor::new(AuditStreamId::new("stream-b").unwrap(), 1, two.digest()).unwrap();
+    assert!(
+        replay_audit_events_anchored(records.iter().map(Vec::as_slice), std::slice::from_ref(&a))
+            .is_err()
+    );
+    assert!(
+        replay_audit_events_anchored(
+            records.iter().map(Vec::as_slice),
+            &[a.clone(), a.clone(), b.clone()]
+        )
+        .is_err()
+    );
+    assert!(replay_audit_events_anchored(records.iter().map(Vec::as_slice), &[]).is_err());
+    assert_eq!(
+        replay_audit_events_anchored(records.iter().map(Vec::as_slice), &[a.clone(), b])
+            .unwrap()
+            .stream_count(),
+        2
+    );
+    assert!(
+        AuditStreamAnchor::new(AuditStreamId::new("s").unwrap(), 0, AuditDigest::GENESIS).is_err()
+    );
+    assert!(
+        AuditStreamAnchor::new(AuditStreamId::new("s").unwrap(), 1, AuditDigest::GENESIS).is_err()
+    );
+    let incorrect =
+        AuditStreamAnchor::new(AuditStreamId::new("stream-a").unwrap(), 2, one.digest()).unwrap();
+    assert!(replay_audit_events_anchored([records[0].as_slice()], &[incorrect]).is_err());
+}
