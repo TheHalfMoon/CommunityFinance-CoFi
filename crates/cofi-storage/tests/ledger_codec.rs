@@ -59,17 +59,20 @@ fn accounts_and_entry() -> (Account, Account, JournalEntry) {
 fn account_and_journal_roundtrip_through_checked_domain_ctors() {
     let (receivable, revenue, original) = accounts_and_entry();
 
-    match decode_fact(&encode_account(&receivable).unwrap()).unwrap() {
-        LedgerFact::Account(decoded) => assert_eq!(decoded, receivable),
-        LedgerFact::Entry(_) => panic!("account unexpectedly decoded as entry"),
+    let first = decode_fact(&encode_account(&receivable).unwrap()).unwrap();
+    assert!(matches!(first, LedgerFact::Account(_)));
+    if let LedgerFact::Account(decoded) = first {
+        assert_eq!(decoded, receivable);
     }
-    match decode_fact(&encode_account(&revenue).unwrap()).unwrap() {
-        LedgerFact::Account(decoded) => assert_eq!(decoded, revenue),
-        LedgerFact::Entry(_) => panic!("account unexpectedly decoded as entry"),
+    let second = decode_fact(&encode_account(&revenue).unwrap()).unwrap();
+    assert!(matches!(second, LedgerFact::Account(_)));
+    if let LedgerFact::Account(decoded) = second {
+        assert_eq!(decoded, revenue);
     }
-    match decode_fact(&encode_entry(&original).unwrap()).unwrap() {
-        LedgerFact::Entry(decoded) => assert_eq!(decoded, original),
-        LedgerFact::Account(_) => panic!("entry unexpectedly decoded as account"),
+    let third = decode_fact(&encode_entry(&original).unwrap()).unwrap();
+    assert!(matches!(third, LedgerFact::Entry(_)));
+    if let LedgerFact::Entry(decoded) = third {
+        assert_eq!(decoded, original);
     }
     assert_eq!(original.postings()[0].account_id().as_str(), "receivable");
     assert_eq!(original.recorded_at_unix_ms(), i64::MAX);
