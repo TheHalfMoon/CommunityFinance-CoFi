@@ -56,7 +56,7 @@ fn roundtrip_preserves_meter_definition_and_usage_exactly() {
     // Money/usage values must never silently round through JSON floating point.
     let json: serde_json::Value = serde_json::from_slice(&event_encoded).unwrap();
     assert_eq!(
-        json["payload"]["value"]["amount_minor"],
+        json["payload"]["value"]["quantity"],
         i128::MAX.to_string()
     );
 }
@@ -192,11 +192,11 @@ fn malformed_values_types_and_versions_fail_closed() {
         serde_json::from_slice(&encode_usage_event(&usage).unwrap()).unwrap();
     for malformed in ["01", "1e3", "1.0", "+1", "-1", "170141183460469231731687303715884105728"] {
         let mut changed = original.clone();
-        changed["payload"]["value"]["amount_minor"] = serde_json::json!(malformed);
+        changed["payload"]["value"]["quantity"] = serde_json::json!(malformed);
         assert!(decode_metering_fact(&serde_json::to_vec(&changed).unwrap()).is_err());
     }
     let mut nonstring = original.clone();
-    nonstring["payload"]["value"]["amount_minor"] = serde_json::json!(1.1);
+    nonstring["payload"]["value"]["quantity"] = serde_json::json!(1.1);
     assert!(matches!(
         decode_metering_fact(&serde_json::to_vec(&nonstring).unwrap()),
         Err(CodecError::InvalidPayload(_))
