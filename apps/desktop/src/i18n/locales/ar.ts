@@ -1,4 +1,4 @@
-import type { TranslationMessages } from "./en";
+import type { TranslationMessages } from "./en.ts";
 
 export const ar = {
   "language.label": "اللغة",
