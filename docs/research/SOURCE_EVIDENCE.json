@@ -47,317 +47,227 @@
         {
           "path": "crates/hyperswitch_interfaces/src/api.rs",
           "sha256": "f60f554ea4f175d466179806de36bdff74afecd16c07cdbac1a52cc0e8e4f386",
-          "lines": 1064,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/hyperswitch_interfaces/src/api.rs"
+          "lines": 1064
         },
         {
           "path": "crates/hyperswitch_interfaces/src/webhooks.rs",
           "sha256": "aecfa115abca5903f7639f04dadb295409fc5824da405902a67b153b61093c42",
-          "lines": 473,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/hyperswitch_interfaces/src/webhooks.rs"
+          "lines": 473
         },
         {
           "path": "crates/hyperswitch_connectors/src/connectors/stripe.rs",
           "sha256": "b43af8e2d505304f890deddadead9b7b0a668c2f207e00cca6603427c564c004",
-          "lines": 3869,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/hyperswitch_connectors/src/connectors/stripe.rs"
+          "lines": 3869
         },
         {
           "path": "crates/hyperswitch_connectors/src/connectors/stripe/transformers.rs",
           "sha256": "414eaacd038755613660d6eb2c7bb3eb3a329a9e30cfbb31729ebd4b49164c87",
-          "lines": 5843,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/hyperswitch_connectors/src/connectors/stripe/transformers.rs"
+          "lines": 5843
         },
         {
           "path": "crates/hyperswitch_connectors/Cargo.toml",
           "sha256": "15c3658c5bb57294d754429cf5a4ece3006f8e9e7159cfa701e221a988d83396",
-          "lines": 79,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/hyperswitch_connectors/Cargo.toml"
+          "lines": 79
         },
         {
           "path": "crates/router/src/core/payments.rs",
           "sha256": "f34ac5b2bc7b529458c114880b37867dbee5a4278ef401ed1c5b36f16a939900",
-          "lines": 17915,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/router/src/core/payments.rs"
+          "lines": 17915
         },
         {
           "path": "crates/router/src/core/refunds.rs",
           "sha256": "8ec440d0922a5b92c0943d489a8de619d67ca91d84cbec25cc6e0851e98c3663",
-          "lines": 2902,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/router/src/core/refunds.rs"
+          "lines": 2902
         },
         {
           "path": "crates/router/src/core/disputes.rs",
           "sha256": "dd688de11e5f137591639c7cdd8cdde6554bb32b2bcde31374f4a02aa4871e7d",
-          "lines": 1303,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/router/src/core/disputes.rs"
+          "lines": 1303
         },
         {
           "path": "crates/router/src/core/mandate.rs",
           "sha256": "6aec5d8daa6f9915c91b222b9f0403c89f1ed437575e1e2be08cfbc4e3c330ab",
-          "lines": 449,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/router/src/core/mandate.rs"
+          "lines": 449
         },
         {
           "path": "crates/router/src/core/payouts.rs",
           "sha256": "ab1d563a814314d852251bd0ade02bea44c69db211709dd62a3eab09e074aae2",
-          "lines": 4591,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/router/src/core/payouts.rs"
+          "lines": 4591
         },
         {
           "path": "crates/router/src/core/webhooks.rs",
           "sha256": "b186a7c422478cce153d42fc4a81dd5e6aa6a742537638b4e77181551937db2e",
-          "lines": 34,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/router/src/core/webhooks.rs"
+          "lines": 34
         },
         {
           "path": "crates/router/src/core/routing.rs",
           "sha256": "f9531eb37daa279f6a97dc3a6394d08fa17f9fc7ed08aecf054fc4d775d71dd1",
-          "lines": 4020,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/router/src/core/routing.rs"
+          "lines": 4020
         },
         {
           "path": "crates/router/src/core/revenue_recovery.rs",
           "sha256": "5ba95af596ae44c9f2155fd3da3f4e8db25973cfaacd8eb9b1b067367a2d7f20",
-          "lines": 2076,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/router/src/core/revenue_recovery.rs"
+          "lines": 2076
         },
         {
           "path": "crates/drainer/src/lib.rs",
           "sha256": "1514f23a1b8d889480b285136ead419f5b52188544279763f25b12d0e16fdd76",
-          "lines": 76,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/drainer/src/lib.rs"
+          "lines": 76
         },
         {
           "path": "crates/scheduler/src/lib.rs",
           "sha256": "ef0b7089c1315e3544f1cd52b6c9f0cc7a2799953be8fd18af7586226efdd53a",
-          "lines": 13,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/scheduler/src/lib.rs"
+          "lines": 13
         },
         {
           "path": "crates/storage_impl/src/lib.rs",
           "sha256": "ac4e0e1f625e9276b05fccaa43354a9eaf5cf011de2ef320efbd08523d4aa1ac",
-          "lines": 827,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/storage_impl/src/lib.rs"
+          "lines": 827
         },
         {
           "path": "crates/diesel_models/src/payment_intent.rs",
           "sha256": "5a1b730ed2466064605fba19a3fc09fe441301311c3bfa9562a3358919ca422c",
-          "lines": 2140,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/diesel_models/src/payment_intent.rs"
+          "lines": 2140
         },
         {
           "path": "crates/router/src/core/encryption.rs",
           "sha256": "fe5d5122f1b067f7d8025124f7e0c535cabcec358e4749ed02429cbc6c7b9c6d",
-          "lines": 58,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/router/src/core/encryption.rs"
+          "lines": 58
         },
         {
           "path": "crates/router/src/core/fraud_check.rs",
           "sha256": "d94010a0581268d985e108c62ee701e84421cfd79cb27a7de0ecbba53d4fa477",
-          "lines": 1471,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/router/src/core/fraud_check.rs"
+          "lines": 1471
         },
         {
           "path": "crates/events/src/lib.rs",
           "sha256": "1c53bb4de586b8cc579d7205c981301ed42379a32be0c532e8316b479cfddf77",
-          "lines": 277,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/events/src/lib.rs"
+          "lines": 277
         },
         {
           "path": "crates/hyperswitch_connectors/src/connectors/adyen.rs",
           "sha256": "d019eba547ddf8fa567d90597faabc8df0cdd006aee331146c7d0416a0595643",
-          "lines": 3502,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/hyperswitch_connectors/src/connectors/adyen.rs"
+          "lines": 3502
         },
         {
           "path": "crates/hyperswitch_connectors/src/connectors/paypal.rs",
           "sha256": "280dcbbde2626b8e977d8b2a2b92fa6a46958b6e3d0c7f59687a747f3a13d710",
-          "lines": 2764,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/hyperswitch_connectors/src/connectors/paypal.rs"
+          "lines": 2764
         },
         {
           "path": "crates/connector_configs/src/connector.rs",
           "sha256": "95a053d60dff946d1e6ba13a590638836c88a63c4ad476d0e7575bc237bd025d",
-          "lines": 754,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/connector_configs/src/connector.rs"
+          "lines": 754
         },
         {
           "path": "crates/api_models/src/payments.rs",
           "sha256": "b33e35a2f068ba12ca8e869c2cd0c84ca3d34456a6159d68b3dc55a8bc35098f",
-          "lines": 15162,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/api_models/src/payments.rs"
+          "lines": 15162
         },
         {
           "path": "crates/api_models/src/customers.rs",
           "sha256": "a70388412d2c7b329c54d3dfe418ae535b8da2cbb4110e466a8bbd0e710022f0",
-          "lines": 524,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/api_models/src/customers.rs"
+          "lines": 524
         },
         {
           "path": "crates/diesel_models/src/merchant_account.rs",
           "sha256": "e3815769dee21109115177b15dd1ccddb6a502ba4c3850fafccbacbf6d49dbec",
-          "lines": 362,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/diesel_models/src/merchant_account.rs"
+          "lines": 362
         },
         {
           "path": "crates/diesel_models/src/merchant_connector_account.rs",
           "sha256": "b41ea8d71aa2b5e41e95c54697820c0d0c6709cd9a6b218c9867625a887383a7",
-          "lines": 344,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/diesel_models/src/merchant_connector_account.rs"
+          "lines": 344
         },
         {
           "path": "crates/router/src/core/payments/retry.rs",
           "sha256": "57f63190e5975abb0d3a720d38ea4b20814258cbf9bcea011fedcbbbdc292f7d",
-          "lines": 1013,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/router/src/core/payments/retry.rs"
+          "lines": 1013
         },
         {
           "path": "crates/router/src/core/webhooks/incoming.rs",
           "sha256": "89ac907514c4797d7b6ca725db91710136310f04af98f03ca78dedf1386a74d5",
-          "lines": 4098,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/router/src/core/webhooks/incoming.rs"
+          "lines": 4098
         },
         {
           "path": "crates/router/src/core/webhooks/outgoing.rs",
           "sha256": "89b4863d8a07c07ed96d3cb3f780edfefe4e8491c11debfe69195a803f0bc69e",
-          "lines": 1848,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/router/src/core/webhooks/outgoing.rs"
+          "lines": 1848
         },
         {
           "path": "crates/drainer/src/handler.rs",
           "sha256": "fb55661b028fb8c6d0bd6b1b33edfb4849b055076ca4f482f8d477f517197710",
-          "lines": 306,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/drainer/src/handler.rs"
+          "lines": 306
         },
         {
           "path": "crates/drainer/src/stream.rs",
           "sha256": "6d56834a06839d1a991e171ac34ca3f2d003e783d9d20e199abf6f5d6cb58ad7",
-          "lines": 140,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/drainer/src/stream.rs"
+          "lines": 140
         },
         {
           "path": "crates/scheduler/src/scheduler.rs",
           "sha256": "a9c06257e8268bb223f8d498ff98133ce0151b93fa642093abb930c3b10d34a8",
-          "lines": 104,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/scheduler/src/scheduler.rs"
+          "lines": 104
         },
         {
           "path": "crates/router/src/core/payment_link.rs",
           "sha256": "584e72a0849be90ce0db2ef7afc67f1620cd8227f0c22a8e2923d7a5868f9bca",
-          "lines": 1055,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/router/src/core/payment_link.rs"
+          "lines": 1055
         },
         {
           "path": "crates/router/src/core/payment_methods.rs",
           "sha256": "18bb1acde39a2a7e812d68f205912f04432e421a7602835d1a4d83c0adfcc1f8",
-          "lines": 8626,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/router/src/core/payment_methods.rs"
+          "lines": 8626
         },
         {
           "path": "crates/router/src/core/authentication.rs",
           "sha256": "9a539586bec500f78aae010aabdc5f81336c6568583f16f48e229ac37cc7986a",
-          "lines": 1810,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/router/src/core/authentication.rs"
+          "lines": 1810
         },
         {
           "path": "crates/router/src/services/encryption.rs",
           "sha256": "4fff0769922ada3ff9bff2b9c429ffc93952475cb8a240bf210541029782a921",
-          "lines": 266,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/router/src/services/encryption.rs"
+          "lines": 266
         },
         {
           "path": "crates/router/src/services/logger.rs",
           "sha256": "f31f728394868497344fd1e627d94ce65cc892a1c3b9c236c50c44bd7acd9765",
-          "lines": 3,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/router/src/services/logger.rs"
+          "lines": 3
         },
         {
           "path": "crates/router/src/services/connector_integration_interface.rs",
           "sha256": "66e6565389723856c9da51abe47083de6abf55be47bfaecdd5ea4865ddd5f87c",
-          "lines": 4,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/router/src/services/connector_integration_interface.rs"
+          "lines": 4
         },
         {
           "path": "crates/analytics/src/payments.rs",
           "sha256": "161d1a8e5bd1eb2ae978279a955e9da31deecac8d5c12b56947f5f78c9cc8dcc",
-          "lines": 16,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/analytics/src/payments.rs"
+          "lines": 16
         },
         {
           "path": "crates/router/tests/connectors/stripe.rs",
           "sha256": "4f1ecbe409c82582910e7f7c3d15442f7d4c02c11fabd1789aea0ae8bbe1b347",
-          "lines": 420,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/router/tests/connectors/stripe.rs"
+          "lines": 420
         },
         {
           "path": "crates/router/tests/connectors/adyen.rs",
           "sha256": "b35bead6c4f92f6f034cc5a288ca059c3034a6b00557d5168c3601164851fbc5",
-          "lines": 644,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/router/tests/connectors/adyen.rs"
+          "lines": 644
         },
         {
           "path": "crates/router/tests/connectors/paypal.rs",
           "sha256": "b817d88c4a80ffe4c1fccd573113c96aaa30cdee8e4b13e7a8be4ba1f1d6ba33",
-          "lines": 637,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/router/tests/connectors/paypal.rs"
+          "lines": 637
         },
         {
           "path": "config/development.toml",
           "sha256": "c762158b8a7ec0e8b3c9c7e3dcca74cda576c54c2b40d7e485a0353d6ff24443",
-          "lines": 1799,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/config/development.toml"
+          "lines": 1799
         },
         {
           "path": "crates/euclid/src/lib.rs",
           "sha256": "db6f9b5c22525ac1c8097018b501fa6dde2c85f6b01f4f6dd903303dbf0d0c14",
-          "lines": 6,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/crates/euclid/src/lib.rs"
+          "lines": 6
         }
       ],
       "qualification": "Not built, benchmarked or security-qualified; no code imported"
@@ -395,219 +305,157 @@
         {
           "path": "app/services/billable_metrics/aggregations/apply_rounding_service.rb",
           "sha256": "c1b7fc317a05ae6b5333ac0b7f7b176bc57a91a0c872f198f9f9e1aebd98b843",
-          "lines": 37,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/billable_metrics/aggregations/apply_rounding_service.rb"
+          "lines": 37
         },
         {
           "path": "app/services/billable_metrics/aggregations/base_service.rb",
           "sha256": "094c10725017df358bb363fa28c7aaa3865d2c555c0bb38f7448aff8d890265d",
-          "lines": 251,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/billable_metrics/aggregations/base_service.rb"
+          "lines": 251
         },
         {
           "path": "app/services/billable_metrics/aggregations/count_service.rb",
           "sha256": "8514d20adb5893e5de2818da4284b1b4a7d5e4bd5688d874328bfb0e73676c3d",
-          "lines": 73,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/billable_metrics/aggregations/count_service.rb"
+          "lines": 73
         },
         {
           "path": "app/services/billable_metrics/aggregations/custom_service.rb",
           "sha256": "cbcf6334114aa8b95f08a11a1510bf5dc89f9e9b0828348346cf81aea98436af",
-          "lines": 247,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/billable_metrics/aggregations/custom_service.rb"
+          "lines": 247
         },
         {
           "path": "app/services/billable_metrics/aggregations/latest_service.rb",
           "sha256": "59f87d13e2dd93ade761cc4386a5ccdcde1a8c46361ebaf8946ada71bc919d6a",
-          "lines": 67,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/billable_metrics/aggregations/latest_service.rb"
+          "lines": 67
         },
         {
           "path": "app/services/billable_metrics/aggregations/max_service.rb",
           "sha256": "ed401ea9f769c8de3301d47d50181c768428506ab9d97de5c5d75b7c5ccb1a39",
-          "lines": 74,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/billable_metrics/aggregations/max_service.rb"
+          "lines": 74
         },
         {
           "path": "app/services/billable_metrics/aggregations/sum_service.rb",
           "sha256": "4a9fc00e887376b64b2b45535c6085ffded95417c289ae99671793df0db0330d",
-          "lines": 184,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/billable_metrics/aggregations/sum_service.rb"
+          "lines": 184
         },
         {
           "path": "app/services/billable_metrics/aggregations/unique_count_service.rb",
           "sha256": "8a36d2d3112744fdcc488bc665eda82af622bc1e018c7ca471d5034e4a4d199f",
-          "lines": 159,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/billable_metrics/aggregations/unique_count_service.rb"
+          "lines": 159
         },
         {
           "path": "app/services/billable_metrics/aggregations/weighted_sum_service.rb",
           "sha256": "5bdcd4a8629abb6e006db25d7bed1184cdf79efe1ccdf5571003c70a4ecf36ca",
-          "lines": 216,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/billable_metrics/aggregations/weighted_sum_service.rb"
+          "lines": 216
         },
         {
           "path": "app/services/credits/allocate_prepaid_credits_by_wallets_service.rb",
           "sha256": "e609d76acce055e5c6d022fbcf6af1670aca1f7f193e7f65363285495c1bc58c",
-          "lines": 133,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/credits/allocate_prepaid_credits_by_wallets_service.rb"
+          "lines": 133
         },
         {
           "path": "app/services/credits/applied_coupon_service.rb",
           "sha256": "fe44f9900acc7848c8a0f0db251cf70c4654dbfe9e652a3bb339378470e3466d",
-          "lines": 130,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/credits/applied_coupon_service.rb"
+          "lines": 130
         },
         {
           "path": "app/services/credits/applied_coupons_service.rb",
           "sha256": "6d2c9010b5aca2aae88bd2be9c4db60a51cac1abe86e0cbd13cbaf3ceb21fa94",
-          "lines": 57,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/credits/applied_coupons_service.rb"
+          "lines": 57
         },
         {
           "path": "app/services/credits/applied_prepaid_credits_service.rb",
           "sha256": "5efa334764743aaddc7274e30f08b25bafcfac6cfb4ade0cb71d418dc71ee146",
-          "lines": 125,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/credits/applied_prepaid_credits_service.rb"
+          "lines": 125
         },
         {
           "path": "app/services/credits/credit_note_service.rb",
           "sha256": "3ae6ff289d6c2aeeffc4f4b8d033a1b9123f3784a1a6156cba9a3fead4aeab2a",
-          "lines": 117,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/credits/credit_note_service.rb"
+          "lines": 117
         },
         {
           "path": "app/services/credits/progressive_billing_service.rb",
           "sha256": "6e7151a1b01ed019fb31d7f20f075e1ff91010463eef2cf1df7a48f961881a49",
-          "lines": 95,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/credits/progressive_billing_service.rb"
+          "lines": 95
         },
         {
           "path": "app/services/wallets/apply_paid_credits_service.rb",
           "sha256": "ebb9ed2412ac8da5e3cc791239e61ed37edc62d28f759e4b7d311a6b734a1b14",
-          "lines": 30,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/wallets/apply_paid_credits_service.rb"
+          "lines": 30
         },
         {
           "path": "app/services/wallets/create_interval_wallet_transactions_service.rb",
           "sha256": "f0a154a4b70f2404181ce55c0c0a648600638b0177d9cd71462f99149ca19bc7",
-          "lines": 272,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/wallets/create_interval_wallet_transactions_service.rb"
+          "lines": 272
         },
         {
           "path": "app/services/wallets/create_service.rb",
           "sha256": "e1c88111a26d9ecaa69e22fad29b6adc80ef70e753314dbe72904e1f78cf771d",
-          "lines": 266,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/wallets/create_service.rb"
+          "lines": 266
         },
         {
           "path": "app/services/wallets/realtime_refresh_service.rb",
           "sha256": "500f43035db408480085964f146f9b660f0ea7f28d5d3140a9a8c56ee4b373ef",
-          "lines": 113,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/wallets/realtime_refresh_service.rb"
+          "lines": 113
         },
         {
           "path": "app/services/wallets/terminate_service.rb",
           "sha256": "4096e224a7cb7e62e03148c637d25809f093ceca36f233cbbd5cba43aa75f3bf",
-          "lines": 35,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/wallets/terminate_service.rb"
+          "lines": 35
         },
         {
           "path": "app/services/wallets/threshold_top_up_service.rb",
           "sha256": "44f264b2ce4d4ea1c251d432fff4affd6e9632405ee769e3da914dcfb4b7c283",
-          "lines": 97,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/wallets/threshold_top_up_service.rb"
+          "lines": 97
         },
         {
           "path": "app/services/wallets/update_service.rb",
           "sha256": "399090f36604e0fd5c291ee8d79e0411853c03e0ca6acd4f6358420bc1a2ef4b",
-          "lines": 261,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/wallets/update_service.rb"
+          "lines": 261
         },
         {
           "path": "app/services/wallets/validate_limitations_service.rb",
           "sha256": "af1b845753987e23f01512364ee3b701e664e518ab1a61e28ee54e657a1faeee",
-          "lines": 40,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/wallets/validate_limitations_service.rb"
+          "lines": 40
         },
         {
           "path": "app/services/wallets/validate_recurring_transaction_rules_service.rb",
           "sha256": "8e97b04b61d8dfadf12dea6145422324508311819781ea170def5bd37e7341e7",
-          "lines": 35,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/wallets/validate_recurring_transaction_rules_service.rb"
+          "lines": 35
         },
         {
           "path": "app/services/wallets/validate_service.rb",
           "sha256": "0f07f76d82fbad3fe660e9f80069d84b7decafd14d45d77bb32e1c138fc7cc4c",
-          "lines": 131,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/wallets/validate_service.rb"
+          "lines": 131
         },
         {
           "path": "app/services/dunning_campaigns/bulk_process_service.rb",
           "sha256": "08c68543ac0ded89c555f98010b62373fe94dc4ff31415326651a00efb75298b",
-          "lines": 30,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/dunning_campaigns/bulk_process_service.rb"
+          "lines": 30
         },
         {
           "path": "app/services/dunning_campaigns/create_service.rb",
           "sha256": "39c398b9a38889521046948112ef0f006a13a8aafcea95507dae40baa2c6c3ec",
-          "lines": 49,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/dunning_campaigns/create_service.rb"
+          "lines": 49
         },
         {
           "path": "app/services/dunning_campaigns/destroy_service.rb",
           "sha256": "0b4e159ce991cd83c763b3983bb05c03d0db4264948c253fba0bbc21876728d5",
-          "lines": 35,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/dunning_campaigns/destroy_service.rb"
+          "lines": 35
         },
         {
           "path": "app/services/dunning_campaigns/process_attempt_service.rb",
           "sha256": "6a6cacef3603a56a0c90c34aa07b59538f9b34a9a0ac64ddc814a1646d5c4991",
-          "lines": 72,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/dunning_campaigns/process_attempt_service.rb"
+          "lines": 72
         },
         {
           "path": "app/services/dunning_campaigns/process_customer_service.rb",
           "sha256": "9fe79b7676cdbd73806829032e1d05f2234a451849ae061348a47ec613b13ad3",
-          "lines": 107,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/dunning_campaigns/process_customer_service.rb"
+          "lines": 107
         },
         {
           "path": "app/services/dunning_campaigns/update_service.rb",
           "sha256": "c2dc86fa537a8ef76651a8cabbc016e99d109744b9eae1aafe46d2792f21ca9f",
-          "lines": 107,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/app/services/dunning_campaigns/update_service.rb"
+          "lines": 107
         }
       ],
       "qualification": "Not built, benchmarked or security-qualified; no code imported"
@@ -629,23 +477,17 @@
         {
           "path": "src/analytics/clickhouse/endpoints/cost_savings.rs",
           "sha256": "18529b8813fd6e0999af626ed6557d33791024c983fe8e08fae379b4f264ac9c",
-          "lines": 48,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/decision-engine/6cc11474ff7fb08dd35f33828258968cc04dff27/src/analytics/clickhouse/endpoints/cost_savings.rs"
+          "lines": 48
         },
         {
           "path": "src/analytics/clickhouse/endpoints/preview_trace.rs",
           "sha256": "403e1aa8ec6f7a371a01249e9af7f867e35ccd43f43493b2e470c64e3a244c7e",
-          "lines": 9,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/decision-engine/6cc11474ff7fb08dd35f33828258968cc04dff27/src/analytics/clickhouse/endpoints/preview_trace.rs"
+          "lines": 9
         },
         {
           "path": "README.md",
           "sha256": "b9cbe27f36d12aec60638bb032b73df37aa563ca5bdac0bed3746bb79f1cae1d",
-          "lines": 234,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/decision-engine/6cc11474ff7fb08dd35f33828258968cc04dff27/README.md"
+          "lines": 234
         }
       ],
       "qualification": "Not built, benchmarked or security-qualified; no code imported"
@@ -667,128 +509,92 @@
         {
           "path": "src/api_client.rs",
           "sha256": "bd633f04a6501e35ecd201b414e320179f4190e43117bc05d978b838c41bb5cd",
-          "lines": 262,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-card-vault/eca8b7e3d0f544319578120f05b8157e73130864/src/api_client.rs"
+          "lines": 262
         },
         {
           "path": "src/app.rs",
           "sha256": "cfd40dcb2ad7b84984ebad753360a47e736d4494ddd1549c732ef6eebec31dfa",
-          "lines": 343,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-card-vault/eca8b7e3d0f544319578120f05b8157e73130864/src/app.rs"
+          "lines": 343
         },
         {
           "path": "src/config.rs",
           "sha256": "0aee9418d7f5a3c5d2a67bd0dbab1f50df0b6dc9a06a72f5058f994820e76d5c",
-          "lines": 779,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-card-vault/eca8b7e3d0f544319578120f05b8157e73130864/src/config.rs"
+          "lines": 779
         },
         {
           "path": "src/crypto.rs",
           "sha256": "1346c6eb0e01d03b69ba38d9c71796748c9bfdd4103e86af1f9c44d88a0a9cb5",
-          "lines": 15,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-card-vault/eca8b7e3d0f544319578120f05b8157e73130864/src/crypto.rs"
+          "lines": 15
         },
         {
           "path": "src/custom_extractors.rs",
           "sha256": "0c0208aca5ffc3bcf8cee50ca5738e058136ac664dd7994bae16529978a18efb",
-          "lines": 93,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-card-vault/eca8b7e3d0f544319578120f05b8157e73130864/src/custom_extractors.rs"
+          "lines": 93
         },
         {
           "path": "src/domain.rs",
           "sha256": "9d9d79f457ffd2e57dbde7ceca7c6a39fee9b6da1415909a82999138462e6a19",
-          "lines": 22,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-card-vault/eca8b7e3d0f544319578120f05b8157e73130864/src/domain.rs"
+          "lines": 22
         },
         {
           "path": "src/error.rs",
           "sha256": "59bb919b57081572b09d60972bca2e54d4a8019e9d97ee18e005576eed1b7359",
-          "lines": 469,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-card-vault/eca8b7e3d0f544319578120f05b8157e73130864/src/error.rs"
+          "lines": 469
         },
         {
           "path": "src/lib.rs",
           "sha256": "050f1173dd6183588f21dc174457eaa1ad039db8f0918e06f1b06a6374a0d48f",
-          "lines": 17,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-card-vault/eca8b7e3d0f544319578120f05b8157e73130864/src/lib.rs"
+          "lines": 17
         },
         {
           "path": "src/logger.rs",
           "sha256": "90a7d72551f1444934fb48cd4621e7f9e0e0aee5e91469925fd9492489b86707",
-          "lines": 8,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-card-vault/eca8b7e3d0f544319578120f05b8157e73130864/src/logger.rs"
+          "lines": 8
         },
         {
           "path": "src/middleware.rs",
           "sha256": "ae26c77dd8655ea5d6a8a886766d5a705b9013fe1551f176104a6a7a34172677",
-          "lines": 98,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-card-vault/eca8b7e3d0f544319578120f05b8157e73130864/src/middleware.rs"
+          "lines": 98
         },
         {
           "path": "src/observability.rs",
           "sha256": "81643fc12e9a92ee3b209d0a1d9fd9951033dc89529fa859a76ee479b04a06d7",
-          "lines": 126,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-card-vault/eca8b7e3d0f544319578120f05b8157e73130864/src/observability.rs"
+          "lines": 126
         },
         {
           "path": "src/routes.rs",
           "sha256": "5683a602b88f8bd4ec9e32ecd778e9596f350e05ce2a3cdf9ea3ac5ca803444f",
-          "lines": 23,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-card-vault/eca8b7e3d0f544319578120f05b8157e73130864/src/routes.rs"
+          "lines": 23
         },
         {
           "path": "src/runtime_config.rs",
           "sha256": "46b517da3789a308f0b929a7d2803cef1934470fb402c08d7bf4728ff007f872",
-          "lines": 320,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-card-vault/eca8b7e3d0f544319578120f05b8157e73130864/src/runtime_config.rs"
+          "lines": 320
         },
         {
           "path": "src/storage.rs",
           "sha256": "1b2efa7b4f62bc3ce5a0deae483689ef30820a5031e542f10a58eb943bd3e7a0",
-          "lines": 858,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-card-vault/eca8b7e3d0f544319578120f05b8157e73130864/src/storage.rs"
+          "lines": 858
         },
         {
           "path": "src/tenant.rs",
           "sha256": "b21c34577848421e55280bc19aaf8d77c7837ed47ffa045cc74a8f6598705537",
-          "lines": 194,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-card-vault/eca8b7e3d0f544319578120f05b8157e73130864/src/tenant.rs"
+          "lines": 194
         },
         {
           "path": "src/utils.rs",
           "sha256": "538da9bba95b9031d9b5bd6a32fb537b834e2f4d83fb28ef6eecab3e0a922773",
-          "lines": 124,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-card-vault/eca8b7e3d0f544319578120f05b8157e73130864/src/utils.rs"
+          "lines": 124
         },
         {
           "path": "src/validations.rs",
           "sha256": "bf72a5993284b04abf062f44bc23ec9ef3b56da35ad7d6c55590f3ed7dab5b58",
-          "lines": 71,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-card-vault/eca8b7e3d0f544319578120f05b8157e73130864/src/validations.rs"
+          "lines": 71
         },
         {
           "path": "README.md",
           "sha256": "765214a4c589956cb407f720f09e3f1b63e3b5379e931b0875dcd6da146068f6",
-          "lines": 33,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-card-vault/eca8b7e3d0f544319578120f05b8157e73130864/README.md"
+          "lines": 33
         }
       ],
       "qualification": "Not built, benchmarked or security-qualified; no code imported"
@@ -810,16 +616,12 @@
         {
           "path": "README.md",
           "sha256": "fbab63050d564eb794f54a99098eb846c66b518c261a310ac458f5460e4f067c",
-          "lines": 692,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-control-center/719e57cdb2912f4a89913b3e3625e81cca0e55bf/README.md"
+          "lines": 692
         },
         {
           "path": "package.json",
           "sha256": "2b6503aa879056d91428342a8014f4a7bc9082e3b1ba8e41474cacf6f4970e19",
-          "lines": 118,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-control-center/719e57cdb2912f4a89913b3e3625e81cca0e55bf/package.json"
+          "lines": 118
         }
       ],
       "qualification": "Not built, benchmarked or security-qualified; no code imported"
@@ -841,114 +643,82 @@
         {
           "path": "src/app.rs",
           "sha256": "7add6699e3a0107fb0b401d99485dfc01a6c1a73b838443233c8c57e8f0a53d4",
-          "lines": 89,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-encryption-service/e1b58ea30c670dcef3e301beb8375835c9f4f2e1/src/app.rs"
+          "lines": 89
         },
         {
           "path": "src/config.rs",
           "sha256": "9b8a54edec0c4c151fc603d8abba833d3cb5ce66eb49e39693c9671f4a834a7a",
-          "lines": 547,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-encryption-service/e1b58ea30c670dcef3e301beb8375835c9f4f2e1/src/config.rs"
+          "lines": 547
         },
         {
           "path": "src/consts.rs",
           "sha256": "6f4bc3cd652af0f9a963d4fda6242a1749bb2d4e35bd58e014d3cd0af542de4e",
-          "lines": 9,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-encryption-service/e1b58ea30c670dcef3e301beb8375835c9f4f2e1/src/consts.rs"
+          "lines": 9
         },
         {
           "path": "src/core.rs",
           "sha256": "5a2276fd4d63d08713f2dc8fcb90449195847a938c373510b0549358b98fe346",
-          "lines": 42,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-encryption-service/e1b58ea30c670dcef3e301beb8375835c9f4f2e1/src/core.rs"
+          "lines": 42
         },
         {
           "path": "src/crypto.rs",
           "sha256": "ccb4b94339d6174adc2cefd028d2ffd6120eaa2ed3e07dc26abfd101c1ccedc1",
-          "lines": 265,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-encryption-service/e1b58ea30c670dcef3e301beb8375835c9f4f2e1/src/crypto.rs"
+          "lines": 265
         },
         {
           "path": "src/env.rs",
           "sha256": "45be73f96edc4fde8ae3d4747d3a5c4e7aaabec7fbfeecefa3e44cef7daff62f",
-          "lines": 18,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-encryption-service/e1b58ea30c670dcef3e301beb8375835c9f4f2e1/src/env.rs"
+          "lines": 18
         },
         {
           "path": "src/errors.rs",
           "sha256": "30d6594edc82d4d8caffd6eba75ae8f243d0267959c738f70c806dda8a39d6f9",
-          "lines": 14,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-encryption-service/e1b58ea30c670dcef3e301beb8375835c9f4f2e1/src/errors.rs"
+          "lines": 14
         },
         {
           "path": "src/lib.rs",
           "sha256": "d1b7ec0f169f42e18efe114144c42fd291c9de7f47f3b88f9d46cfb7711f29cc",
-          "lines": 14,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-encryption-service/e1b58ea30c670dcef3e301beb8375835c9f4f2e1/src/lib.rs"
+          "lines": 14
         },
         {
           "path": "src/multitenancy.rs",
           "sha256": "b72d27c9d1da74d6a9a844c469fc80f8ab24f59b5307249a032a1859d1e1c239",
-          "lines": 91,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-encryption-service/e1b58ea30c670dcef3e301beb8375835c9f4f2e1/src/multitenancy.rs"
+          "lines": 91
         },
         {
           "path": "src/request_id.rs",
           "sha256": "d1ef28280b0a1e857478d173702cf8d5e6295545befd6a21c69d6a3add67de5e",
-          "lines": 14,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-encryption-service/e1b58ea30c670dcef3e301beb8375835c9f4f2e1/src/request_id.rs"
+          "lines": 14
         },
         {
           "path": "src/routes.rs",
           "sha256": "5e299791e71e5e7edee6b255757d943da3830a68c2941721c56f3e7e65a49336",
-          "lines": 7,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-encryption-service/e1b58ea30c670dcef3e301beb8375835c9f4f2e1/src/routes.rs"
+          "lines": 7
         },
         {
           "path": "src/schema.rs",
           "sha256": "faa95a6b891f25773d6215720ad8c81f2e177de0863cec27ab814c87902f3b44",
-          "lines": 18,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-encryption-service/e1b58ea30c670dcef3e301beb8375835c9f4f2e1/src/schema.rs"
+          "lines": 18
         },
         {
           "path": "src/services.rs",
           "sha256": "998b39f38765b98c0e5087d69000460b27d39de1a961f7768bbb110ce07bc326",
-          "lines": 4,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-encryption-service/e1b58ea30c670dcef3e301beb8375835c9f4f2e1/src/services.rs"
+          "lines": 4
         },
         {
           "path": "src/storage.rs",
           "sha256": "c1ca17002eaa89a9feb161db26c2c8be01dbec4a6a5a6dbb6eeca409b0b6ecf3",
-          "lines": 104,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-encryption-service/e1b58ea30c670dcef3e301beb8375835c9f4f2e1/src/storage.rs"
+          "lines": 104
         },
         {
           "path": "src/types.rs",
           "sha256": "09728bc0296629accc3bb499f3d8ae6633641ddf48ab482cb00447917a940923",
-          "lines": 6,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-encryption-service/e1b58ea30c670dcef3e301beb8375835c9f4f2e1/src/types.rs"
+          "lines": 6
         },
         {
           "path": "README.md",
           "sha256": "e63073bb56a5fae73556e54ea3ee50b31e836cbb30159282e0e86664402c5df3",
-          "lines": 20,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-encryption-service/e1b58ea30c670dcef3e301beb8375835c9f4f2e1/README.md"
+          "lines": 20
         }
       ],
       "qualification": "Not built, benchmarked or security-qualified; no code imported"
@@ -970,39 +740,27 @@
       "selected_source_read_receipts": [
         {
           "path": "LICENSE",
-          "git_blob_sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64",
-          "inspection": "Pinned raw source fetched; not locally built",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-prism/c9c0727d99ada0f0eda057f3d8a6f16719a43bbc/LICENSE"
+          "git_blob_sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
         },
         {
           "path": "Cargo.toml",
-          "git_blob_sha": "0fbd68ceffe244ad6fb73c79420cdeab2b5ee492",
-          "inspection": "Pinned raw source fetched; not locally built",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-prism/c9c0727d99ada0f0eda057f3d8a6f16719a43bbc/Cargo.toml"
+          "git_blob_sha": "0fbd68ceffe244ad6fb73c79420cdeab2b5ee492"
         },
         {
           "path": "crates/types-traits/interfaces/src/connector_integration_v2.rs",
-          "git_blob_sha": "670a1bca89bdfaf3d52865debe9413a1254c6b21",
-          "inspection": "Pinned raw source fetched; not locally built",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-prism/c9c0727d99ada0f0eda057f3d8a6f16719a43bbc/crates/types-traits/interfaces/src/connector_integration_v2.rs"
+          "git_blob_sha": "670a1bca89bdfaf3d52865debe9413a1254c6b21"
         },
         {
           "path": "crates/types-traits/domain_types/src/router_request_types.rs",
-          "git_blob_sha": "1f5e2dba7486826192d95f72f7c2d9a0a2d02023",
-          "inspection": "Pinned raw source fetched; not locally built",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-prism/c9c0727d99ada0f0eda057f3d8a6f16719a43bbc/crates/types-traits/domain_types/src/router_request_types.rs"
+          "git_blob_sha": "1f5e2dba7486826192d95f72f7c2d9a0a2d02023"
         },
         {
           "path": "crates/grpc-server/grpc-server/Cargo.toml",
-          "git_blob_sha": "517a62f7a2e888549604a3a38bbdb6c08fe37713",
-          "inspection": "Pinned raw source fetched; not locally built",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-prism/c9c0727d99ada0f0eda057f3d8a6f16719a43bbc/crates/grpc-server/grpc-server/Cargo.toml"
+          "git_blob_sha": "517a62f7a2e888549604a3a38bbdb6c08fe37713"
         },
         {
           "path": "crates/integrations/connector-integration/src/connectors/stripe.rs",
-          "git_blob_sha": "3838530eb3f807a948e47148876f7831044e723c",
-          "inspection": "Pinned raw source fetched; not locally built",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-prism/c9c0727d99ada0f0eda057f3d8a6f16719a43bbc/crates/integrations/connector-integration/src/connectors/stripe.rs"
+          "git_blob_sha": "3838530eb3f807a948e47148876f7831044e723c"
         }
       ],
       "qualification": "Not built, benchmarked or security-qualified; no code imported"
@@ -1024,16 +782,12 @@
         {
           "path": "README.md",
           "sha256": "2c70dadfc549e09556f9e147918ae02660a61bb5bda0530d04cda213d1abbd58",
-          "lines": 351,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-web/c83a564fac3caf48affc36164cfa9c5e3ff89eef/README.md"
+          "lines": 351
         },
         {
           "path": "package.json",
           "sha256": "3ecfb8121f07a4f6f246c4c421fada4edffd2936d18bf18eae170f6d0aa005b7",
-          "lines": 118,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-web/c83a564fac3caf48affc36164cfa9c5e3ff89eef/package.json"
+          "lines": 118
         }
       ],
       "qualification": "Not built, benchmarked or security-qualified; no code imported"
@@ -1055,16 +809,12 @@
         {
           "path": "payment/src/main/java/org/killbill/billing/payment/core/PaymentProcessor.java",
           "sha256": "1a98e78afc5a386153a435e4036d1a48ca59d70a60d3ac45d2adbcdf38400b60",
-          "lines": 386,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/killbill/killbill/05a6c4346e9921d581af0b498141837fd829ffc1/payment/src/main/java/org/killbill/billing/payment/core/PaymentProcessor.java"
+          "lines": 386
         },
         {
           "path": "invoice/src/main/java/org/killbill/billing/invoice/generator/DefaultInvoiceGenerator.java",
           "sha256": "682af03115f64b63a1c80f5dbfc06772ba3410ac36d66effd422c620ab6c2747",
-          "lines": 156,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/killbill/killbill/05a6c4346e9921d581af0b498141837fd829ffc1/invoice/src/main/java/org/killbill/billing/invoice/generator/DefaultInvoiceGenerator.java"
+          "lines": 156
         }
       ],
       "qualification": "Not built, benchmarked or security-qualified; no code imported"
@@ -1091,16 +841,12 @@
         {
           "path": "packages/core/types/src/payment/provider.ts",
           "sha256": "ed0b1e5300eac211ef53977bb3f3812e68b72aaeaa802b1947cffc360bb9c167",
-          "lines": 749,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/medusajs/medusa/d436d2fbc3c50be0bdbc272ab0516d1d16db170f/packages/core/types/src/payment/provider.ts"
+          "lines": 749
         },
         {
           "path": "packages/modules/payment/src/services/payment-module.ts",
           "sha256": "8a3511ead437d4fa17eac9c45bb1197db70c1542545d371da508261e497b5819",
-          "lines": 1468,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/medusajs/medusa/d436d2fbc3c50be0bdbc272ab0516d1d16db170f/packages/modules/payment/src/services/payment-module.ts"
+          "lines": 1468
         }
       ],
       "qualification": "Not built, benchmarked or security-qualified; no code imported"
@@ -1122,114 +868,82 @@
         {
           "path": "crates/common-build-info/src/lib.rs",
           "sha256": "ceb51600207c7c03d9d21627e44beef07d7cf9c4fd5764494e0b3e5562889e30",
-          "lines": 66,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/meteroid-oss/meteroid/2fda46cdc8a16668b15356e60f2a986034cdd352/crates/common-build-info/src/lib.rs"
+          "lines": 66
         },
         {
           "path": "crates/common-config/src/lib.rs",
           "sha256": "3d4a41256403b9055cd2a08bee68e6d8d3cc8f78c98e0d90d7c400221d8bb3ba",
-          "lines": 5,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/meteroid-oss/meteroid/2fda46cdc8a16668b15356e60f2a986034cdd352/crates/common-config/src/lib.rs"
+          "lines": 5
         },
         {
           "path": "crates/common-domain/src/lib.rs",
           "sha256": "ed7f606a6ab61f09d2622e104a3d5d0117106409126bb6eba8463d5d4e0f710d",
-          "lines": 6,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/meteroid-oss/meteroid/2fda46cdc8a16668b15356e60f2a986034cdd352/crates/common-domain/src/lib.rs"
+          "lines": 6
         },
         {
           "path": "crates/common-eventbus/src/lib.rs",
           "sha256": "3b4dff0281787765c839008189b99a528189bcee2cc6bf39d58841fc969270d9",
-          "lines": 371,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/meteroid-oss/meteroid/2fda46cdc8a16668b15356e60f2a986034cdd352/crates/common-eventbus/src/lib.rs"
+          "lines": 371
         },
         {
           "path": "crates/common-grpc/src/lib.rs",
           "sha256": "09ff7170f39ddcd05ee269199c326b043ceb3c3c3da289a878b12ceea81889cb",
-          "lines": 122,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/meteroid-oss/meteroid/2fda46cdc8a16668b15356e60f2a986034cdd352/crates/common-grpc/src/lib.rs"
+          "lines": 122
         },
         {
           "path": "crates/common-grpc-error-as-tonic-macros/src/lib.rs",
           "sha256": "012dd7490d4d54f96601c8324baaff0b610e8ec862f1be170c21b3c363daf851",
-          "lines": 44,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/meteroid-oss/meteroid/2fda46cdc8a16668b15356e60f2a986034cdd352/crates/common-grpc-error-as-tonic-macros/src/lib.rs"
+          "lines": 44
         },
         {
           "path": "crates/common-grpc-error-as-tonic-macros-impl/src/lib.rs",
           "sha256": "0d281d096e6507a01c39ad016d28d26acb2a56fc8894536ed2ebbb6603308025",
-          "lines": 96,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/meteroid-oss/meteroid/2fda46cdc8a16668b15356e60f2a986034cdd352/crates/common-grpc-error-as-tonic-macros-impl/src/lib.rs"
+          "lines": 96
         },
         {
           "path": "crates/common-logging/src/lib.rs",
           "sha256": "5c486d888c1a0140b0aa58e33880051cfea2a332debf6a56ee7d180a5bf226d0",
-          "lines": 13,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/meteroid-oss/meteroid/2fda46cdc8a16668b15356e60f2a986034cdd352/crates/common-logging/src/lib.rs"
+          "lines": 13
         },
         {
           "path": "crates/common-utils/src/lib.rs",
           "sha256": "0e44adf1b5f5c13e1d5dbd55060e89184c9304516a87030b21d6601606c4fcda",
-          "lines": 9,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/meteroid-oss/meteroid/2fda46cdc8a16668b15356e60f2a986034cdd352/crates/common-utils/src/lib.rs"
+          "lines": 9
         },
         {
           "path": "crates/distributed-lock/src/lib.rs",
           "sha256": "5df531074d1260285b34be4a8b14030ac78937728f31432c22c21f4002426277",
-          "lines": 6,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/meteroid-oss/meteroid/2fda46cdc8a16668b15356e60f2a986034cdd352/crates/distributed-lock/src/lib.rs"
+          "lines": 6
         },
         {
           "path": "crates/golden/src/lib.rs",
           "sha256": "b1992f233af08b188889c6123348dc51487acab1b85442e16a784223a5ef0563",
-          "lines": 244,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/meteroid-oss/meteroid/2fda46cdc8a16668b15356e60f2a986034cdd352/crates/golden/src/lib.rs"
+          "lines": 244
         },
         {
           "path": "crates/kafka/src/lib.rs",
           "sha256": "a74fb0bac61d8184e771e779a69c0262cbb00b8d4756f5191e3eeb14ba0f5360",
-          "lines": 4,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/meteroid-oss/meteroid/2fda46cdc8a16668b15356e60f2a986034cdd352/crates/kafka/src/lib.rs"
+          "lines": 4
         },
         {
           "path": "crates/secrecy/src/lib.rs",
           "sha256": "89dc1b7b3b053629650ec3028245c76f6d44f26dd4a921706a8e7f9be19aca1b",
-          "lines": 348,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/meteroid-oss/meteroid/2fda46cdc8a16668b15356e60f2a986034cdd352/crates/secrecy/src/lib.rs"
+          "lines": 348
         },
         {
           "path": "crates/world-tax/src/lib.rs",
           "sha256": "d2c5ed24605a60b92a4f6f716d0b96ecf00972e9726ade6e53c2e3319f249963",
-          "lines": 20,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/meteroid-oss/meteroid/2fda46cdc8a16668b15356e60f2a986034cdd352/crates/world-tax/src/lib.rs"
+          "lines": 20
         },
         {
           "path": "modules/meteroid/crates/diesel-models/src/outbox_event.rs",
           "sha256": "1b38f8cf641c1cda57497cf3f18fbb2bb212155b74b70d539d7ebfe140b7add1",
-          "lines": 14,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/meteroid-oss/meteroid/2fda46cdc8a16668b15356e60f2a986034cdd352/modules/meteroid/crates/diesel-models/src/outbox_event.rs"
+          "lines": 14
         },
         {
           "path": "modules/meteroid/crates/diesel-models/src/credit_notes.rs",
           "sha256": "7ad13d42cb835c12ff140166c6cc9e00ee0e5bd5e5b5c2259b87d60d7077723f",
-          "lines": 81,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/meteroid-oss/meteroid/2fda46cdc8a16668b15356e60f2a986034cdd352/modules/meteroid/crates/diesel-models/src/credit_notes.rs"
+          "lines": 81
         }
       ],
       "qualification": "Not built, benchmarked or security-qualified; no code imported"
@@ -1251,527 +965,377 @@
         {
           "path": "openmeter/credit/balance.go",
           "sha256": "bcaec573174456e2c47dcb946d2fba9ec1556247282750474ea408086dfb37fb",
-          "lines": 355,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/credit/balance.go"
+          "lines": 355
         },
         {
           "path": "openmeter/credit/connector.go",
           "sha256": "5b4f1912f054f073d1b5796ac8cf66c3811c65d70eed79170710df36d3b114f2",
-          "lines": 60,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/credit/connector.go"
+          "lines": 60
         },
         {
           "path": "openmeter/credit/errors.go",
           "sha256": "7a0977a688d799645087af7c7c934e94140db783529877b3e385c6e74e8d40d0",
-          "lines": 26,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/credit/errors.go"
+          "lines": 26
         },
         {
           "path": "openmeter/credit/grant.go",
           "sha256": "e85650c2a0022ed66579bb2ea30b2c92a77231b819d7cd5443e5055bc3e8f9f8",
-          "lines": 208,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/credit/grant.go"
+          "lines": 208
         },
         {
           "path": "openmeter/credit/helper.go",
           "sha256": "8ab00d6fbfd06de97a59394d24368be83a72c7c567e50fb539effe8b121744f3",
-          "lines": 326,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/credit/helper.go"
+          "lines": 326
         },
         {
           "path": "openmeter/credit/trace.go",
           "sha256": "cb18070943567753d59bb567a5f5a3aeba7a1f00365271b02bf639d3b0584d71",
-          "lines": 40,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/credit/trace.go"
+          "lines": 40
         },
         {
           "path": "openmeter/entitlement/access.go",
           "sha256": "41ea46913c072bbb76b98e79ed1e5a82dfecd5b0bd282dd38ed7eb42ec67f29c",
-          "lines": 12,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/entitlement/access.go"
+          "lines": 12
         },
         {
           "path": "openmeter/entitlement/api.go",
           "sha256": "2ec9012b1f49fdfa52f39a66320d50a82efecf2429b083a48726333acecb07eb",
-          "lines": 561,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/entitlement/api.go"
+          "lines": 561
         },
         {
           "path": "openmeter/entitlement/api_test.go",
           "sha256": "5a2e34fe00cfaba5f40d260a8f8a220a860148cbf00b9e2d679041353dd65f31",
-          "lines": 443,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/entitlement/api_test.go"
+          "lines": 443
         },
         {
           "path": "openmeter/entitlement/connector.go",
           "sha256": "7f6f210012da7d11a8422b12db64026d3328be5b50023bd3a5dd92f48fdb35ec",
-          "lines": 113,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/entitlement/connector.go"
+          "lines": 113
         },
         {
           "path": "openmeter/entitlement/entitlement.go",
           "sha256": "057a546cc14b00358ddb3ab7b4aab545a330301462dc2a8132ca4e73b7d323de",
-          "lines": 415,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/entitlement/entitlement.go"
+          "lines": 415
         },
         {
           "path": "openmeter/entitlement/entitlement_grant.go",
           "sha256": "1bb6206ab7e877e8f3e6812ac68474c5ff7fbb37b91c92270897b32ab80873e7",
-          "lines": 7,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/entitlement/entitlement_grant.go"
+          "lines": 7
         },
         {
           "path": "openmeter/entitlement/entitlement_test.go",
           "sha256": "77e1d3c51a982ddf718886aa0522ca88d273576ed68ead230dd8d3fde9a14312",
-          "lines": 69,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/entitlement/entitlement_test.go"
+          "lines": 69
         },
         {
           "path": "openmeter/entitlement/entitlement_types.go",
           "sha256": "0af29d06447321eeec2cb25be6aaf56d4e10db6cdd84f1fb7864802cb0bf208a",
-          "lines": 33,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/entitlement/entitlement_types.go"
+          "lines": 33
         },
         {
           "path": "openmeter/entitlement/errors.go",
           "sha256": "0cf32636bb3800fad41956f78a92995e5db677514bc8ebe8516a6c9f40667e8b",
-          "lines": 82,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/entitlement/errors.go"
+          "lines": 82
         },
         {
           "path": "openmeter/entitlement/events.go",
           "sha256": "4191141fa1d2932e794677c75feec7bac61d712c4d0acd4cafc84a1d8b9ffd11",
-          "lines": 207,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/entitlement/events.go"
+          "lines": 207
         },
         {
           "path": "openmeter/entitlement/repository.go",
           "sha256": "d18da6d582064c78e1c26aa580a8ff6ea1faa03cad5e09146c90f2563b1ab09b",
-          "lines": 98,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/entitlement/repository.go"
+          "lines": 98
         },
         {
           "path": "openmeter/entitlement/uniqueness.go",
           "sha256": "2a35dd7c7bf31290108bdc400380ed1f849534776494a2b8447a14635521576e",
-          "lines": 73,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/entitlement/uniqueness.go"
+          "lines": 73
         },
         {
           "path": "openmeter/entitlement/uniqueness_test.go",
           "sha256": "54fedd84f8fc92933622dd458e2ad1887b4293f13552d70574d8c4aa3cac7c98",
-          "lines": 246,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/entitlement/uniqueness_test.go"
+          "lines": 246
         },
         {
           "path": "openmeter/entitlement/usageperiod.go",
           "sha256": "3ffda2ace96841be2e679ca7ee3b573289b08c151dedfcfc03d50ec09a5151d7",
-          "lines": 270,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/entitlement/usageperiod.go"
+          "lines": 270
         },
         {
           "path": "openmeter/entitlement/usageperiod_test.go",
           "sha256": "69aee8d4bda5d57790b84fa5b84adcd894f28ee82261bdd5090ec0bc49632527",
-          "lines": 406,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/entitlement/usageperiod_test.go"
+          "lines": 406
         },
         {
           "path": "openmeter/billing/adapter.go",
           "sha256": "12f2d62b53dcd44560cb70f4caa49bf8b66880f658a907661469fddbf1dc501c",
-          "lines": 115,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/adapter.go"
+          "lines": 115
         },
         {
           "path": "openmeter/billing/annotations.go",
           "sha256": "e60babe30a4cc808e038328d761b2a0f48fa6c44ada4a1d9be385522916020cc",
-          "lines": 14,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/annotations.go"
+          "lines": 14
         },
         {
           "path": "openmeter/billing/app.go",
           "sha256": "2aec549643408de008ccc7cb14157183828b53bf340718fe15f4a8bbe86c4ee1",
-          "lines": 410,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/app.go"
+          "lines": 410
         },
         {
           "path": "openmeter/billing/change_source_test.go",
           "sha256": "067e0334ac4d3d7844dd6607423d6d6de60290b3080d7c20184b00507766d8da",
-          "lines": 15,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/change_source_test.go"
+          "lines": 15
         },
         {
           "path": "openmeter/billing/consts.go",
           "sha256": "3d5688f1b35ce9bbc3323ba3c38fe9cd02724cf9f16b98b4e56bdb25ae74b504",
-          "lines": 23,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/consts.go"
+          "lines": 23
         },
         {
           "path": "openmeter/billing/customer.go",
           "sha256": "2323c51c4da4fb1344ae9d80c6866426ba73b5e29ec4f6564e73060d4ef977ab",
-          "lines": 76,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/customer.go"
+          "lines": 76
         },
         {
           "path": "openmeter/billing/customeroverride.go",
           "sha256": "1cc3e5ad91b1c638c05a418442c11be01c6a935ddca0f451e7c059e41d2a3c63",
-          "lines": 385,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/customeroverride.go"
+          "lines": 385
         },
         {
           "path": "openmeter/billing/defaults.go",
           "sha256": "4fd1c6361702f5a2794185630aef6d6f38238b8d1d0232fa054fdba0eae9ad27",
-          "lines": 33,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/defaults.go"
+          "lines": 33
         },
         {
           "path": "openmeter/billing/derived.gen.go",
           "sha256": "f2873ad4b924c1f17f193ac5ca0d394c403bcef103ae9ccac8bd11752350c0a8",
-          "lines": 172,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/derived.gen.go"
+          "lines": 172
         },
         {
           "path": "openmeter/billing/discount.go",
           "sha256": "25eab14da1d1a3d24888043da8ca9b15d2ae377000288b26d921aa50405319db",
-          "lines": 514,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/discount.go"
+          "lines": 514
         },
         {
           "path": "openmeter/billing/discount_test.go",
           "sha256": "6002fbded169398b6b7e711aadadf6f609c0c1835bc3514b4ed7209ac90c107b",
-          "lines": 222,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/discount_test.go"
+          "lines": 222
         },
         {
           "path": "openmeter/billing/errors.go",
           "sha256": "1ce08ef2503f85bec9fe325bd2c4540106488d1d7fc11d973b92ba9fdc7552d6",
-          "lines": 178,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/errors.go"
+          "lines": 178
         },
         {
           "path": "openmeter/billing/events.go",
           "sha256": "c362c048479edca3af9b3ac005eaeba76f161b370c212f0a43eb18610c00b97c",
-          "lines": 194,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/events.go"
+          "lines": 194
         },
         {
           "path": "openmeter/billing/eventscollection.go",
           "sha256": "d4312aa81e9a4693a720f0943dc04d41224c8bfae1f9d03af052dd359c5ca08e",
-          "lines": 49,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/eventscollection.go"
+          "lines": 49
         },
         {
           "path": "openmeter/billing/eventscollection_test.go",
           "sha256": "92649db77a50955b582569e2ce85b152ff704bbabfdf8cedb2fcf76be5c2eaa6",
-          "lines": 73,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/eventscollection_test.go"
+          "lines": 73
         },
         {
           "path": "openmeter/billing/eventsgathering.go",
           "sha256": "9354e17fb1b4638524ccda1209c1541a94b58036864d7fce9db46a609ad28b5a",
-          "lines": 30,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/eventsgathering.go"
+          "lines": 30
         },
         {
           "path": "openmeter/billing/gatheringinvoice.go",
           "sha256": "57c41e9cbb04ec1248b7b015eb7b60f789585e918730b818fadee8452cb96381",
-          "lines": 1154,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/gatheringinvoice.go"
+          "lines": 1154
         },
         {
           "path": "openmeter/billing/gatheringinvoice_test.go",
           "sha256": "e697c44461ada303cf068dc9563cbfe36e6383c3452ced981f254484d123cd17",
-          "lines": 151,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/gatheringinvoice_test.go"
+          "lines": 151
         },
         {
           "path": "openmeter/billing/generate.go",
           "sha256": "bffa25f8dca7527c50bf902062f9e2692687d17b9550a821230b6f7c7a7a2fbb",
-          "lines": 5,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/generate.go"
+          "lines": 5
         },
         {
           "path": "openmeter/billing/invoice.go",
           "sha256": "986d852b8ee885d17bc30497b65408edb048e6a52a0ccb59e7a3adc0006a73ec",
-          "lines": 541,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/invoice.go"
+          "lines": 541
         },
         {
           "path": "openmeter/billing/invoice_test.go",
           "sha256": "e05c1c9dc6e7cd76a07cc25812a2c463012a192deaa122b1f5c3e5342ea21dd6",
-          "lines": 31,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/invoice_test.go"
+          "lines": 31
         },
         {
           "path": "openmeter/billing/invoice_validator.go",
           "sha256": "f411d9675b59476911f5ac073e40d3be70aa71252b661a96c8fc2ff1c04f0eb7",
-          "lines": 58,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/invoice_validator.go"
+          "lines": 58
         },
         {
           "path": "openmeter/billing/invoicedetailedline.go",
           "sha256": "7c58dc87d5b4cc7e174f06a8533f3ad534fb87e898924b6c4eaf091488fc26a4",
-          "lines": 189,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/invoicedetailedline.go"
+          "lines": 189
         },
         {
           "path": "openmeter/billing/invoicedetailedline_test.go",
           "sha256": "20eeec4c286dabbe6d411388dbb64e555ba45ae819cf6edb232ebd6343e791f4",
-          "lines": 239,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/invoicedetailedline_test.go"
+          "lines": 239
         },
         {
           "path": "openmeter/billing/invoiceline.go",
           "sha256": "4aa36d7446bdc38e59a5f4bc73f75fa3512e08b2e776af5d1e36e18feff2ddac",
-          "lines": 282,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/invoiceline.go"
+          "lines": 282
         },
         {
           "path": "openmeter/billing/invoiceline_test.go",
           "sha256": "f89c914560f5ef4fadb87e7968ce7bcf45195155ce72f1c6695b64f48d4e0874",
-          "lines": 46,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/invoiceline_test.go"
+          "lines": 46
         },
         {
           "path": "openmeter/billing/invoicelinediscount.go",
           "sha256": "2a70d0d6f881baedc819334737e02d689d941bb2f0a37b512f0243f61ba094f2",
-          "lines": 414,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/invoicelinediscount.go"
+          "lines": 414
         },
         {
           "path": "openmeter/billing/invoicelinesplitgroup.go",
           "sha256": "ba9df3a7ee7ed0847a4106f8751f2e281ab4d05ff617d795609ca967c9f773e3",
-          "lines": 457,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/invoicelinesplitgroup.go"
+          "lines": 457
         },
         {
           "path": "openmeter/billing/invoicelinesplitgroup_test.go",
           "sha256": "2caeed2991b007f6d9b7cbeb85b6a751fcd7986c510598d2a6ec369bf92a8978",
-          "lines": 89,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/invoicelinesplitgroup_test.go"
+          "lines": 89
         },
         {
           "path": "openmeter/billing/invoicelinetypes.go",
           "sha256": "55ed6cde215653af04da18eade507a0bd3d850c15c59b4d1c5c92630ef1d4868",
-          "lines": 35,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/invoicelinetypes.go"
+          "lines": 35
         },
         {
           "path": "openmeter/billing/lineengine.go",
           "sha256": "0e36f0f87d6757b6d35a352a27163e5267e62dcdd15bd3adcb5cde83def520cf",
-          "lines": 410,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/lineengine.go"
+          "lines": 410
         },
         {
           "path": "openmeter/billing/lineengine_test.go",
           "sha256": "8f7b5f9297efc2a90c2fbfa27a0e1d72654f1130f12d700b6326c27ccbc06828",
-          "lines": 181,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/lineengine_test.go"
+          "lines": 181
         },
         {
           "path": "openmeter/billing/lock.go",
           "sha256": "22f47599c2c39c361793ae03a399802d97e2829d020dfe200737b40baf3a5227",
-          "lines": 8,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/lock.go"
+          "lines": 8
         },
         {
           "path": "openmeter/billing/profile.go",
           "sha256": "adb305a523a8cb371f0dae2e30cd59c896568aaaf3698e4c4a4f879a2ed25234",
-          "lines": 619,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/profile.go"
+          "lines": 619
         },
         {
           "path": "openmeter/billing/profile_test.go",
           "sha256": "8ff07b0ba73f57492b250569773e5c304b7a625decb995e19cc471798ccf8cb1",
-          "lines": 281,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/profile_test.go"
+          "lines": 281
         },
         {
           "path": "openmeter/billing/service.go",
           "sha256": "4b54b4ead451d9f887b916f224cb998dcd5ec71712d90511b4ef32e6310f6306",
-          "lines": 157,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/service.go"
+          "lines": 157
         },
         {
           "path": "openmeter/billing/serviceconfig.go",
           "sha256": "175d6811d85aab35170e49fffc65f9a3db37cfa4fb6118610d19d870c7676fb5",
-          "lines": 33,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/serviceconfig.go"
+          "lines": 33
         },
         {
           "path": "openmeter/billing/stdinvoice.go",
           "sha256": "cb2741ed8a66429a0796386592e96d9939e09eff55bcfc0aa6611d5c4bfeb7c5",
-          "lines": 1338,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/stdinvoice.go"
+          "lines": 1338
         },
         {
           "path": "openmeter/billing/stdinvoice_test.go",
           "sha256": "4f9e3bfe66b25b445d0bc6fb072285fb7224ae86f4199449419a74ad9e090a01",
-          "lines": 209,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/stdinvoice_test.go"
+          "lines": 209
         },
         {
           "path": "openmeter/billing/stdinvoicecredits.go",
           "sha256": "e85ef89ab9bcbb0524607284080efabc12b74862d5a35ead034d9b177b029378",
-          "lines": 8,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/stdinvoicecredits.go"
+          "lines": 8
         },
         {
           "path": "openmeter/billing/stdinvoiceedit.go",
           "sha256": "c5a4c6e78bab42be2637149d592dd0a92600514e3eab0413bef1c52c8f032845",
-          "lines": 443,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/stdinvoiceedit.go"
+          "lines": 443
         },
         {
           "path": "openmeter/billing/stdinvoiceline.go",
           "sha256": "f8981903f3b57de2370f36205bccaf925bc930d538990d63bfb71ae8563b2b38",
-          "lines": 1191,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/stdinvoiceline.go"
+          "lines": 1191
         },
         {
           "path": "openmeter/billing/stdinvoiceline_test.go",
           "sha256": "678205b42267bc00f86bf92d4fce6d4ba5ec26871c0dd955d0513dcc7c5bb34f",
-          "lines": 207,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/stdinvoiceline_test.go"
+          "lines": 207
         },
         {
           "path": "openmeter/billing/stdinvoicestate.go",
           "sha256": "332a056c348186701ddcbcf71b9d2c7c99f92329a2fc4dcf9b81d5535b0e9ae3",
-          "lines": 78,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/stdinvoicestate.go"
+          "lines": 78
         },
         {
           "path": "openmeter/billing/taxconfig.go",
           "sha256": "84d3e477b172e1254a18927c0215ee14773a9508416d0ef9bdaf571281a01109",
-          "lines": 139,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/taxconfig.go"
+          "lines": 139
         },
         {
           "path": "openmeter/billing/validationissue.go",
           "sha256": "bf3cd41405eef56401ffb7c13d0c000f1ad6847f9576225c8a8b54c1cc83ccdc",
-          "lines": 717,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/validationissue.go"
+          "lines": 717
         },
         {
           "path": "openmeter/billing/validationissue_test.go",
           "sha256": "40d40db1de069d781654083c01c781b27a0a29a67e4d9ea1ae3d489a49e701b3",
-          "lines": 874,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/validationissue_test.go"
+          "lines": 874
         },
         {
           "path": "openmeter/billing/workflow.go",
           "sha256": "cb747223f1239dc8e9398c3029e67ef3d8936f6ecc24b5025e4bdc907658dcd5",
-          "lines": 91,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/billing/workflow.go"
+          "lines": 91
         },
         {
           "path": "openmeter/meter/errors.go",
           "sha256": "eab001b5e042c4d8ad6ba6851ac58ca590081132645677316e73eb719742b6cc",
-          "lines": 45,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/meter/errors.go"
+          "lines": 45
         },
         {
           "path": "openmeter/meter/event.go",
           "sha256": "e948718c381012a658f03586742fb41af8f17848accf0684eb9b3c878199bd7d",
-          "lines": 151,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/meter/event.go"
+          "lines": 151
         },
         {
           "path": "openmeter/meter/meter.go",
           "sha256": "e4900e2ae405c9696014b2ff4a02d0a8354a6c19e7e9af30ef9a4159a3ada5a6",
-          "lines": 350,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/meter/meter.go"
+          "lines": 350
         },
         {
           "path": "openmeter/meter/meter_test.go",
           "sha256": "3954a821f2090f108c1e21db1f4c6fb16c1abda562e4fdfb20f5f65b81d2a6ac",
-          "lines": 387,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/meter/meter_test.go"
+          "lines": 387
         },
         {
           "path": "openmeter/meter/parse.go",
           "sha256": "480baa70ef2af15aead5c574b76c6bf924e75ca5850b39b0439a1f6438d8ade2",
-          "lines": 198,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/meter/parse.go"
+          "lines": 198
         },
         {
           "path": "openmeter/meter/parse_test.go",
           "sha256": "bf7ba7eb4934ef67c5a3a5809815abd1c1818c76d1405c086bbe7f7480993caa",
-          "lines": 252,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/openmeter/meter/parse_test.go"
+          "lines": 252
         }
       ],
       "qualification": "Not built, benchmarked or security-qualified; no code imported"
@@ -1798,9 +1362,7 @@
         {
           "path": "src/assurance/workflow/idempotency-reconciliation.ts",
           "sha256": "69b9d8d66df5cb4163902e58fd9426db288db7c39a7be425a4b472a38d73db57",
-          "lines": 148,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Ascout/ca6b6f514e5a8881e2cfa2789b5e5ea43e3aaaad/src/assurance/workflow/idempotency-reconciliation.ts"
+          "lines": 148
         }
       ],
       "qualification": "Not built, benchmarked or security-qualified; no code imported"
@@ -1822,16 +1384,12 @@
         {
           "path": "apps/qdral-mcp/src/oauth_authorization.ts",
           "sha256": "c63a924c5d6a2d4b7b83bea652159427707f0dc28605502a3926e5fd94992f93",
-          "lines": 1698,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Deskal/ca060c69ad6bcdbc38c15609620888c0bc0911f4/apps/qdral-mcp/src/oauth_authorization.ts"
+          "lines": 1698
         },
         {
           "path": "apps/qdral-mcp/src/computer_action_proposal.ts",
           "sha256": "f009e23330435ad677528b87cd44e47e232c32903ee816a9f44a6d3e52354681",
-          "lines": 102,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Deskal/ca060c69ad6bcdbc38c15609620888c0bc0911f4/apps/qdral-mcp/src/computer_action_proposal.ts"
+          "lines": 102
         }
       ],
       "qualification": "Not built, benchmarked or security-qualified; no code imported"
@@ -1853,16 +1411,12 @@
         {
           "path": "crates/diffcipline-cli/src/enterprise.rs",
           "sha256": "9bde7af49e3a5621d050e049596fd7e4e5fbfc2989c008707f95d8db6e5e88a8",
-          "lines": 292,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Diffcipline/1e6d14f77b95bb132b42276f10d67f1018ab5bb6/crates/diffcipline-cli/src/enterprise.rs"
+          "lines": 292
         },
         {
           "path": "schemas/proof-v1.json",
           "sha256": "eed264633052c52ce0adf3353acb292d6e47854e94300095d5ed3e03c8f3c7ea",
-          "lines": 25,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Diffcipline/1e6d14f77b95bb132b42276f10d67f1018ab5bb6/schemas/proof-v1.json"
+          "lines": 25
         }
       ],
       "qualification": "Not built, benchmarked or security-qualified; no code imported"
@@ -1878,16 +1432,12 @@
         {
           "path": "crates/ecra-core/src/capability.rs",
           "sha256": "a9f57ee52bc97afb563459bd85cf98d0096f841a82d0407df533500771438ac3",
-          "lines": 358,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Ecra/0e2ff8c687c93e6f158da6984a7a6915339b5f3f/crates/ecra-core/src/capability.rs"
+          "lines": 358
         },
         {
           "path": "crates/ecra-core/src/evidence.rs",
           "sha256": "51b9b0750dfaf27299df285d7e05237b821f06213dd59f37dfa2066991014fb8",
-          "lines": 658,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Ecra/0e2ff8c687c93e6f158da6984a7a6915339b5f3f/crates/ecra-core/src/evidence.rs"
+          "lines": 658
         }
       ],
       "qualification": "Not built, benchmarked or security-qualified; no code imported"
@@ -1914,23 +1464,17 @@
         {
           "path": "servers/fastapi/gomrey/connector_sync.py",
           "sha256": "9c838835fbf3f2f6e85f5b0287b8f42484d655d7897a2800f37779635e605fe1",
-          "lines": 196,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Gomrey/1a186641fb96035e1d8ef40e102f9021f28f652e/servers/fastapi/gomrey/connector_sync.py"
+          "lines": 196
         },
         {
           "path": "contracts/v1/connector-identity.schema.json",
           "sha256": "152818128b3b7325aa30ebf4e47fc6d3b0e6c5ff3d0a44fafc0e89ea472bfa78",
-          "lines": 23,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Gomrey/1a186641fb96035e1d8ef40e102f9021f28f652e/contracts/v1/connector-identity.schema.json"
+          "lines": 23
         },
         {
           "path": "contracts/v1/capability-grant.schema.json",
           "sha256": "79c55f620d2831dddd713d09bfbb5b4075358f43835f622c350283f8094e6bac",
-          "lines": 23,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Gomrey/1a186641fb96035e1d8ef40e102f9021f28f652e/contracts/v1/capability-grant.schema.json"
+          "lines": 23
         }
       ],
       "qualification": "Not built, benchmarked or security-qualified; no code imported"
@@ -1957,16 +1501,12 @@
         {
           "path": "packages/provenance/src/index.ts",
           "sha256": "db440650ab437db23de9f6285b0f2650a721b80432f9da03d03f45b0414a8f59",
-          "lines": 693,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Inercative/3a4713c47d36722c564f185bc4a8c02ad57da05c/packages/provenance/src/index.ts"
+          "lines": 693
         },
         {
           "path": "packages/provenance/schema/import-record.schema.json",
           "sha256": "6e9d956dcd3b4ec22f66a71fd29cccce31ff5034513b18cadffa5cd61a1b87b8",
-          "lines": 181,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Inercative/3a4713c47d36722c564f185bc4a8c02ad57da05c/packages/provenance/schema/import-record.schema.json"
+          "lines": 181
         }
       ],
       "qualification": "Not built, benchmarked or security-qualified; no code imported"
@@ -1988,65 +1528,47 @@
         {
           "path": "crates/kernux-contracts/src/lib.rs",
           "sha256": "2609bbf96798a6698ac330fa3936c60a580107df5676495cc2d40338c1e103f5",
-          "lines": 5,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/kernux/2085b6ed1121b1a94c66c076bdd6b578da4dad0d/crates/kernux-contracts/src/lib.rs"
+          "lines": 5
         },
         {
           "path": "crates/kernux-identity/src/lib.rs",
           "sha256": "d82352cdf4a6c353e360960d39ae2e29013d40c3b0c6afe5ba2b714d5fd40648",
-          "lines": 756,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/kernux/2085b6ed1121b1a94c66c076bdd6b578da4dad0d/crates/kernux-identity/src/lib.rs"
+          "lines": 756
         },
         {
           "path": "crates/kernux-policy/src/lib.rs",
           "sha256": "e603c94913d62a91027eb5f29d64a81c3bea66ad3b49ecd0f43d7cfd7ef11a74",
-          "lines": 601,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/kernux/2085b6ed1121b1a94c66c076bdd6b578da4dad0d/crates/kernux-policy/src/lib.rs"
+          "lines": 601
         },
         {
           "path": "crates/kernux-secret/src/lib.rs",
           "sha256": "305fff42c4dda996bde008ec0ef395e8e884390f2273757d5d4ab4d9b733897a",
-          "lines": 116,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/kernux/2085b6ed1121b1a94c66c076bdd6b578da4dad0d/crates/kernux-secret/src/lib.rs"
+          "lines": 116
         },
         {
           "path": "crates/kernux-store/src/lib.rs",
           "sha256": "dbd58cca36ed50e21b5cc8ad947d89d50dea19cd0438a8301f03999888d55910",
-          "lines": 825,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/kernux/2085b6ed1121b1a94c66c076bdd6b578da4dad0d/crates/kernux-store/src/lib.rs"
+          "lines": 825
         },
         {
           "path": "crates/kernuxd/src/lib.rs",
           "sha256": "b5144cbef1ac848932322516d95307a15ed1243e24e7be05b006cce557c314e7",
-          "lines": 261,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/kernux/2085b6ed1121b1a94c66c076bdd6b578da4dad0d/crates/kernuxd/src/lib.rs"
+          "lines": 261
         },
         {
           "path": "crates/kernux-store/src/recovery.rs",
           "sha256": "b1b09d3ad8dc09a081e5550d8ed8b33a8105e950deced930aeaced196ee489bb",
-          "lines": 180,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/kernux/2085b6ed1121b1a94c66c076bdd6b578da4dad0d/crates/kernux-store/src/recovery.rs"
+          "lines": 180
         },
         {
           "path": "crates/kernux-secret/src/broker.rs",
           "sha256": "d7ea94939e21a7f7e2819fd4e6a6e9862b16d705ec3b6ebbe1208974cb94b0a7",
-          "lines": 639,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/kernux/2085b6ed1121b1a94c66c076bdd6b578da4dad0d/crates/kernux-secret/src/broker.rs"
+          "lines": 639
         },
         {
           "path": "crates/kernux-policy/src/egress.rs",
           "sha256": "203ab65694384905221101d90fd4f760a3a7ab6d0d99e5a4c322c0a837449435",
-          "lines": 1564,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/kernux/2085b6ed1121b1a94c66c076bdd6b578da4dad0d/crates/kernux-policy/src/egress.rs"
+          "lines": 1564
         }
       ],
       "qualification": "Not built, benchmarked or security-qualified; no code imported"
@@ -2078,9 +1600,7 @@
         {
           "path": "crates/morize-core/src/lib.rs",
           "sha256": "338d61a22be70c1ac694a6c9e816f59537c2a3c4687e78a7b6d2ce36b9b3288d",
-          "lines": 35,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Morize/62fc04d01d398da93b4dacf0ab2f33e3f1440462/crates/morize-core/src/lib.rs"
+          "lines": 35
         }
       ],
       "qualification": "Not built, benchmarked or security-qualified; no code imported"
@@ -2149,16 +1669,12 @@
         {
           "path": "crates/sentrdel-store/src/lib.rs",
           "sha256": "2ecda7e21d83d206dc8ed8715a246f898007c38464d841f5615e1a998c6e3fea",
-          "lines": 518,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Sentrdel/f5747319a50831ef7cee983d253c0ca5503c9a64/crates/sentrdel-store/src/lib.rs"
+          "lines": 518
         },
         {
           "path": "crates/sentrdel-review/src/reconcile.rs",
           "sha256": "368b2a61bae3daffcea44bb3204b67cb8f095300d5b550ee9ebab091a552123c",
-          "lines": 263,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Sentrdel/f5747319a50831ef7cee983d253c0ca5503c9a64/crates/sentrdel-review/src/reconcile.rs"
+          "lines": 263
         }
       ],
       "qualification": "Not built, benchmarked or security-qualified; no code imported"
@@ -2180,23 +1696,17 @@
         {
           "path": "tools/provenance/src/restricted_policy.rs",
           "sha256": "0297e6d4c59058ff420259737f977ba7b605a6381e5a25f2301c306bbf17c4dc",
-          "lines": 367,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Signthos/f945f12fd1a2b600c2c61493162e3654b4d5b50c/tools/provenance/src/restricted_policy.rs"
+          "lines": 367
         },
         {
           "path": "tools/provenance/src/verify_source.rs",
           "sha256": "5b4b447fc6f094fe45ddc9318f4963ce1f2158854fdd0951d4f8291c67a90205",
-          "lines": 835,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Signthos/f945f12fd1a2b600c2c61493162e3654b4d5b50c/tools/provenance/src/verify_source.rs"
+          "lines": 835
         },
         {
           "path": "provenance/schema/v2/source-import.schema.json",
           "sha256": "c397d23483e05578b191e8a2b579658ec8a6435fd429e8deb08acea90d082bfb",
-          "lines": 194,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Signthos/f945f12fd1a2b600c2c61493162e3654b4d5b50c/provenance/schema/v2/source-import.schema.json"
+          "lines": 194
         }
       ],
       "qualification": "Not built, benchmarked or security-qualified; no code imported"
@@ -2228,23 +1738,17 @@
         {
           "path": "src/specgrain/lifecycle.py",
           "sha256": "ce9ebcd3ad4e429c5c9a59d2085708c9582831592825199310ba09adee0502cb",
-          "lines": 158,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/SpecGrain/5de7d6499bb0a9e3a191fc0934399cf099d1980a/src/specgrain/lifecycle.py"
+          "lines": 158
         },
         {
           "path": "src/specgrain/store.py",
           "sha256": "97928f321a4cd5f0f39c6fef6a768e17dd12d84bc4387d0293b1cf7667bb099f",
-          "lines": 1121,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/SpecGrain/5de7d6499bb0a9e3a191fc0934399cf099d1980a/src/specgrain/store.py"
+          "lines": 1121
         },
         {
           "path": "src/specgrain/dependency.py",
           "sha256": "b588cbd7bcac7b89566091281d61d20920d90fe71d9b222ba5ce22ac23d423b0",
-          "lines": 296,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/SpecGrain/5de7d6499bb0a9e3a191fc0934399cf099d1980a/src/specgrain/dependency.py"
+          "lines": 296
         }
       ],
       "qualification": "Not built, benchmarked or security-qualified; no code imported"
@@ -2271,16 +1775,12 @@
         {
           "path": "desktop/src/multiplexer/bridge.ts",
           "sha256": "83651de0d701810b54c57446f74dd1382ea6e3bacd7b280c9b0a4023e211c882",
-          "lines": 60,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Winds/3bfe45fec5c36ef1e407edf12c96ff5444f03847/desktop/src/multiplexer/bridge.ts"
+          "lines": 60
         },
         {
           "path": "migrations/0010_resumable_workflow_ledger.sql",
           "sha256": "735e9624b5c4395b608a212e5c2c8d8e06ba9db29ef93b2ca888a617bfbf0d0a",
-          "lines": 326,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Winds/3bfe45fec5c36ef1e407edf12c96ff5444f03847/migrations/0010_resumable_workflow_ledger.sql"
+          "lines": 326
         }
       ],
       "qualification": "Not built, benchmarked or security-qualified; no code imported"
@@ -2302,16 +1802,12 @@
         {
           "path": "packages/core/src/config/payment/payment-method-handler.ts",
           "sha256": "59db980b41005dccbeec01a53e75934964ce84455cadb244a92fc6f446611d12",
-          "lines": 470,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/vendure-ecommerce/vendure/cc88031a2079ea41c0375aeba524f601f3124a6b/packages/core/src/config/payment/payment-method-handler.ts"
+          "lines": 470
         },
         {
           "path": "packages/core/src/service/helpers/payment-state-machine/payment-state.ts",
           "sha256": "e9abf3a79fbf8838a464b75ffd0560f1a79ff98744c85813c95795f94d04ffa8",
-          "lines": 45,
-          "inspection": "Source read and targeted symbol/behavior inspection; no build or security qualification",
-          "evidence_url": "https://raw.githubusercontent.com/vendure-ecommerce/vendure/cc88031a2079ea41c0375aeba524f601f3124a6b/packages/core/src/service/helpers/payment-state-machine/payment-state.ts"
+          "lines": 45
         }
       ],
       "qualification": "Not built, benchmarked or security-qualified; no code imported"
@@ -2484,5 +1980,7 @@
     "Prism checkout failed on Windows path; remote tree and selected raw files used",
     "No donor executed or security-qualified",
     "Code-search index may lag source; pinned clone takes precedence"
-  ]
+  ],
+  "source_url_template": "https://raw.githubusercontent.com/{repository}/{revision}/{path}",
+  "source_read_method": "Source read and targeted symbol/behavior inspection; no build or security qualification. Receipt URL is constructed using source_url_template and the enclosing repository/revision."
 }
