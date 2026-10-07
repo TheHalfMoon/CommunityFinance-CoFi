@@ -1,9 +1,9 @@
-# G001 codec coverage — ledger, metering and rating evidence slices
+# G001 codec coverage — ledger, metering, rating and subscription evidence slices
 
 Status: **PARTIAL IMPLEMENTATION / NOT G001 QUALIFIED**.
 
 This file records the actual delivered codec slices in issue #22. G001 requires
-**all** economic and authority registries, not just ledger, metering and rating. No database,
+**all** economic and authority registries, not just ledger, metering, rating and subscriptions. No database,
 API, provider execution, or live-money capability is introduced here.
 
 ## Implemented now
@@ -19,6 +19,8 @@ API, provider execution, or live-money capability is introduced here.
 | Usage aggregate | `cofi-metering::UsageAggregate` | Derived, never serialized directly | Recomputed by `MeteringEngine::aggregate` | Sum `i128::MAX`, Count, exact reference parity |
 | Rate plan snapshot | cofi-rating::RatePlan | rate.plan v1 | Checked RatePlan constructors, all exact integer fields | i128 bounds, malformed plan and price rejection |
 | Historical accepted rating | cofi-rating::RatingRequest / RatedCharge | rating.acceptance v1 | Frozen original meter/usage/plan; canonical aggregate and rate; verify every charge field | Late-arrival nonretroactivity, altered source, mismatched receipt, identity/key conflict, overflow |
+| Accepted subscription request | cofi-subscriptions::SubscriptionRequest | subscription.create v1 | Checked IDs, organization scope, customer, subject, embedded immutable plan snapshot, original effective interval; SubscriptionRequest::new and SubscriptionRegistry::create | Exact request and schedule parity, adjacent valid periods, overlap rejection, source-event identity and temporal failures |
+| Derived subscription indexes/status | cofi-subscriptions::SubscriptionRegistry | Derived, never persisted directly | Existing create, status_at and resolve_for_window | Reference and window boundary parity |
 
 Record payloads use typed JSON with required version/type, unknown-field rejection,
 canonical decimal **strings** for monetary amounts and timestamps, and a checked
@@ -44,7 +46,7 @@ will be specified before G003. Record type/version rejection is fail-closed.
 | `cofi-disbursements`, `cofi-provider-contract` | lifecycle, request, observation and evidence bindings |
 | `cofi-reconciliation`, `cofi-audit` | cases/outcomes and authenticated audit streams |
 | cofi-rating production admission | Authenticated complete source-event cutoff, tenant scope and authorization lineage remain unproven |
-| `cofi-billing`, `cofi-invoicing`, `cofi-subscriptions` | customers, receivables, invoice lifecycle and subscription schedule/indexes |
+| cofi-billing and cofi-invoicing; remaining subscription integration | Receivables, invoice lifecycle, authenticated schedule lineage, snapshot provenance and runtime interactions. Subscription request codec implemented separately |
 | `cofi-payments` | capture and payout accounting source events |
 | `cofi-rating-authorization`, `cofi-invoice-authorization`, `cofi-finalization-authorization` | lineage, immutable authorization results and consumed keys |
 | `cofi-payment-authorization`, `cofi-payout-authorization` | capture/payout authorization and exact source-event binding |
@@ -68,6 +70,20 @@ Six targeted tests now verify late-arrival stability, exact price-plan
 roundtrip, source/receipt corruption rejection, changed equal-value source,
 duplicate rating key and multiplication overflow. Graft dependency analysis
 must accompany the exact diff before it can be merged.
+
+### Subscription replay limitations
+
+The subscription.create record rebuilds the original accepted immutable request
+through checked public constructors. Its registry derives schedules, duplicate
+guards, status and window resolution; the embedded RatePlan is immutable.
+A codec alone does not authenticate the full source-event history, trusted order,
+tenant binding, or atomic persistence at acceptance. Those remain G002-G004
+gates and prohibit production rating/billing activation.
+
+Pstack RED-before-GREEN: unresolved codec/dependency compiler errors preceded
+the implementation. Four focused tests now pass, covering request and schedule
+parity, original plan, adjacent intervals, overlapping intervals and conflicts.
+Graft blast-radius and exact-head reviews are required for merger.
 
 This summary is a coverage *frontier*, not a proof of complete domain transitions.
 The metering slice uses Pstack's narrow TDD/review workflow: first the missing-module
