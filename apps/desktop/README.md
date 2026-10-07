@@ -14,7 +14,7 @@ The current desktop foundation provides:
 - live ledger-backed currency validation over IPC;
 - explicit empty states instead of fabricated financial records;
 - Windows MSI and NSIS packaging;
-- a high-contrast purple application icon for taskbar visibility.
+- the approved cool silver/blue-gray CoFi application icon for taskbar and installer visibility.
 
 Surfaces that are not yet connected to their canonical engine remain visibly unavailable instead of simulating data.
 
@@ -52,4 +52,4 @@ The current zero-cost Windows pipeline produces unsigned MSI and NSIS installers
 
 ## Release rule
 
-A release tag must exactly match the version in `package.json` (for example, `v1.1.1`). The release workflow builds Windows installers, creates SHA-256 checksums, and publishes the artifacts to GitHub Releases. The public landing page then discovers the installer from the latest release.
+A tag-triggered release must exactly match the version in `package.json` (for example, `v1.1.1`). On `main`, if that matching tag does not exist yet, the release workflow performs the full Windows qualification first, creates the annotated version tag on the exact qualified commit, and then publishes the MSI, NSIS installer, and SHA-256 checksums. If the release already exists, later `main` pushes are a no-op. The public landing page discovers the installer from the latest GitHub release.
