@@ -1,8 +1,10 @@
 //! Validated, versioned persistence records.
 //!
-//! This first G001 slice only admits ledger accounts and journal entries.
-//! Other economic and authorization registries remain blocked until dedicated
-//! codecs, complete inventories, and parity proofs are reviewed.
+//! G001 currently admits ledger accounts/journals and metering definitions/events.
+//! All other financial and authorization registries remain blocked until
+//! dedicated codecs, complete inventories, and parity proofs are reviewed.
+
+pub mod metering;
 
 use std::error::Error;
 use std::fmt::{Display, Formatter};
