@@ -70,7 +70,12 @@ export function resolveInitialLocale(
 export function getInitialLocale(): SupportedLocale {
   if (typeof window === "undefined") return "en";
 
-  const persisted = window.localStorage.getItem(storageKey);
+  let persisted: string | null = null;
+  try {
+    persisted = window.localStorage.getItem(storageKey);
+  } catch {
+    persisted = null;
+  }
   const languages =
     typeof navigator !== "undefined"
       ? navigator.languages.length > 0
@@ -83,7 +88,11 @@ export function getInitialLocale(): SupportedLocale {
 
 export function persistLocale(locale: SupportedLocale): void {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(storageKey, locale);
+  try {
+    window.localStorage.setItem(storageKey, locale);
+  } catch {
+    // Locale persistence is optional; the active session still remains localized.
+  }
 }
 
 export function applyDocumentLocale(locale: SupportedLocale): void {
