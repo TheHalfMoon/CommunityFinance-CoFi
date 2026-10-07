@@ -13,7 +13,7 @@ permissions:
   pull-requests: read
 
 concurrency:
-  group: cofi-desktop-release-${{ github.event_name }}-${{ github.event.issue.number || github.ref }}
+  group: cofi-desktop-release
   cancel-in-progress: false
 
 jobs:
@@ -40,6 +40,8 @@ jobs:
           PR_NUMBER: ${{ github.event.issue.number }}
           GH_TOKEN: ${{ github.token }}
         run: |
+          $createTag = $false
+
           if ($env:EVENT_NAME -eq "push") {
             $tag = $env:PUSH_TAG
             $target = $env:PUSH_SHA
@@ -63,20 +65,32 @@ jobs:
             if (-not $pr.merged_at) {
               throw "Release command must be issued on a merged pull request."
             }
+            if ($pr.base.ref -ne "main") {
+              throw "Release command must target a pull request merged into main."
+            }
             if ($pr.merge_commit_sha -ne $target) {
               throw "Requested target $target does not match PR merge commit $($pr.merge_commit_sha)."
             }
 
+            $commit = gh api "repos/$env:GITHUB_REPOSITORY/commits/$target" | ConvertFrom-Json
+            if ($commit.parents.Count -ne 2) {
+              throw "Release target must be a normal merge commit with exactly two parents."
+            }
+
             gh api "repos/$env:GITHUB_REPOSITORY/git/ref/tags/$tag" *> $null
             if ($LASTEXITCODE -eq 0) {
-              throw "Tag $tag already exists."
+              $createTag = $false
+            } else {
+              $createTag = $true
             }
           }
 
           "RELEASE_TAG=$tag" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           "TARGET_SHA=$target" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          "CREATE_TAG=$($createTag.ToString().ToLowerInvariant())" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           Write-Host "RELEASE_TAG=$tag"
           Write-Host "TARGET_SHA=$target"
+          Write-Host "CREATE_TAG=$($createTag.ToString().ToLowerInvariant())"
 
       - name: Checkout repository
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -89,9 +103,22 @@ jobs:
         run: |
           git fetch --no-tags origin $env:TARGET_SHA
           git checkout --detach $env:TARGET_SHA
-          $actual = git rev-parse HEAD
+          $actual = (git rev-parse HEAD).Trim()
           if ($actual -ne $env:TARGET_SHA) {
             throw "Checked out $actual instead of requested release target $env:TARGET_SHA."
+          }
+
+      - name: Validate existing release tag
+        if: env.CREATE_TAG == 'false'
+        shell: pwsh
+        run: |
+          git fetch origin "refs/tags/$env:RELEASE_TAG:refs/tags/$env:RELEASE_TAG" --force
+          if ($LASTEXITCODE -ne 0) {
+            throw "Failed to fetch existing release tag $env:RELEASE_TAG."
+          }
+          $tagCommit = (git rev-list -n 1 $env:RELEASE_TAG).Trim()
+          if ($tagCommit -ne $env:TARGET_SHA) {
+            throw "Release tag $env:RELEASE_TAG resolves to $tagCommit, expected $env:TARGET_SHA."
           }
 
       - name: Install Node 24
@@ -115,15 +142,6 @@ jobs:
           if ($env:RELEASE_TAG -ne $expected) {
             throw "Tag $env:RELEASE_TAG does not match desktop version $expected."
           }
-
-      - name: Create annotated release tag
-        if: github.event_name == 'issue_comment'
-        shell: pwsh
-        run: |
-          git config user.name "Abdulaziz M. Shehri"
-          git config user.email "alshehriofficial@gmail.com"
-          git tag -a $env:RELEASE_TAG $env:TARGET_SHA -m "CoFi $env:RELEASE_TAG"
-          git push origin "refs/tags/$env:RELEASE_TAG"
 
       - name: Install desktop dependencies
         working-directory: apps/desktop
@@ -163,6 +181,30 @@ jobs:
             "$hash  $($file.Name)"
           }
           $lines | Set-Content -Encoding ascii apps/desktop/src-tauri/target/release/bundle/SHA256SUMS.txt
+
+      - name: Create annotated release tag
+        if: github.event_name == 'issue_comment' && env.CREATE_TAG == 'true'
+        shell: pwsh
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a $env:RELEASE_TAG $env:TARGET_SHA -m "CoFi $env:RELEASE_TAG"
+          git push origin "refs/tags/$env:RELEASE_TAG"
+          if ($LASTEXITCODE -ne 0) {
+            throw "Failed to publish release tag $env:RELEASE_TAG."
+          }
+
+      - name: Verify release tag target
+        shell: pwsh
+        run: |
+          git fetch origin "refs/tags/$env:RELEASE_TAG:refs/tags/$env:RELEASE_TAG" --force
+          if ($LASTEXITCODE -ne 0) {
+            throw "Failed to fetch release tag $env:RELEASE_TAG."
+          }
+          $tagCommit = (git rev-list -n 1 $env:RELEASE_TAG).Trim()
+          if ($tagCommit -ne $env:TARGET_SHA) {
+            throw "Release tag $env:RELEASE_TAG resolves to $tagCommit, expected $env:TARGET_SHA."
+          }
 
       - name: Publish GitHub release
         shell: pwsh
