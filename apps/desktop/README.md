@@ -14,7 +14,9 @@ The current desktop foundation provides:
 - live ledger-backed currency validation over IPC;
 - explicit empty states instead of fabricated financial records;
 - Windows MSI and NSIS packaging;
-- a high-contrast purple application icon for taskbar visibility.
+- the approved CoFi application icon for taskbar and installer visibility;
+- built-in localization for English, Arabic, French, German, Spanish, Italian, and Simplified Chinese;
+- right-to-left layout support for Arabic with local language preference persistence.
 
 Surfaces that are not yet connected to their canonical engine remain visibly unavailable instead of simulating data.
 
@@ -37,7 +39,7 @@ npm run desktop:dev
 
 ```powershell
 npm run build
-npm run test:ipc
+npm test
 cargo fmt --manifest-path src-tauri/Cargo.toml -- --check
 cargo clippy --locked --manifest-path src-tauri/Cargo.toml --all-targets -- -D warnings
 cargo test --locked --manifest-path src-tauri/Cargo.toml
@@ -53,3 +55,20 @@ The current zero-cost Windows pipeline produces unsigned MSI and NSIS installers
 ## Release rule
 
 A release tag must exactly match the version in `package.json` (for example, `v1.1.1`). The release workflow builds Windows installers, creates SHA-256 checksums, and publishes the artifacts to GitHub Releases. The public landing page then discovers the installer from the latest release.
+
+
+## Localization
+
+Desktop localization is bundled with the application and does not call a translation service at runtime.
+
+Supported locales:
+
+- English (`en`)
+- Arabic (`ar`, RTL)
+- French (`fr`)
+- German (`de`)
+- Spanish (`es`)
+- Italian (`it`)
+- Simplified Chinese (`zh-CN`)
+
+CoFi uses the saved local preference when available, otherwise it detects the operating-system language and falls back to English. Translation completeness is enforced by `npm run test:i18n`.
