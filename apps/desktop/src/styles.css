@@ -1,7 +1,7 @@
 :root {
   font-family:
     Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
+    "Noto Sans Arabic", "Noto Sans SC", sans-serif;
   color: #15131d;
   background: #f5f3fb;
   font-synthesis: none;
@@ -641,5 +641,99 @@ button {
 
   .status-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+
+.language-control {
+  display: grid;
+  gap: 7px;
+  margin-bottom: 16px;
+}
+
+.language-control > span {
+  color: #918b99;
+  font-size: 9px;
+  font-weight: 760;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.language-control select {
+  width: 100%;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid rgba(35, 30, 44, 0.1);
+  border-radius: 9px;
+  outline: none;
+  background: rgba(255, 255, 255, 0.78);
+  color: #3f3948;
+  font-size: 11px;
+  font-weight: 620;
+  cursor: pointer;
+}
+
+.language-control select:focus {
+  border-color: rgba(89, 66, 151, 0.38);
+  box-shadow: 0 0 0 3px rgba(89, 66, 151, 0.07);
+}
+
+[dir="rtl"] .app-shell {
+  grid-template-columns: minmax(0, 1fr) 248px;
+}
+
+[dir="rtl"] .sidebar {
+  grid-column: 2;
+  grid-row: 1;
+  border-right: 0;
+  border-left: 1px solid rgba(28, 24, 40, 0.08);
+}
+
+[dir="rtl"] .main-panel {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+[dir="rtl"] .nav-item {
+  text-align: right;
+}
+
+[dir="rtl"] .nav-item:hover {
+  transform: translateX(-1px);
+}
+
+[dir="rtl"] .topbar-status small {
+  padding-right: 4px;
+  padding-left: 0;
+}
+
+[dir="rtl"] .field-row input {
+  text-align: left;
+}
+
+@media (max-width: 1180px) {
+  [dir="rtl"] .app-shell {
+    grid-template-columns: minmax(0, 1fr) 210px;
+  }
+}
+
+@media (max-width: 860px) {
+  [dir="rtl"] .app-shell {
+    grid-template-columns: minmax(0, 1fr) 74px;
+  }
+
+  .language-control {
+    justify-items: center;
+    margin-bottom: 12px;
+  }
+
+  .language-control > span {
+    display: none;
+  }
+
+  .language-control select {
+    width: 50px;
+    padding-inline: 5px;
+    font-size: 10px;
   }
 }
