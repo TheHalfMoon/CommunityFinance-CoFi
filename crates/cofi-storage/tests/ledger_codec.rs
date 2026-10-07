@@ -5,8 +5,8 @@ use cofi_ledger::{
     JournalEntryId, Ledger, LedgerScopeId, Posting, Side,
 };
 use cofi_storage::{
-    CodecError, LedgerFact, decode_fact, encode_account, encode_entry, parse_i128_exact,
-    parse_i64_exact, parse_u128_exact, replay_ledger,
+    CodecError, LedgerFact, decode_fact, encode_account, encode_entry, parse_i64_exact,
+    parse_i128_exact, parse_u128_exact, replay_ledger,
 };
 
 fn account(id: &str, kind: AccountKind) -> Account {
@@ -91,15 +91,27 @@ fn replay_rebuilds_indexes_balances_and_exact_identity() {
     let mut reference = Ledger::new();
     reference.register_account(receivable).unwrap();
     reference.register_account(revenue).unwrap();
-    assert_eq!(reference.commit(original.clone()), Ok(CommitOutcome::Committed));
+    assert_eq!(
+        reference.commit(original.clone()),
+        Ok(CommitOutcome::Committed)
+    );
 
     let mut recovered = replay_ledger(facts.iter().map(Vec::as_slice)).unwrap();
     assert_eq!(recovered.entry_count(), reference.entry_count());
-    assert_eq!(recovered.entry(original.id()), reference.entry(original.id()));
+    assert_eq!(
+        recovered.entry(original.id()),
+        reference.entry(original.id())
+    );
     for id in ["receivable", "revenue"] {
         let account_id = AccountId::new(id).unwrap();
-        assert_eq!(recovered.account(&account_id), reference.account(&account_id));
-        assert_eq!(recovered.balance(&account_id), reference.balance(&account_id));
+        assert_eq!(
+            recovered.account(&account_id),
+            reference.account(&account_id)
+        );
+        assert_eq!(
+            recovered.balance(&account_id),
+            reference.balance(&account_id)
+        );
     }
     assert_eq!(recovered.commit(original), Ok(CommitOutcome::Replayed));
 }
@@ -136,7 +148,9 @@ fn exact_integer_boundaries_and_bad_representations() {
     assert_eq!(parse_i128_exact(&i128::MIN.to_string()), Ok(i128::MIN));
     assert_eq!(parse_i128_exact(&i128::MAX.to_string()), Ok(i128::MAX));
     assert_eq!(parse_i64_exact(&i64::MIN.to_string()), Ok(i64::MIN));
-    for bad in ["", " 1", "1 ", "+1", "01", "-0", "1.0", "1e3", "NaN", "1_000"] {
+    for bad in [
+        "", " 1", "1 ", "+1", "01", "-0", "1.0", "1e3", "NaN", "1_000",
+    ] {
         assert!(parse_i128_exact(bad).is_err(), "{bad:?}");
         assert!(parse_u128_exact(bad).is_err(), "{bad:?}");
     }
