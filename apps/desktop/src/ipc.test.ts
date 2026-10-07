@@ -12,7 +12,7 @@ test("loads the native core manifest through the canonical command", async () =>
   const call: DesktopInvoke = async (command, args) => {
     calls.push({ command, args });
     return {
-      appVersion: "1.1.0",
+      appVersion: "1.1.1",
       ledgerLinked: true,
       localOnly: true,
       unsafeRustForbidden: true,
