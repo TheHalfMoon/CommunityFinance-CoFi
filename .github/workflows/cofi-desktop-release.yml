@@ -154,7 +154,7 @@ jobs:
 
       - name: Test desktop IPC contract
         working-directory: apps/desktop
-        run: npm run test:ipc
+        run: npm test
 
       - name: Qualify native host
         shell: pwsh
