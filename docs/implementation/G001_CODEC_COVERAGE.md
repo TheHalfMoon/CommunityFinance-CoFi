@@ -22,6 +22,7 @@ API, provider execution, or live-money capability is introduced here.
 | Accepted subscription request | cofi-subscriptions::SubscriptionRequest | subscription.create v1 | Checked IDs, organization scope, customer, subject, embedded immutable plan snapshot, original effective interval; SubscriptionRequest::new and SubscriptionRegistry::create | Exact request and schedule parity, adjacent valid periods, overlap rejection, source-event identity and temporal failures |
 | Derived subscription indexes/status | cofi-subscriptions::SubscriptionRegistry | Derived, never persisted directly | Existing create, status_at and resolve_for_window | Reference and window boundary parity |
 | Authorized rating from accepted subscription and frozen metering evidence | cofi-rating-authorization::AuthorizedRatingRegistry | authorized.rating v1 (cofi-storage) | Reconstruct original subscription.create and rating.acceptance via domain constructors and meters; reapply AuthorizedRatingRegistry::rate; compare source IDs, scoped plan and full original charge | Exact authorization replay, altered plan/scope/source membership/charge, conflicting same-ID subscription and missing history tests |
+| Authorized invoice draft from accepted P21 rating evidence | cofi-invoice-authorization::AuthorizedDraftRegistry | authorized.draft v1 | Decode each original authorized.rating evidence through P21; reconstruct AuthorizedDraftRequest, use canonical AuthorizedDraftRegistry::assemble, derive draft and rated-charge binding indexes; verify invoice ID, scope/customer, total and each line charge ID | Exact authorization parity/idempotent replay, mutated P21 lineage, changed ID/scope/total, duplicate source use across invoices |
 | Accepted draft invoice with frozen rating-line receipts | cofi-invoicing::DraftInvoiceRequest | invoice.draft v1 | Reconstruct every RatedCharge through original rating.acceptance; exact original billing event, invoice, customer/scope and interval; checked DraftInvoiceRequest::new and DraftInvoiceRegistry::assemble | Two-line amount parity, duplicate/missing receipt, changed identity, scope, total and charge-bound conflict tests |
 | Derived draft invoice indexes/charge bindings | cofi-invoicing::DraftInvoiceRegistry | Never persisted directly | Existing canonical assemble method, plus to_billing_event projection | Parity of invoices/events/charge binding count and replay semantics |
 | Accepted reconciliation audit event | cofi-audit::AuditEvent | audit.reconciliation v1 (cofi-audit canonical codec; cofi-storage re-export) | Original audit position/attribution/times/action/resource/typed reconciliation projection; AuditEvent::new and recomputed canonical SHA-256 digest parity | 6 targeted tests: two interleaved streams, original event/digest parity, bad digest/IDs/time/version/type/payload, changed duplicate, missing ancestor, oversized and duplicate JSON keys |
@@ -171,6 +172,31 @@ Pstack TDD found an equal-amount changed-source-ID acceptance and the
 auth record now binds the exact original event-ID list. Four tests cover
 source ancestry/replay and negative corruption. Graft diff analysis and
 exact-head CI/Jev/OCR are required before merging this slice.
+
+### Authorized P22 draft source ancestry
+
+The \`authorized.draft\` v1 record contains the original accepted P21
+authorized.rating source receipt per rated line. Rehydration recomputes
+each AuthorizedRating through the P21 domain registry, reconstructs the
+original AuthorizedDraftRequest, and invokes only the canonical
+AuthorizedDraftRegistry::assemble to recover accepted draft, event and
+rated-charge binding indexes. Original billed invoice ID, scope/customer,
+total and line IDs are compared to recorded acceptance; exact replay is
+idempotent while a changed P21 evidence or re-used charge in another
+invoice fails closed.
+
+**Authenticity remains an external obligation:** the embedded expected
+values and all P21 source evidence are in the same untrusted v1 envelope,
+not independently authenticated. A coherent forged record can pass
+internal parity. Source-event completeness, tenant-scoped trusted
+sequence/transaction, and finalization authorization P23 remain OPEN.
+This is not a released or production-authorized billing workflow.
+
+The Pstack-style RED-before-GREEN test first reported missing P22 codec,
+then exposed a mutable invoice ID not independently checked even within
+the same envelope; the bounded partial-tamper guard was added. Three
+focused tests exercise accepted result parity and negative mutation
+and charge reuse; exact-head CI/Jev/OCR and Graft review are mandatory.
 
 This summary is a coverage *frontier*, not a proof of complete domain transitions.
 The metering slice uses Pstack's narrow TDD/review workflow: first the missing-module
