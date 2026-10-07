@@ -2,6 +2,8 @@ name: CoFi Desktop Release
 
 on:
   push:
+    branches:
+      - main
     tags:
       - "v*"
 
@@ -9,7 +11,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: cofi-desktop-release-${{ github.ref }}
+  group: cofi-desktop-release
   cancel-in-progress: false
 
 jobs:
@@ -20,8 +22,66 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+
+      - name: Plan release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $package = Get-Content apps/desktop/package.json -Raw | ConvertFrom-Json
+          $expected = "v$($package.version)"
+          $shouldRelease = $false
+          $createTag = $false
+
+          if ($env:GITHUB_REF_TYPE -eq "tag") {
+            if ($env:GITHUB_REF_NAME -ne $expected) {
+              throw "Tag $env:GITHUB_REF_NAME does not match desktop version $expected."
+            }
+            $shouldRelease = $true
+          } elseif ($env:GITHUB_REF -eq "refs/heads/main") {
+            git ls-remote --exit-code --tags origin "refs/tags/$expected" *> $null
+            $tagLookup = $LASTEXITCODE
+
+            if ($tagLookup -eq 2) {
+              $shouldRelease = $true
+              $createTag = $true
+            } elseif ($tagLookup -eq 0) {
+              gh release view $expected --repo $env:GITHUB_REPOSITORY *> $null
+              if ($LASTEXITCODE -eq 0) {
+                $shouldRelease = $false
+              } else {
+                git fetch origin "refs/tags/$expected:refs/tags/$expected"
+                if ($LASTEXITCODE -ne 0) {
+                  throw "Failed to fetch existing tag $expected."
+                }
+                $tagCommit = (git rev-list -n 1 $expected).Trim()
+                $headCommit = (git rev-parse HEAD).Trim()
+                if ($tagCommit -ne $headCommit) {
+                  throw "Tag $expected exists at $tagCommit, but current main is $headCommit."
+                }
+                $shouldRelease = $true
+              }
+            } else {
+              throw "Failed to inspect remote tag $expected."
+            }
+          } else {
+            throw "Unsupported release ref $env:GITHUB_REF."
+          }
+
+          "RELEASE_TAG=$expected" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          "SHOULD_RELEASE=$($shouldRelease.ToString().ToLowerInvariant())" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          "CREATE_TAG=$($createTag.ToString().ToLowerInvariant())" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+          if ($shouldRelease) {
+            Write-Host "Release qualification required for $expected."
+          } else {
+            Write-Host "Release $expected already exists; nothing to publish."
+          }
 
       - name: Install Node 24
+        if: env.SHOULD_RELEASE == 'true'
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: "24.19.0"
@@ -29,35 +89,29 @@ jobs:
           cache-dependency-path: apps/desktop/package-lock.json
 
       - name: Install Rust 1.85
+        if: env.SHOULD_RELEASE == 'true'
         uses: dtolnay/rust-toolchain@89b12181fb390509a0842a86cc55eeb8eb928c1d
         with:
           toolchain: 1.85.0
           components: rustfmt, clippy
 
-      - name: Verify tag matches desktop version
-        shell: pwsh
-        env:
-          RELEASE_TAG: ${{ github.ref_name }}
-        run: |
-          $package = Get-Content apps/desktop/package.json -Raw | ConvertFrom-Json
-          $expected = "v$($package.version)"
-          if ($env:RELEASE_TAG -ne $expected) {
-            throw "Tag $env:RELEASE_TAG does not match desktop version $expected."
-          }
-
       - name: Install desktop dependencies
+        if: env.SHOULD_RELEASE == 'true'
         working-directory: apps/desktop
         run: npm ci
 
       - name: Audit desktop dependencies
+        if: env.SHOULD_RELEASE == 'true'
         working-directory: apps/desktop
         run: npm audit --audit-level=high
 
       - name: Test desktop IPC contract
+        if: env.SHOULD_RELEASE == 'true'
         working-directory: apps/desktop
         run: npm run test:ipc
 
       - name: Qualify native host
+        if: env.SHOULD_RELEASE == 'true'
         shell: pwsh
         run: |
           cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml -- --check
@@ -65,10 +119,12 @@ jobs:
           cargo test --locked --manifest-path apps/desktop/src-tauri/Cargo.toml
 
       - name: Build Windows installers
+        if: env.SHOULD_RELEASE == 'true'
         working-directory: apps/desktop
         run: npm run desktop:build
 
       - name: Create checksums
+        if: env.SHOULD_RELEASE == 'true'
         shell: pwsh
         run: |
           $files = @(
@@ -84,11 +140,37 @@ jobs:
           }
           $lines | Set-Content -Encoding ascii apps/desktop/src-tauri/target/release/bundle/SHA256SUMS.txt
 
+      - name: Create release tag
+        if: env.SHOULD_RELEASE == 'true' && env.CREATE_TAG == 'true'
+        shell: pwsh
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a $env:RELEASE_TAG HEAD -m "CoFi $env:RELEASE_TAG"
+          git push origin "refs/tags/$env:RELEASE_TAG"
+          if ($LASTEXITCODE -ne 0) {
+            throw "Failed to publish release tag $env:RELEASE_TAG."
+          }
+
+      - name: Verify release tag target
+        if: env.SHOULD_RELEASE == 'true'
+        shell: pwsh
+        run: |
+          git fetch origin "refs/tags/$env:RELEASE_TAG:refs/tags/$env:RELEASE_TAG" --force
+          if ($LASTEXITCODE -ne 0) {
+            throw "Failed to fetch release tag $env:RELEASE_TAG."
+          }
+          $tagCommit = (git rev-list -n 1 $env:RELEASE_TAG).Trim()
+          $headCommit = (git rev-parse HEAD).Trim()
+          if ($tagCommit -ne $headCommit) {
+            throw "Release tag $env:RELEASE_TAG resolves to $tagCommit, expected $headCommit."
+          }
+
       - name: Publish GitHub release
+        if: env.SHOULD_RELEASE == 'true'
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ github.ref_name }}
         run: |
           $tag = $env:RELEASE_TAG
           $msi = (Get-ChildItem apps/desktop/src-tauri/target/release/bundle/msi/*.msi).FullName
