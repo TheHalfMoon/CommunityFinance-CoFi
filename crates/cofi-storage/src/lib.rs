@@ -6,6 +6,7 @@
 
 pub mod metering;
 pub mod rating;
+pub mod subscription;
 
 use std::error::Error;
 use std::fmt::{Display, Formatter};
