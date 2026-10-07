@@ -1,0 +1,364 @@
+{
+  "schema_version": 2,
+  "retrieved_date": "2026-10-07",
+  "cofi_baseline": "c640844675895578ce52e67c591308e4ddb99037",
+  "scope": "Public repositories only; targeted source inspection, not exhaustive code audit",
+  "repositories": [
+    {
+      "repository": "TheHalfMoon/CommunityFinance-CoFi",
+      "revision": "c640844675895578ce52e67c591308e4ddb99037",
+      "evidence_file": "source-evidence/TheHalfMoon--CommunityFinance-CoFi.json",
+      "sha256": "a62e9fda637dfb623d3b9703ce2dcd89afee4fd43cf923a959e41fcfc0af0061"
+    },
+    {
+      "repository": "juspay/hyperswitch",
+      "revision": "c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3",
+      "evidence_file": "source-evidence/juspay--hyperswitch.json",
+      "sha256": "327d2e97ba5aa8302e1f50450e900287be52b3e89b1e143b17baddf4c61dcf90"
+    },
+    {
+      "repository": "getlago/lago",
+      "revision": "878c66c1f01d6831016d340674b6e68c2138ccc3",
+      "evidence_file": "source-evidence/getlago--lago.json",
+      "sha256": "18987a6c8cd44f56c8beb51b3786d02e360c4c2535f597aa5d648a7eb48fe4d8"
+    },
+    {
+      "repository": "getlago/lago-api",
+      "revision": "25b8b7b0984dae3f64b690750eaa8a8daf7af752",
+      "evidence_file": "source-evidence/getlago--lago-api.json",
+      "sha256": "3345f2598b9d34c686cee72ebd58b4717ab67bb87022107d165f0b8aa4a34420"
+    },
+    {
+      "repository": "juspay/decision-engine",
+      "revision": "6cc11474ff7fb08dd35f33828258968cc04dff27",
+      "evidence_file": "source-evidence/juspay--decision-engine.json",
+      "sha256": "309e9029e34e6f68b8830bec02cc355c9b3e08d2acc83e0d2aa7fcd00b4f115e"
+    },
+    {
+      "repository": "juspay/hyperswitch-card-vault",
+      "revision": "eca8b7e3d0f544319578120f05b8157e73130864",
+      "evidence_file": "source-evidence/juspay--hyperswitch-card-vault.json",
+      "sha256": "4191de44573c329d9ba478bb880e5b038663da7c6b899f2500fd6b3e74e60b62"
+    },
+    {
+      "repository": "juspay/hyperswitch-control-center",
+      "revision": "719e57cdb2912f4a89913b3e3625e81cca0e55bf",
+      "evidence_file": "source-evidence/juspay--hyperswitch-control-center.json",
+      "sha256": "fde8e14c4d4da791516e1ab8ac1fac0912c4893f2bd7aee471e37aecbc42d394"
+    },
+    {
+      "repository": "juspay/hyperswitch-encryption-service",
+      "revision": "e1b58ea30c670dcef3e301beb8375835c9f4f2e1",
+      "evidence_file": "source-evidence/juspay--hyperswitch-encryption-service.json",
+      "sha256": "8947ddc1fc7cca60ea6aabd5360d25a98da81f262b615e0f3f0acc79d13ec382"
+    },
+    {
+      "repository": "juspay/hyperswitch-prism",
+      "revision": "c9c0727d99ada0f0eda057f3d8a6f16719a43bbc",
+      "evidence_file": "source-evidence/juspay--hyperswitch-prism.json",
+      "sha256": "751e056b2d324c6c7e3558aa17ab6f4696f5fc8d8e1aa0bab0998a109cc57755"
+    },
+    {
+      "repository": "juspay/hyperswitch-web",
+      "revision": "c83a564fac3caf48affc36164cfa9c5e3ff89eef",
+      "evidence_file": "source-evidence/juspay--hyperswitch-web.json",
+      "sha256": "a0d2aadf75f2745a3e41392370dbd6be3867f3846fab89a228c3b8b8c847002f"
+    },
+    {
+      "repository": "killbill/killbill",
+      "revision": "05a6c4346e9921d581af0b498141837fd829ffc1",
+      "evidence_file": "source-evidence/killbill--killbill.json",
+      "sha256": "6827ea930f7f6a09b2b30ccb534743ae4ef011d9b8d4e77c7550d165cf8118ec"
+    },
+    {
+      "repository": "medusajs/medusa",
+      "revision": "d436d2fbc3c50be0bdbc272ab0516d1d16db170f",
+      "evidence_file": "source-evidence/medusajs--medusa.json",
+      "sha256": "af3fedc61e20992dbb24a2ba9347a3e6489dcb96fa6ad89f42f6ff4f3859a38b"
+    },
+    {
+      "repository": "meteroid-oss/meteroid",
+      "revision": "2fda46cdc8a16668b15356e60f2a986034cdd352",
+      "evidence_file": "source-evidence/meteroid-oss--meteroid.json",
+      "sha256": "8e4f604e4c2b4694c30cb6830843cab909848f107ff0ec1e7e4cdc7e3047ba85"
+    },
+    {
+      "repository": "openmeterio/openmeter",
+      "revision": "5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f",
+      "evidence_file": "source-evidence/openmeterio--openmeter.json",
+      "sha256": "ab72c796fd3b71d6ffbf6a9e8d3fec23f50b99910e0a6301662d610571a3bf71"
+    },
+    {
+      "repository": "TheHalfMoon/Ascout",
+      "revision": "ca6b6f514e5a8881e2cfa2789b5e5ea43e3aaaad",
+      "evidence_file": "source-evidence/TheHalfMoon--Ascout.json",
+      "sha256": "266155a66e36a7becaacc8aeb13dcd0d99b196e47576e38556b07b68c629fdfd"
+    },
+    {
+      "repository": "TheHalfMoon/Deskal",
+      "revision": "ca060c69ad6bcdbc38c15609620888c0bc0911f4",
+      "evidence_file": "source-evidence/TheHalfMoon--Deskal.json",
+      "sha256": "c52f461fe47d5e3301eb931af3b19cdf794e6bd837e0bc87c1641391f7bb8bf1"
+    },
+    {
+      "repository": "TheHalfMoon/Diffcipline",
+      "revision": "1e6d14f77b95bb132b42276f10d67f1018ab5bb6",
+      "evidence_file": "source-evidence/TheHalfMoon--Diffcipline.json",
+      "sha256": "6139a2297dd1f3cc4ff11e7128788ff9a1bf515326e6f45611786fb4994e5a8d"
+    },
+    {
+      "repository": "TheHalfMoon/Ecra",
+      "revision": "0e2ff8c687c93e6f158da6984a7a6915339b5f3f",
+      "evidence_file": "source-evidence/TheHalfMoon--Ecra.json",
+      "sha256": "cccaa25cdd9790d60135d4ed666dc168490a5a3cab9c62f6ffc1fa0497734315"
+    },
+    {
+      "repository": "TheHalfMoon/Gomrey",
+      "revision": "1a186641fb96035e1d8ef40e102f9021f28f652e",
+      "evidence_file": "source-evidence/TheHalfMoon--Gomrey.json",
+      "sha256": "c3d3dc20f1ec4df0acd1618a51901c61d9705094ebd3d401188fabbec19e8472"
+    },
+    {
+      "repository": "TheHalfMoon/Inercative",
+      "revision": "3a4713c47d36722c564f185bc4a8c02ad57da05c",
+      "evidence_file": "source-evidence/TheHalfMoon--Inercative.json",
+      "sha256": "5e860d5767a96e3a8f8999f3521a100d31a46e3f89122955c18a7a4c9266cdfb"
+    },
+    {
+      "repository": "TheHalfMoon/kernux",
+      "revision": "2085b6ed1121b1a94c66c076bdd6b578da4dad0d",
+      "evidence_file": "source-evidence/TheHalfMoon--kernux.json",
+      "sha256": "eb30b376d5132d57ecf9d5c271872905b5fdb68f24e1918b2125218a265ce32c"
+    },
+    {
+      "repository": "TheHalfMoon/Morize",
+      "revision": "62fc04d01d398da93b4dacf0ab2f33e3f1440462",
+      "evidence_file": "source-evidence/TheHalfMoon--Morize.json",
+      "sha256": "f62c5563e2be846da98c6fed3f97722d90bb16afd735c93aa2fc422efca03f2f"
+    },
+    {
+      "repository": "TheHalfMoon/Olax",
+      "revision": "745a4ba791cf9291051592ab3d6ed29145e0e2c2",
+      "evidence_file": "source-evidence/TheHalfMoon--Olax.json",
+      "sha256": "77f3473c83ab4f6230295fdffaa9141e77aa7e1af577b277c471fff0005364b1"
+    },
+    {
+      "repository": "TheHalfMoon/Orcel",
+      "revision": "181eb6ad2cd2abe5632a668b9e7141bac3c9e6e5",
+      "evidence_file": "source-evidence/TheHalfMoon--Orcel.json",
+      "sha256": "6fa2226c44d58dcc5c26f8f18c1df0f2bc699e2fa27c6b1f9717ecffb43dabb6"
+    },
+    {
+      "repository": "TheHalfMoon/Qdrat",
+      "revision": "e2d288940aab52af881786678b2fc86dfa5c272a",
+      "evidence_file": "source-evidence/TheHalfMoon--Qdrat.json",
+      "sha256": "55367fdcfc6ca222ee78d24e732b92fde20225c666a6e0b9e5cc755c9f2b46d4"
+    },
+    {
+      "repository": "TheHalfMoon/Sentrdel",
+      "revision": "f5747319a50831ef7cee983d253c0ca5503c9a64",
+      "evidence_file": "source-evidence/TheHalfMoon--Sentrdel.json",
+      "sha256": "c733133a9bb91cb03564a9b1b4c906e4c373462af0dc2cab1140691db0687c0f"
+    },
+    {
+      "repository": "TheHalfMoon/Signthos",
+      "revision": "f945f12fd1a2b600c2c61493162e3654b4d5b50c",
+      "evidence_file": "source-evidence/TheHalfMoon--Signthos.json",
+      "sha256": "9787e1f30386959039900542f4885765acb2544ab33aeafccd04ce0942206cbd"
+    },
+    {
+      "repository": "TheHalfMoon/Skelet",
+      "revision": "51ad391fba0099645496750c1eab5eeb7e54fc35",
+      "evidence_file": "source-evidence/TheHalfMoon--Skelet.json",
+      "sha256": "341307e7d4e39c97b67b0674ab9fb0a0bf9d0f88131381fd0e0c1abe6e90593d"
+    },
+    {
+      "repository": "TheHalfMoon/SpecGrain",
+      "revision": "5de7d6499bb0a9e3a191fc0934399cf099d1980a",
+      "evidence_file": "source-evidence/TheHalfMoon--SpecGrain.json",
+      "sha256": "002599f0045377938de31e4eb587d917a14ac4d959f8a354276c35b4c22201c9"
+    },
+    {
+      "repository": "TheHalfMoon/Winds",
+      "revision": "3bfe45fec5c36ef1e407edf12c96ff5444f03847",
+      "evidence_file": "source-evidence/TheHalfMoon--Winds.json",
+      "sha256": "d8aa165626e1a7a2952c49e8bc6bcfe530f7a4a0d7be3ce837b772c2043b7b65"
+    },
+    {
+      "repository": "vendure-ecommerce/vendure",
+      "revision": "cc88031a2079ea41c0375aeba524f601f3124a6b",
+      "evidence_file": "source-evidence/vendure-ecommerce--vendure.json",
+      "sha256": "e3d7a6343c3f5bebcae5677b6bcf5c1f3939b54fe6f525ddc31cf2d819a9f713"
+    }
+  ],
+  "public_founder_inventory_screened": [
+    {
+      "repository": "TheHalfMoon/MESC",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/Kodac",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/Winds",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/commandF",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/MedScale",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/wepld",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/Trcel",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/commandMed",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/Ascout",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/MSTR",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/Sentrdel",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/Golam-research",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/Golam",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/Ecra",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/SpecGrain",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/Diffcipline",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/Delethos",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/Wispral",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/Tarif",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/Signthos",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/ottari",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/Qdrat",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/Zyara",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/Balott",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/kernux",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/Morize",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/Inercative",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/acarat",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/Mckani",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/Deskal",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/DAL",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/Orcel",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/Lilac",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/Olax",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/MedOrigin",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/Skelet",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/Gomrey",
+      "default_branch": "main"
+    },
+    {
+      "repository": "TheHalfMoon/CommunityFinance-CoFi",
+      "default_branch": "main"
+    }
+  ],
+  "founder_code_search_terms": [
+    "idempotency",
+    "capability",
+    "connector",
+    "transaction",
+    "exact-head"
+  ],
+  "limitations": [
+    "Graft live lookup returned 404; no evidence invented",
+    "Branch protection read returned 403; protection unknown",
+    "Prism checkout failed on Windows path; remote tree and selected raw files used",
+    "No donor executed or security-qualified",
+    "Code-search index may lag source; pinned clone takes precedence"
+  ],
+  "source_url_template": "https://raw.githubusercontent.com/{repository}/{revision}/{path}",
+  "source_read_method": "Source read and targeted symbol/behavior inspection; no build or security qualification. Receipt URL is constructed using source_url_template and the enclosing repository/revision."
+}

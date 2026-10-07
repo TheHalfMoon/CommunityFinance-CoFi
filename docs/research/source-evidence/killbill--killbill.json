@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "killbill/killbill",
+    "revision": "05a6c4346e9921d581af0b498141837fd829ffc1",
+    "screening_license": "Apache-2.0",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": 2094,
+    "license_receipts": [
+      {
+        "path": "LICENSE",
+        "sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd",
+        "evidence_url": "https://raw.githubusercontent.com/killbill/killbill/05a6c4346e9921d581af0b498141837fd829ffc1/LICENSE"
+      }
+    ],
+    "selected_source_read_receipts": [
+      {
+        "path": "payment/src/main/java/org/killbill/billing/payment/core/PaymentProcessor.java",
+        "sha256": "1a98e78afc5a386153a435e4036d1a48ca59d70a60d3ac45d2adbcdf38400b60",
+        "lines": 386
+      },
+      {
+        "path": "invoice/src/main/java/org/killbill/billing/invoice/generator/DefaultInvoiceGenerator.java",
+        "sha256": "682af03115f64b63a1c80f5dbfc06772ba3410ac36d66effd422c620ab6c2747",
+        "lines": 156
+      }
+    ],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}

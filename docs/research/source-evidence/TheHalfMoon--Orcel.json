@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "TheHalfMoon/Orcel",
+    "revision": "181eb6ad2cd2abe5632a668b9e7141bac3c9e6e5",
+    "screening_license": "Apache-2.0 + derivative NOTICE",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": 5570,
+    "license_receipts": [
+      {
+        "path": "LICENSE",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Orcel/181eb6ad2cd2abe5632a668b9e7141bac3c9e6e5/LICENSE"
+      },
+      {
+        "path": "NOTICE",
+        "sha256": "3e0903a8fb8573d06a9cc0563805714c69a2029eebb908a8c1b26f8f8fefa923",
+        "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Orcel/181eb6ad2cd2abe5632a668b9e7141bac3c9e6e5/NOTICE"
+      }
+    ],
+    "selected_source_read_receipts": [],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "TheHalfMoon/Gomrey",
+    "revision": "1a186641fb96035e1d8ef40e102f9021f28f652e",
+    "screening_license": "Apache-2.0 + NOTICE",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": 11592,
+    "license_receipts": [
+      {
+        "path": "LICENSE",
+        "sha256": "23d6fd64bfcbd46b331098ed89454717fd1719faccbf632f8234b962aa43ed1a",
+        "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Gomrey/1a186641fb96035e1d8ef40e102f9021f28f652e/LICENSE"
+      },
+      {
+        "path": "NOTICE",
+        "sha256": "b896b6803a6dd38c9307e3fc6768c0da387e9ce8596d1c2e7c73c26b769ce2d7",
+        "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Gomrey/1a186641fb96035e1d8ef40e102f9021f28f652e/NOTICE"
+      }
+    ],
+    "selected_source_read_receipts": [
+      {
+        "path": "servers/fastapi/gomrey/connector_sync.py",
+        "sha256": "9c838835fbf3f2f6e85f5b0287b8f42484d655d7897a2800f37779635e605fe1",
+        "lines": 196
+      },
+      {
+        "path": "contracts/v1/connector-identity.schema.json",
+        "sha256": "152818128b3b7325aa30ebf4e47fc6d3b0e6c5ff3d0a44fafc0e89ea472bfa78",
+        "lines": 23
+      },
+      {
+        "path": "contracts/v1/capability-grant.schema.json",
+        "sha256": "79c55f620d2831dddd713d09bfbb5b4075358f43835f622c350283f8094e6bac",
+        "lines": 23
+      }
+    ],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}

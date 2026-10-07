@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "juspay/hyperswitch-encryption-service",
+    "revision": "e1b58ea30c670dcef3e301beb8375835c9f4f2e1",
+    "screening_license": "Apache-2.0",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": 131,
+    "license_receipts": [
+      {
+        "path": "LICENSE",
+        "sha256": "8c6db340475136df3c1201d458fa5755698eace76e510471ecc9d857d6083dac",
+        "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-encryption-service/e1b58ea30c670dcef3e301beb8375835c9f4f2e1/LICENSE"
+      }
+    ],
+    "selected_source_read_receipts": [
+      {
+        "path": "src/app.rs",
+        "sha256": "7add6699e3a0107fb0b401d99485dfc01a6c1a73b838443233c8c57e8f0a53d4",
+        "lines": 89
+      },
+      {
+        "path": "src/config.rs",
+        "sha256": "9b8a54edec0c4c151fc603d8abba833d3cb5ce66eb49e39693c9671f4a834a7a",
+        "lines": 547
+      },
+      {
+        "path": "src/consts.rs",
+        "sha256": "6f4bc3cd652af0f9a963d4fda6242a1749bb2d4e35bd58e014d3cd0af542de4e",
+        "lines": 9
+      },
+      {
+        "path": "src/core.rs",
+        "sha256": "5a2276fd4d63d08713f2dc8fcb90449195847a938c373510b0549358b98fe346",
+        "lines": 42
+      },
+      {
+        "path": "src/crypto.rs",
+        "sha256": "ccb4b94339d6174adc2cefd028d2ffd6120eaa2ed3e07dc26abfd101c1ccedc1",
+        "lines": 265
+      },
+      {
+        "path": "src/env.rs",
+        "sha256": "45be73f96edc4fde8ae3d4747d3a5c4e7aaabec7fbfeecefa3e44cef7daff62f",
+        "lines": 18
+      },
+      {
+        "path": "src/errors.rs",
+        "sha256": "30d6594edc82d4d8caffd6eba75ae8f243d0267959c738f70c806dda8a39d6f9",
+        "lines": 14
+      },
+      {
+        "path": "src/lib.rs",
+        "sha256": "d1b7ec0f169f42e18efe114144c42fd291c9de7f47f3b88f9d46cfb7711f29cc",
+        "lines": 14
+      },
+      {
+        "path": "src/multitenancy.rs",
+        "sha256": "b72d27c9d1da74d6a9a844c469fc80f8ab24f59b5307249a032a1859d1e1c239",
+        "lines": 91
+      },
+      {
+        "path": "src/request_id.rs",
+        "sha256": "d1ef28280b0a1e857478d173702cf8d5e6295545befd6a21c69d6a3add67de5e",
+        "lines": 14
+      },
+      {
+        "path": "src/routes.rs",
+        "sha256": "5e299791e71e5e7edee6b255757d943da3830a68c2941721c56f3e7e65a49336",
+        "lines": 7
+      },
+      {
+        "path": "src/schema.rs",
+        "sha256": "faa95a6b891f25773d6215720ad8c81f2e177de0863cec27ab814c87902f3b44",
+        "lines": 18
+      },
+      {
+        "path": "src/services.rs",
+        "sha256": "998b39f38765b98c0e5087d69000460b27d39de1a961f7768bbb110ce07bc326",
+        "lines": 4
+      },
+      {
+        "path": "src/storage.rs",
+        "sha256": "c1ca17002eaa89a9feb161db26c2c8be01dbec4a6a5a6dbb6eeca409b0b6ecf3",
+        "lines": 104
+      },
+      {
+        "path": "src/types.rs",
+        "sha256": "09728bc0296629accc3bb499f3d8ae6633641ddf48ab482cb00447917a940923",
+        "lines": 6
+      },
+      {
+        "path": "README.md",
+        "sha256": "e63073bb56a5fae73556e54ea3ee50b31e836cbb30159282e0e86664402c5df3",
+        "lines": 20
+      }
+    ],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}

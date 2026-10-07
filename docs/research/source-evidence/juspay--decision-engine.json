@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "juspay/decision-engine",
+    "revision": "6cc11474ff7fb08dd35f33828258968cc04dff27",
+    "screening_license": "AGPL-3.0",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": 808,
+    "license_receipts": [
+      {
+        "path": "LICENSE",
+        "sha256": "02d68a717c16cd81692ddf2641ebe71756613b343afee12f3ddfee62d89bf038",
+        "evidence_url": "https://raw.githubusercontent.com/juspay/decision-engine/6cc11474ff7fb08dd35f33828258968cc04dff27/LICENSE"
+      }
+    ],
+    "selected_source_read_receipts": [
+      {
+        "path": "src/analytics/clickhouse/endpoints/cost_savings.rs",
+        "sha256": "18529b8813fd6e0999af626ed6557d33791024c983fe8e08fae379b4f264ac9c",
+        "lines": 48
+      },
+      {
+        "path": "src/analytics/clickhouse/endpoints/preview_trace.rs",
+        "sha256": "403e1aa8ec6f7a371a01249e9af7f867e35ccd43f43493b2e470c64e3a244c7e",
+        "lines": 9
+      },
+      {
+        "path": "README.md",
+        "sha256": "b9cbe27f36d12aec60638bb032b73df37aa563ca5bdac0bed3746bb79f1cae1d",
+        "lines": 234
+      }
+    ],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}

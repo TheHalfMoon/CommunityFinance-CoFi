@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "TheHalfMoon/Morize",
+    "revision": "62fc04d01d398da93b4dacf0ab2f33e3f1440462",
+    "screening_license": "Apache-2.0 + notices",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": 113,
+    "license_receipts": [
+      {
+        "path": "LICENSE",
+        "sha256": "3366eb64b49c5908f88972fcd34d7d88dd74308d2b6b5c4217e1e72db64e5693",
+        "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Morize/62fc04d01d398da93b4dacf0ab2f33e3f1440462/LICENSE"
+      },
+      {
+        "path": "NOTICE",
+        "sha256": "9ed143db917411e009462cd584a9569b03e216ba516c144eaba07d58d913e89a",
+        "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Morize/62fc04d01d398da93b4dacf0ab2f33e3f1440462/NOTICE"
+      },
+      {
+        "path": "THIRD_PARTY_NOTICES.md",
+        "sha256": "1c4d5c3ee01e9e34b0a03ea917f263659ea99b8ec22fd4113baf4dd1350d21c4",
+        "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Morize/62fc04d01d398da93b4dacf0ab2f33e3f1440462/THIRD_PARTY_NOTICES.md"
+      }
+    ],
+    "selected_source_read_receipts": [
+      {
+        "path": "crates/morize-core/src/lib.rs",
+        "sha256": "338d61a22be70c1ac694a6c9e816f59537c2a3c4687e78a7b6d2ce36b9b3288d",
+        "lines": 35
+      }
+    ],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}

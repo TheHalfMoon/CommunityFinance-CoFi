@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "TheHalfMoon/Deskal",
+    "revision": "ca060c69ad6bcdbc38c15609620888c0bc0911f4",
+    "screening_license": "Apache-2.0",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": 504,
+    "license_receipts": [
+      {
+        "path": "LICENSE",
+        "sha256": "f4c1d7ba32ef5bcf5cf03e2eefec5825ebafedf50fa330a36700a49c605c1ef4",
+        "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Deskal/ca060c69ad6bcdbc38c15609620888c0bc0911f4/LICENSE"
+      }
+    ],
+    "selected_source_read_receipts": [
+      {
+        "path": "apps/qdral-mcp/src/oauth_authorization.ts",
+        "sha256": "c63a924c5d6a2d4b7b83bea652159427707f0dc28605502a3926e5fd94992f93",
+        "lines": 1698
+      },
+      {
+        "path": "apps/qdral-mcp/src/computer_action_proposal.ts",
+        "sha256": "f009e23330435ad677528b87cd44e47e232c32903ee816a9f44a6d3e52354681",
+        "lines": 102
+      }
+    ],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}

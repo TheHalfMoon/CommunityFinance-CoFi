@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "TheHalfMoon/Olax",
+    "revision": "745a4ba791cf9291051592ab3d6ed29145e0e2c2",
+    "screening_license": "No root LICENSE found",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": 156,
+    "license_receipts": [],
+    "selected_source_read_receipts": [],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}

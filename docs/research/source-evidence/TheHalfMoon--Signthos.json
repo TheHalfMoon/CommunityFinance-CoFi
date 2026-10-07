@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "TheHalfMoon/Signthos",
+    "revision": "f945f12fd1a2b600c2c61493162e3654b4d5b50c",
+    "screening_license": "No root LICENSE; restricted import licenses present",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": 563,
+    "license_receipts": [
+      {
+        "path": "NOTICE",
+        "sha256": "5b4d2ce178ee622c3bed9b5c2bf79f4e957c56778774281802c1c5671231041c",
+        "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Signthos/f945f12fd1a2b600c2c61493162e3654b4d5b50c/NOTICE"
+      }
+    ],
+    "selected_source_read_receipts": [
+      {
+        "path": "tools/provenance/src/restricted_policy.rs",
+        "sha256": "0297e6d4c59058ff420259737f977ba7b605a6381e5a25f2301c306bbf17c4dc",
+        "lines": 367
+      },
+      {
+        "path": "tools/provenance/src/verify_source.rs",
+        "sha256": "5b4b447fc6f094fe45ddc9318f4963ce1f2158854fdd0951d4f8291c67a90205",
+        "lines": 835
+      },
+      {
+        "path": "provenance/schema/v2/source-import.schema.json",
+        "sha256": "c397d23483e05578b191e8a2b579658ec8a6435fd429e8deb08acea90d082bfb",
+        "lines": 194
+      }
+    ],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}

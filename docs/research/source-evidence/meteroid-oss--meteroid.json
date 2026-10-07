@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "meteroid-oss/meteroid",
+    "revision": "2fda46cdc8a16668b15356e60f2a986034cdd352",
+    "screening_license": "AGPL-3.0",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": 2248,
+    "license_receipts": [
+      {
+        "path": "LICENSE",
+        "sha256": "8486a10c4393cee1c25392769ddd3b2d6c242d6ec7928e1414efff7dfb2f07ef",
+        "evidence_url": "https://raw.githubusercontent.com/meteroid-oss/meteroid/2fda46cdc8a16668b15356e60f2a986034cdd352/LICENSE"
+      }
+    ],
+    "selected_source_read_receipts": [
+      {
+        "path": "crates/common-build-info/src/lib.rs",
+        "sha256": "ceb51600207c7c03d9d21627e44beef07d7cf9c4fd5764494e0b3e5562889e30",
+        "lines": 66
+      },
+      {
+        "path": "crates/common-config/src/lib.rs",
+        "sha256": "3d4a41256403b9055cd2a08bee68e6d8d3cc8f78c98e0d90d7c400221d8bb3ba",
+        "lines": 5
+      },
+      {
+        "path": "crates/common-domain/src/lib.rs",
+        "sha256": "ed7f606a6ab61f09d2622e104a3d5d0117106409126bb6eba8463d5d4e0f710d",
+        "lines": 6
+      },
+      {
+        "path": "crates/common-eventbus/src/lib.rs",
+        "sha256": "3b4dff0281787765c839008189b99a528189bcee2cc6bf39d58841fc969270d9",
+        "lines": 371
+      },
+      {
+        "path": "crates/common-grpc/src/lib.rs",
+        "sha256": "09ff7170f39ddcd05ee269199c326b043ceb3c3c3da289a878b12ceea81889cb",
+        "lines": 122
+      },
+      {
+        "path": "crates/common-grpc-error-as-tonic-macros/src/lib.rs",
+        "sha256": "012dd7490d4d54f96601c8324baaff0b610e8ec862f1be170c21b3c363daf851",
+        "lines": 44
+      },
+      {
+        "path": "crates/common-grpc-error-as-tonic-macros-impl/src/lib.rs",
+        "sha256": "0d281d096e6507a01c39ad016d28d26acb2a56fc8894536ed2ebbb6603308025",
+        "lines": 96
+      },
+      {
+        "path": "crates/common-logging/src/lib.rs",
+        "sha256": "5c486d888c1a0140b0aa58e33880051cfea2a332debf6a56ee7d180a5bf226d0",
+        "lines": 13
+      },
+      {
+        "path": "crates/common-utils/src/lib.rs",
+        "sha256": "0e44adf1b5f5c13e1d5dbd55060e89184c9304516a87030b21d6601606c4fcda",
+        "lines": 9
+      },
+      {
+        "path": "crates/distributed-lock/src/lib.rs",
+        "sha256": "5df531074d1260285b34be4a8b14030ac78937728f31432c22c21f4002426277",
+        "lines": 6
+      },
+      {
+        "path": "crates/golden/src/lib.rs",
+        "sha256": "b1992f233af08b188889c6123348dc51487acab1b85442e16a784223a5ef0563",
+        "lines": 244
+      },
+      {
+        "path": "crates/kafka/src/lib.rs",
+        "sha256": "a74fb0bac61d8184e771e779a69c0262cbb00b8d4756f5191e3eeb14ba0f5360",
+        "lines": 4
+      },
+      {
+        "path": "crates/secrecy/src/lib.rs",
+        "sha256": "89dc1b7b3b053629650ec3028245c76f6d44f26dd4a921706a8e7f9be19aca1b",
+        "lines": 348
+      },
+      {
+        "path": "crates/world-tax/src/lib.rs",
+        "sha256": "d2c5ed24605a60b92a4f6f716d0b96ecf00972e9726ade6e53c2e3319f249963",
+        "lines": 20
+      },
+      {
+        "path": "modules/meteroid/crates/diesel-models/src/outbox_event.rs",
+        "sha256": "1b38f8cf641c1cda57497cf3f18fbb2bb212155b74b70d539d7ebfe140b7add1",
+        "lines": 14
+      },
+      {
+        "path": "modules/meteroid/crates/diesel-models/src/credit_notes.rs",
+        "sha256": "7ad13d42cb835c12ff140166c6cc9e00ee0e5bd5e5b5c2259b87d60d7077723f",
+        "lines": 81
+      }
+    ],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}

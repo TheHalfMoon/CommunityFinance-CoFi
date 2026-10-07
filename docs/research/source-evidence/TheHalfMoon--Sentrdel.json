@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "TheHalfMoon/Sentrdel",
+    "revision": "f5747319a50831ef7cee983d253c0ca5503c9a64",
+    "screening_license": "Apache-2.0",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": 488,
+    "license_receipts": [
+      {
+        "path": "LICENSE",
+        "sha256": "84df429c06e43d80628b61d77a002fee038e876a0d9d1d09db1953a275590318",
+        "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Sentrdel/f5747319a50831ef7cee983d253c0ca5503c9a64/LICENSE"
+      }
+    ],
+    "selected_source_read_receipts": [
+      {
+        "path": "crates/sentrdel-store/src/lib.rs",
+        "sha256": "2ecda7e21d83d206dc8ed8715a246f898007c38464d841f5615e1a998c6e3fea",
+        "lines": 518
+      },
+      {
+        "path": "crates/sentrdel-review/src/reconcile.rs",
+        "sha256": "368b2a61bae3daffcea44bb3204b67cb8f095300d5b550ee9ebab091a552123c",
+        "lines": 263
+      }
+    ],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}

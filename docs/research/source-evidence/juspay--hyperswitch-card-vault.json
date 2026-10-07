@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "juspay/hyperswitch-card-vault",
+    "revision": "eca8b7e3d0f544319578120f05b8157e73130864",
+    "screening_license": "Apache-2.0",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": 179,
+    "license_receipts": [
+      {
+        "path": "LICENSE",
+        "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-card-vault/eca8b7e3d0f544319578120f05b8157e73130864/LICENSE"
+      }
+    ],
+    "selected_source_read_receipts": [
+      {
+        "path": "src/api_client.rs",
+        "sha256": "bd633f04a6501e35ecd201b414e320179f4190e43117bc05d978b838c41bb5cd",
+        "lines": 262
+      },
+      {
+        "path": "src/app.rs",
+        "sha256": "cfd40dcb2ad7b84984ebad753360a47e736d4494ddd1549c732ef6eebec31dfa",
+        "lines": 343
+      },
+      {
+        "path": "src/config.rs",
+        "sha256": "0aee9418d7f5a3c5d2a67bd0dbab1f50df0b6dc9a06a72f5058f994820e76d5c",
+        "lines": 779
+      },
+      {
+        "path": "src/crypto.rs",
+        "sha256": "1346c6eb0e01d03b69ba38d9c71796748c9bfdd4103e86af1f9c44d88a0a9cb5",
+        "lines": 15
+      },
+      {
+        "path": "src/custom_extractors.rs",
+        "sha256": "0c0208aca5ffc3bcf8cee50ca5738e058136ac664dd7994bae16529978a18efb",
+        "lines": 93
+      },
+      {
+        "path": "src/domain.rs",
+        "sha256": "9d9d79f457ffd2e57dbde7ceca7c6a39fee9b6da1415909a82999138462e6a19",
+        "lines": 22
+      },
+      {
+        "path": "src/error.rs",
+        "sha256": "59bb919b57081572b09d60972bca2e54d4a8019e9d97ee18e005576eed1b7359",
+        "lines": 469
+      },
+      {
+        "path": "src/lib.rs",
+        "sha256": "050f1173dd6183588f21dc174457eaa1ad039db8f0918e06f1b06a6374a0d48f",
+        "lines": 17
+      },
+      {
+        "path": "src/logger.rs",
+        "sha256": "90a7d72551f1444934fb48cd4621e7f9e0e0aee5e91469925fd9492489b86707",
+        "lines": 8
+      },
+      {
+        "path": "src/middleware.rs",
+        "sha256": "ae26c77dd8655ea5d6a8a886766d5a705b9013fe1551f176104a6a7a34172677",
+        "lines": 98
+      },
+      {
+        "path": "src/observability.rs",
+        "sha256": "81643fc12e9a92ee3b209d0a1d9fd9951033dc89529fa859a76ee479b04a06d7",
+        "lines": 126
+      },
+      {
+        "path": "src/routes.rs",
+        "sha256": "5683a602b88f8bd4ec9e32ecd778e9596f350e05ce2a3cdf9ea3ac5ca803444f",
+        "lines": 23
+      },
+      {
+        "path": "src/runtime_config.rs",
+        "sha256": "46b517da3789a308f0b929a7d2803cef1934470fb402c08d7bf4728ff007f872",
+        "lines": 320
+      },
+      {
+        "path": "src/storage.rs",
+        "sha256": "1b2efa7b4f62bc3ce5a0deae483689ef30820a5031e542f10a58eb943bd3e7a0",
+        "lines": 858
+      },
+      {
+        "path": "src/tenant.rs",
+        "sha256": "b21c34577848421e55280bc19aaf8d77c7837ed47ffa045cc74a8f6598705537",
+        "lines": 194
+      },
+      {
+        "path": "src/utils.rs",
+        "sha256": "538da9bba95b9031d9b5bd6a32fb537b834e2f4d83fb28ef6eecab3e0a922773",
+        "lines": 124
+      },
+      {
+        "path": "src/validations.rs",
+        "sha256": "bf72a5993284b04abf062f44bc23ec9ef3b56da35ad7d6c55590f3ed7dab5b58",
+        "lines": 71
+      },
+      {
+        "path": "README.md",
+        "sha256": "765214a4c589956cb407f720f09e3f1b63e3b5379e931b0875dcd6da146068f6",
+        "lines": 33
+      }
+    ],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "juspay/hyperswitch-control-center",
+    "revision": "719e57cdb2912f4a89913b3e3625e81cca0e55bf",
+    "screening_license": "Apache-2.0 root; MIT package metadata conflict",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": 2110,
+    "license_receipts": [
+      {
+        "path": "LICENSE",
+        "sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd",
+        "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-control-center/719e57cdb2912f4a89913b3e3625e81cca0e55bf/LICENSE"
+      }
+    ],
+    "selected_source_read_receipts": [
+      {
+        "path": "README.md",
+        "sha256": "fbab63050d564eb794f54a99098eb846c66b518c261a310ac458f5460e4f067c",
+        "lines": 692
+      },
+      {
+        "path": "package.json",
+        "sha256": "2b6503aa879056d91428342a8014f4a7bc9082e3b1ba8e41474cacf6f4970e19",
+        "lines": 118
+      }
+    ],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}
