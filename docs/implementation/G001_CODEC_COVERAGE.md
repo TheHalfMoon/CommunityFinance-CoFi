@@ -1,9 +1,9 @@
-# G001 codec coverage — ledger and metering slices
+# G001 codec coverage — ledger, metering and rating evidence slices
 
 Status: **PARTIAL IMPLEMENTATION / NOT G001 QUALIFIED**.
 
 This file records the actual delivered codec slices in issue #22. G001 requires
-**all** economic and authority registries, not just ledger and metering. No database,
+**all** economic and authority registries, not just ledger, metering and rating. No database,
 API, provider execution, or live-money capability is introduced here.
 
 ## Implemented now
@@ -17,6 +17,8 @@ API, provider execution, or live-money capability is introduced here.
 | Meter definition | `cofi-metering::MeterDefinition` | `meter.definition`, v1 | `MeterId::new`, `EventType::new`, `MeterDefinition::new`, `MeteringEngine::register_meter` | Full definition roundtrip, replay and changed-identity conflict |
 | Usage event (Count/Sum) | `cofi-metering::UsageEvent` | `meter.event`, v1 | Checked IDs, times and decimal-string `i128` quantity, `UsageEvent::new`, `MeteringEngine::ingest` | Full event parity, source-event replay, type/shape/timestamp and missing-parent failure |
 | Usage aggregate | `cofi-metering::UsageAggregate` | Derived, never serialized directly | Recomputed by `MeteringEngine::aggregate` | Sum `i128::MAX`, Count, exact reference parity |
+| Rate plan snapshot | cofi-rating::RatePlan | rate.plan v1 | Checked RatePlan constructors, all exact integer fields | i128 bounds, malformed plan and price rejection |
+| Historical accepted rating | cofi-rating::RatingRequest / RatedCharge | rating.acceptance v1 | Frozen original meter/usage/plan; canonical aggregate and rate; verify every charge field | Late-arrival nonretroactivity, altered source, mismatched receipt, identity/key conflict, overflow |
 
 Record payloads use typed JSON with required version/type, unknown-field rejection,
 canonical decimal **strings** for monetary amounts and timestamps, and a checked
@@ -41,12 +43,31 @@ will be specified before G003. Record type/version rejection is fail-closed.
 | `cofi-governance`, `cofi-spending` | proposals, approvals, quorum, consumed authority and approved spending |
 | `cofi-disbursements`, `cofi-provider-contract` | lifecycle, request, observation and evidence bindings |
 | `cofi-reconciliation`, `cofi-audit` | cases/outcomes and authenticated audit streams |
-| `cofi-rating` | price/rate plan facts, pricing outputs and rating replay/indexes |
+| cofi-rating production admission | Authenticated complete source-event cutoff, tenant scope and authorization lineage remain unproven |
 | `cofi-billing`, `cofi-invoicing`, `cofi-subscriptions` | customers, receivables, invoice lifecycle and subscription schedule/indexes |
 | `cofi-payments` | capture and payout accounting source events |
 | `cofi-rating-authorization`, `cofi-invoice-authorization`, `cofi-finalization-authorization` | lineage, immutable authorization results and consumed keys |
 | `cofi-payment-authorization`, `cofi-payout-authorization` | capture/payout authorization and exact source-event binding |
 | `cofi-fund-allocation-authorization`, `cofi-fund-transfer-authorization` | fund movement authorization/budget lineage |
+
+### Historical rating evidence limitation
+
+The rating.acceptance codec checks a supplied **frozen source-event set**
+against its original meter definition, price plan and original charge.
+A later-arriving event cannot be silently used to change that receipt.
+However, a codec alone **cannot prove completeness** of the supplied source
+events at the historical acceptance boundary. Coherent tampering of both
+event snapshots and charge is not cryptographically detectable here.
+A durable canonical sequence/checkpoint, authenticated source provenance,
+tenant/scope enforcement and atomic binding to accepted rating must be
+implemented in G002-G004 before production replay or real billing.
+The source domain currently carries no independent scope identity.
+
+Pstack TDD evidence: the missing rating module/dependencies failed first.
+Six targeted tests now verify late-arrival stability, exact price-plan
+roundtrip, source/receipt corruption rejection, changed equal-value source,
+duplicate rating key and multiplication overflow. Graft dependency analysis
+must accompany the exact diff before it can be merged.
 
 This summary is a coverage *frontier*, not a proof of complete domain transitions.
 The metering slice uses Pstack's narrow TDD/review workflow: first the missing-module

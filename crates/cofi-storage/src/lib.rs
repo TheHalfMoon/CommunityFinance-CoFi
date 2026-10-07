@@ -5,6 +5,7 @@
 //! dedicated codecs, complete inventories, and parity proofs are reviewed.
 
 pub mod metering;
+pub mod rating;
 
 use std::error::Error;
 use std::fmt::{Display, Formatter};
