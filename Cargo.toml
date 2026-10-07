@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/cofi-ledger", "crates/cofi-community", "crates/cofi-governance", "crates/cofi-spending", "crates/cofi-disbursements", "crates/cofi-provider-contract", "crates/cofi-reconciliation", "crates/cofi-metering", "crates/cofi-audit", "crates/cofi-billing", "crates/cofi-payments", "crates/cofi-rating", "crates/cofi-invoicing", "crates/cofi-subscriptions", "crates/cofi-rating-authorization", "crates/cofi-invoice-authorization", "crates/cofi-finalization-authorization", "crates/cofi-payment-authorization", "crates/cofi-payout-authorization", "crates/cofi-fund-allocation-authorization", "crates/cofi-fund-transfer-authorization"]
+members = ["crates/cofi-storage", "crates/cofi-ledger", "crates/cofi-community", "crates/cofi-governance", "crates/cofi-spending", "crates/cofi-disbursements", "crates/cofi-provider-contract", "crates/cofi-reconciliation", "crates/cofi-metering", "crates/cofi-audit", "crates/cofi-billing", "crates/cofi-payments", "crates/cofi-rating", "crates/cofi-invoicing", "crates/cofi-subscriptions", "crates/cofi-rating-authorization", "crates/cofi-invoice-authorization", "crates/cofi-finalization-authorization", "crates/cofi-payment-authorization", "crates/cofi-payout-authorization", "crates/cofi-fund-allocation-authorization", "crates/cofi-fund-transfer-authorization"]
 exclude = ["apps/desktop/src-tauri"]
 resolver = "3"
 
