@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "juspay/hyperswitch-web",
+    "revision": "c83a564fac3caf48affc36164cfa9c5e3ff89eef",
+    "screening_license": "Apache-2.0",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": 502,
+    "license_receipts": [
+      {
+        "path": "LICENSE",
+        "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-web/c83a564fac3caf48affc36164cfa9c5e3ff89eef/LICENSE"
+      }
+    ],
+    "selected_source_read_receipts": [
+      {
+        "path": "README.md",
+        "sha256": "2c70dadfc549e09556f9e147918ae02660a61bb5bda0530d04cda213d1abbd58",
+        "lines": 351
+      },
+      {
+        "path": "package.json",
+        "sha256": "3ecfb8121f07a4f6f246c4c421fada4edffd2936d18bf18eae170f6d0aa005b7",
+        "lines": 118
+      }
+    ],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}

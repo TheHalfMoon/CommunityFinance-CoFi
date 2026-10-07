@@ -2,6 +2,8 @@
 
 Retrieved: 2026-10-07. Pins are live observed source revisions, not assumed prompt values. Root licenses are screening evidence. Exact selected paths/digests and license receipts appear in [SOURCE_EVIDENCE.json](SOURCE_EVIDENCE.json). This documentation imports no donor code.
 
+The schema-version-2 index links one evidence file per repository under `source-evidence/` and records each file's SHA-256. Each linked file contains the complete repository evidence object; source-read method and URL-template metadata remain in the index. Reconstruct the original register by replacing each index entry with its linked `repository_evidence` object. This lossless partition keeps individual review inputs bounded without omitting receipts. It changes research packaging only, not a shipped CoFi format.
+
 ## Immutable source pins
 
 | Repository | Full observed revision | Root screening license | Inspected coverage |

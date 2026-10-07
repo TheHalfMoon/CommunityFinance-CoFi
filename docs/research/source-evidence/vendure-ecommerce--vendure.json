@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "vendure-ecommerce/vendure",
+    "revision": "cc88031a2079ea41c0375aeba524f601f3124a6b",
+    "screening_license": "GPL-3.0 + commercial/plugin provisions",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": 5138,
+    "license_receipts": [
+      {
+        "path": "LICENSE.md",
+        "sha256": "b78a9d11922dff7b00efee72d40381bc3765e220fd31c575e2d39ffd42883013",
+        "evidence_url": "https://raw.githubusercontent.com/vendure-ecommerce/vendure/cc88031a2079ea41c0375aeba524f601f3124a6b/LICENSE.md"
+      }
+    ],
+    "selected_source_read_receipts": [
+      {
+        "path": "packages/core/src/config/payment/payment-method-handler.ts",
+        "sha256": "59db980b41005dccbeec01a53e75934964ce84455cadb244a92fc6f446611d12",
+        "lines": 470
+      },
+      {
+        "path": "packages/core/src/service/helpers/payment-state-machine/payment-state.ts",
+        "sha256": "e9abf3a79fbf8838a464b75ffd0560f1a79ff98744c85813c95795f94d04ffa8",
+        "lines": 45
+      }
+    ],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}

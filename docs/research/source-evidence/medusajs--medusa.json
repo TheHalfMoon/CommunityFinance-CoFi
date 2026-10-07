@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "medusajs/medusa",
+    "revision": "d436d2fbc3c50be0bdbc272ab0516d1d16db170f",
+    "screening_license": "MIT with restricted enterprise units",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": 24234,
+    "license_receipts": [
+      {
+        "path": "ENTERPRISE-LICENSE.md",
+        "sha256": "2e0b6e1a06fc2fbc9d4f6bb57cf61ea707bb470711f8c068acc42b85fd30b5d4",
+        "evidence_url": "https://raw.githubusercontent.com/medusajs/medusa/d436d2fbc3c50be0bdbc272ab0516d1d16db170f/ENTERPRISE-LICENSE.md"
+      },
+      {
+        "path": "LICENSE",
+        "sha256": "cf67cc556c17e0b00dc0c74a3d71db8dec9aae98af747a2503803a640fba9bb5",
+        "evidence_url": "https://raw.githubusercontent.com/medusajs/medusa/d436d2fbc3c50be0bdbc272ab0516d1d16db170f/LICENSE"
+      }
+    ],
+    "selected_source_read_receipts": [
+      {
+        "path": "packages/core/types/src/payment/provider.ts",
+        "sha256": "ed0b1e5300eac211ef53977bb3f3812e68b72aaeaa802b1947cffc360bb9c167",
+        "lines": 749
+      },
+      {
+        "path": "packages/modules/payment/src/services/payment-module.ts",
+        "sha256": "8a3511ead437d4fa17eac9c45bb1197db70c1542545d371da508261e497b5819",
+        "lines": 1468
+      }
+    ],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}

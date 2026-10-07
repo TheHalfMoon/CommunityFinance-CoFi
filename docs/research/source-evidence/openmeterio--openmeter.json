@@ -1,0 +1,395 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "openmeterio/openmeter",
+    "revision": "5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f",
+    "screening_license": "Apache-2.0",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": 4748,
+    "license_receipts": [
+      {
+        "path": "LICENSE",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "evidence_url": "https://raw.githubusercontent.com/openmeterio/openmeter/5a0e27e6f50b301e9bdb93772a6a970fd4a1f58f/LICENSE"
+      }
+    ],
+    "selected_source_read_receipts": [
+      {
+        "path": "openmeter/credit/balance.go",
+        "sha256": "bcaec573174456e2c47dcb946d2fba9ec1556247282750474ea408086dfb37fb",
+        "lines": 355
+      },
+      {
+        "path": "openmeter/credit/connector.go",
+        "sha256": "5b4f1912f054f073d1b5796ac8cf66c3811c65d70eed79170710df36d3b114f2",
+        "lines": 60
+      },
+      {
+        "path": "openmeter/credit/errors.go",
+        "sha256": "7a0977a688d799645087af7c7c934e94140db783529877b3e385c6e74e8d40d0",
+        "lines": 26
+      },
+      {
+        "path": "openmeter/credit/grant.go",
+        "sha256": "e85650c2a0022ed66579bb2ea30b2c92a77231b819d7cd5443e5055bc3e8f9f8",
+        "lines": 208
+      },
+      {
+        "path": "openmeter/credit/helper.go",
+        "sha256": "8ab00d6fbfd06de97a59394d24368be83a72c7c567e50fb539effe8b121744f3",
+        "lines": 326
+      },
+      {
+        "path": "openmeter/credit/trace.go",
+        "sha256": "cb18070943567753d59bb567a5f5a3aeba7a1f00365271b02bf639d3b0584d71",
+        "lines": 40
+      },
+      {
+        "path": "openmeter/entitlement/access.go",
+        "sha256": "41ea46913c072bbb76b98e79ed1e5a82dfecd5b0bd282dd38ed7eb42ec67f29c",
+        "lines": 12
+      },
+      {
+        "path": "openmeter/entitlement/api.go",
+        "sha256": "2ec9012b1f49fdfa52f39a66320d50a82efecf2429b083a48726333acecb07eb",
+        "lines": 561
+      },
+      {
+        "path": "openmeter/entitlement/api_test.go",
+        "sha256": "5a2e34fe00cfaba5f40d260a8f8a220a860148cbf00b9e2d679041353dd65f31",
+        "lines": 443
+      },
+      {
+        "path": "openmeter/entitlement/connector.go",
+        "sha256": "7f6f210012da7d11a8422b12db64026d3328be5b50023bd3a5dd92f48fdb35ec",
+        "lines": 113
+      },
+      {
+        "path": "openmeter/entitlement/entitlement.go",
+        "sha256": "057a546cc14b00358ddb3ab7b4aab545a330301462dc2a8132ca4e73b7d323de",
+        "lines": 415
+      },
+      {
+        "path": "openmeter/entitlement/entitlement_grant.go",
+        "sha256": "1bb6206ab7e877e8f3e6812ac68474c5ff7fbb37b91c92270897b32ab80873e7",
+        "lines": 7
+      },
+      {
+        "path": "openmeter/entitlement/entitlement_test.go",
+        "sha256": "77e1d3c51a982ddf718886aa0522ca88d273576ed68ead230dd8d3fde9a14312",
+        "lines": 69
+      },
+      {
+        "path": "openmeter/entitlement/entitlement_types.go",
+        "sha256": "0af29d06447321eeec2cb25be6aaf56d4e10db6cdd84f1fb7864802cb0bf208a",
+        "lines": 33
+      },
+      {
+        "path": "openmeter/entitlement/errors.go",
+        "sha256": "0cf32636bb3800fad41956f78a92995e5db677514bc8ebe8516a6c9f40667e8b",
+        "lines": 82
+      },
+      {
+        "path": "openmeter/entitlement/events.go",
+        "sha256": "4191141fa1d2932e794677c75feec7bac61d712c4d0acd4cafc84a1d8b9ffd11",
+        "lines": 207
+      },
+      {
+        "path": "openmeter/entitlement/repository.go",
+        "sha256": "d18da6d582064c78e1c26aa580a8ff6ea1faa03cad5e09146c90f2563b1ab09b",
+        "lines": 98
+      },
+      {
+        "path": "openmeter/entitlement/uniqueness.go",
+        "sha256": "2a35dd7c7bf31290108bdc400380ed1f849534776494a2b8447a14635521576e",
+        "lines": 73
+      },
+      {
+        "path": "openmeter/entitlement/uniqueness_test.go",
+        "sha256": "54fedd84f8fc92933622dd458e2ad1887b4293f13552d70574d8c4aa3cac7c98",
+        "lines": 246
+      },
+      {
+        "path": "openmeter/entitlement/usageperiod.go",
+        "sha256": "3ffda2ace96841be2e679ca7ee3b573289b08c151dedfcfc03d50ec09a5151d7",
+        "lines": 270
+      },
+      {
+        "path": "openmeter/entitlement/usageperiod_test.go",
+        "sha256": "69aee8d4bda5d57790b84fa5b84adcd894f28ee82261bdd5090ec0bc49632527",
+        "lines": 406
+      },
+      {
+        "path": "openmeter/billing/adapter.go",
+        "sha256": "12f2d62b53dcd44560cb70f4caa49bf8b66880f658a907661469fddbf1dc501c",
+        "lines": 115
+      },
+      {
+        "path": "openmeter/billing/annotations.go",
+        "sha256": "e60babe30a4cc808e038328d761b2a0f48fa6c44ada4a1d9be385522916020cc",
+        "lines": 14
+      },
+      {
+        "path": "openmeter/billing/app.go",
+        "sha256": "2aec549643408de008ccc7cb14157183828b53bf340718fe15f4a8bbe86c4ee1",
+        "lines": 410
+      },
+      {
+        "path": "openmeter/billing/change_source_test.go",
+        "sha256": "067e0334ac4d3d7844dd6607423d6d6de60290b3080d7c20184b00507766d8da",
+        "lines": 15
+      },
+      {
+        "path": "openmeter/billing/consts.go",
+        "sha256": "3d5688f1b35ce9bbc3323ba3c38fe9cd02724cf9f16b98b4e56bdb25ae74b504",
+        "lines": 23
+      },
+      {
+        "path": "openmeter/billing/customer.go",
+        "sha256": "2323c51c4da4fb1344ae9d80c6866426ba73b5e29ec4f6564e73060d4ef977ab",
+        "lines": 76
+      },
+      {
+        "path": "openmeter/billing/customeroverride.go",
+        "sha256": "1cc3e5ad91b1c638c05a418442c11be01c6a935ddca0f451e7c059e41d2a3c63",
+        "lines": 385
+      },
+      {
+        "path": "openmeter/billing/defaults.go",
+        "sha256": "4fd1c6361702f5a2794185630aef6d6f38238b8d1d0232fa054fdba0eae9ad27",
+        "lines": 33
+      },
+      {
+        "path": "openmeter/billing/derived.gen.go",
+        "sha256": "f2873ad4b924c1f17f193ac5ca0d394c403bcef103ae9ccac8bd11752350c0a8",
+        "lines": 172
+      },
+      {
+        "path": "openmeter/billing/discount.go",
+        "sha256": "25eab14da1d1a3d24888043da8ca9b15d2ae377000288b26d921aa50405319db",
+        "lines": 514
+      },
+      {
+        "path": "openmeter/billing/discount_test.go",
+        "sha256": "6002fbded169398b6b7e711aadadf6f609c0c1835bc3514b4ed7209ac90c107b",
+        "lines": 222
+      },
+      {
+        "path": "openmeter/billing/errors.go",
+        "sha256": "1ce08ef2503f85bec9fe325bd2c4540106488d1d7fc11d973b92ba9fdc7552d6",
+        "lines": 178
+      },
+      {
+        "path": "openmeter/billing/events.go",
+        "sha256": "c362c048479edca3af9b3ac005eaeba76f161b370c212f0a43eb18610c00b97c",
+        "lines": 194
+      },
+      {
+        "path": "openmeter/billing/eventscollection.go",
+        "sha256": "d4312aa81e9a4693a720f0943dc04d41224c8bfae1f9d03af052dd359c5ca08e",
+        "lines": 49
+      },
+      {
+        "path": "openmeter/billing/eventscollection_test.go",
+        "sha256": "92649db77a50955b582569e2ce85b152ff704bbabfdf8cedb2fcf76be5c2eaa6",
+        "lines": 73
+      },
+      {
+        "path": "openmeter/billing/eventsgathering.go",
+        "sha256": "9354e17fb1b4638524ccda1209c1541a94b58036864d7fce9db46a609ad28b5a",
+        "lines": 30
+      },
+      {
+        "path": "openmeter/billing/gatheringinvoice.go",
+        "sha256": "57c41e9cbb04ec1248b7b015eb7b60f789585e918730b818fadee8452cb96381",
+        "lines": 1154
+      },
+      {
+        "path": "openmeter/billing/gatheringinvoice_test.go",
+        "sha256": "e697c44461ada303cf068dc9563cbfe36e6383c3452ced981f254484d123cd17",
+        "lines": 151
+      },
+      {
+        "path": "openmeter/billing/generate.go",
+        "sha256": "bffa25f8dca7527c50bf902062f9e2692687d17b9550a821230b6f7c7a7a2fbb",
+        "lines": 5
+      },
+      {
+        "path": "openmeter/billing/invoice.go",
+        "sha256": "986d852b8ee885d17bc30497b65408edb048e6a52a0ccb59e7a3adc0006a73ec",
+        "lines": 541
+      },
+      {
+        "path": "openmeter/billing/invoice_test.go",
+        "sha256": "e05c1c9dc6e7cd76a07cc25812a2c463012a192deaa122b1f5c3e5342ea21dd6",
+        "lines": 31
+      },
+      {
+        "path": "openmeter/billing/invoice_validator.go",
+        "sha256": "f411d9675b59476911f5ac073e40d3be70aa71252b661a96c8fc2ff1c04f0eb7",
+        "lines": 58
+      },
+      {
+        "path": "openmeter/billing/invoicedetailedline.go",
+        "sha256": "7c58dc87d5b4cc7e174f06a8533f3ad534fb87e898924b6c4eaf091488fc26a4",
+        "lines": 189
+      },
+      {
+        "path": "openmeter/billing/invoicedetailedline_test.go",
+        "sha256": "20eeec4c286dabbe6d411388dbb64e555ba45ae819cf6edb232ebd6343e791f4",
+        "lines": 239
+      },
+      {
+        "path": "openmeter/billing/invoiceline.go",
+        "sha256": "4aa36d7446bdc38e59a5f4bc73f75fa3512e08b2e776af5d1e36e18feff2ddac",
+        "lines": 282
+      },
+      {
+        "path": "openmeter/billing/invoiceline_test.go",
+        "sha256": "f89c914560f5ef4fadb87e7968ce7bcf45195155ce72f1c6695b64f48d4e0874",
+        "lines": 46
+      },
+      {
+        "path": "openmeter/billing/invoicelinediscount.go",
+        "sha256": "2a70d0d6f881baedc819334737e02d689d941bb2f0a37b512f0243f61ba094f2",
+        "lines": 414
+      },
+      {
+        "path": "openmeter/billing/invoicelinesplitgroup.go",
+        "sha256": "ba9df3a7ee7ed0847a4106f8751f2e281ab4d05ff617d795609ca967c9f773e3",
+        "lines": 457
+      },
+      {
+        "path": "openmeter/billing/invoicelinesplitgroup_test.go",
+        "sha256": "2caeed2991b007f6d9b7cbeb85b6a751fcd7986c510598d2a6ec369bf92a8978",
+        "lines": 89
+      },
+      {
+        "path": "openmeter/billing/invoicelinetypes.go",
+        "sha256": "55ed6cde215653af04da18eade507a0bd3d850c15c59b4d1c5c92630ef1d4868",
+        "lines": 35
+      },
+      {
+        "path": "openmeter/billing/lineengine.go",
+        "sha256": "0e36f0f87d6757b6d35a352a27163e5267e62dcdd15bd3adcb5cde83def520cf",
+        "lines": 410
+      },
+      {
+        "path": "openmeter/billing/lineengine_test.go",
+        "sha256": "8f7b5f9297efc2a90c2fbfa27a0e1d72654f1130f12d700b6326c27ccbc06828",
+        "lines": 181
+      },
+      {
+        "path": "openmeter/billing/lock.go",
+        "sha256": "22f47599c2c39c361793ae03a399802d97e2829d020dfe200737b40baf3a5227",
+        "lines": 8
+      },
+      {
+        "path": "openmeter/billing/profile.go",
+        "sha256": "adb305a523a8cb371f0dae2e30cd59c896568aaaf3698e4c4a4f879a2ed25234",
+        "lines": 619
+      },
+      {
+        "path": "openmeter/billing/profile_test.go",
+        "sha256": "8ff07b0ba73f57492b250569773e5c304b7a625decb995e19cc471798ccf8cb1",
+        "lines": 281
+      },
+      {
+        "path": "openmeter/billing/service.go",
+        "sha256": "4b54b4ead451d9f887b916f224cb998dcd5ec71712d90511b4ef32e6310f6306",
+        "lines": 157
+      },
+      {
+        "path": "openmeter/billing/serviceconfig.go",
+        "sha256": "175d6811d85aab35170e49fffc65f9a3db37cfa4fb6118610d19d870c7676fb5",
+        "lines": 33
+      },
+      {
+        "path": "openmeter/billing/stdinvoice.go",
+        "sha256": "cb2741ed8a66429a0796386592e96d9939e09eff55bcfc0aa6611d5c4bfeb7c5",
+        "lines": 1338
+      },
+      {
+        "path": "openmeter/billing/stdinvoice_test.go",
+        "sha256": "4f9e3bfe66b25b445d0bc6fb072285fb7224ae86f4199449419a74ad9e090a01",
+        "lines": 209
+      },
+      {
+        "path": "openmeter/billing/stdinvoicecredits.go",
+        "sha256": "e85ef89ab9bcbb0524607284080efabc12b74862d5a35ead034d9b177b029378",
+        "lines": 8
+      },
+      {
+        "path": "openmeter/billing/stdinvoiceedit.go",
+        "sha256": "c5a4c6e78bab42be2637149d592dd0a92600514e3eab0413bef1c52c8f032845",
+        "lines": 443
+      },
+      {
+        "path": "openmeter/billing/stdinvoiceline.go",
+        "sha256": "f8981903f3b57de2370f36205bccaf925bc930d538990d63bfb71ae8563b2b38",
+        "lines": 1191
+      },
+      {
+        "path": "openmeter/billing/stdinvoiceline_test.go",
+        "sha256": "678205b42267bc00f86bf92d4fce6d4ba5ec26871c0dd955d0513dcc7c5bb34f",
+        "lines": 207
+      },
+      {
+        "path": "openmeter/billing/stdinvoicestate.go",
+        "sha256": "332a056c348186701ddcbcf71b9d2c7c99f92329a2fc4dcf9b81d5535b0e9ae3",
+        "lines": 78
+      },
+      {
+        "path": "openmeter/billing/taxconfig.go",
+        "sha256": "84d3e477b172e1254a18927c0215ee14773a9508416d0ef9bdaf571281a01109",
+        "lines": 139
+      },
+      {
+        "path": "openmeter/billing/validationissue.go",
+        "sha256": "bf3cd41405eef56401ffb7c13d0c000f1ad6847f9576225c8a8b54c1cc83ccdc",
+        "lines": 717
+      },
+      {
+        "path": "openmeter/billing/validationissue_test.go",
+        "sha256": "40d40db1de069d781654083c01c781b27a0a29a67e4d9ea1ae3d489a49e701b3",
+        "lines": 874
+      },
+      {
+        "path": "openmeter/billing/workflow.go",
+        "sha256": "cb747223f1239dc8e9398c3029e67ef3d8936f6ecc24b5025e4bdc907658dcd5",
+        "lines": 91
+      },
+      {
+        "path": "openmeter/meter/errors.go",
+        "sha256": "eab001b5e042c4d8ad6ba6851ac58ca590081132645677316e73eb719742b6cc",
+        "lines": 45
+      },
+      {
+        "path": "openmeter/meter/event.go",
+        "sha256": "e948718c381012a658f03586742fb41af8f17848accf0684eb9b3c878199bd7d",
+        "lines": 151
+      },
+      {
+        "path": "openmeter/meter/meter.go",
+        "sha256": "e4900e2ae405c9696014b2ff4a02d0a8354a6c19e7e9af30ef9a4159a3ada5a6",
+        "lines": 350
+      },
+      {
+        "path": "openmeter/meter/meter_test.go",
+        "sha256": "3954a821f2090f108c1e21db1f4c6fb16c1abda562e4fdfb20f5f65b81d2a6ac",
+        "lines": 387
+      },
+      {
+        "path": "openmeter/meter/parse.go",
+        "sha256": "480baa70ef2af15aead5c574b76c6bf924e75ca5850b39b0439a1f6438d8ade2",
+        "lines": 198
+      },
+      {
+        "path": "openmeter/meter/parse_test.go",
+        "sha256": "bf7ba7eb4934ef67c5a3a5809815abd1c1818c76d1405c086bbe7f7480993caa",
+        "lines": 252
+      }
+    ],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}

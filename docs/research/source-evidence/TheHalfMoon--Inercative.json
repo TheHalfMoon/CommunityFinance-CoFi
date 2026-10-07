@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "TheHalfMoon/Inercative",
+    "revision": "3a4713c47d36722c564f185bc4a8c02ad57da05c",
+    "screening_license": "Apache-2.0 + NOTICE",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": 291,
+    "license_receipts": [
+      {
+        "path": "LICENSE",
+        "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Inercative/3a4713c47d36722c564f185bc4a8c02ad57da05c/LICENSE"
+      },
+      {
+        "path": "NOTICE",
+        "sha256": "2a1084efc25c33a635cb33af5ac74d24bd621fa6874aad41bd154207b9121db9",
+        "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Inercative/3a4713c47d36722c564f185bc4a8c02ad57da05c/NOTICE"
+      }
+    ],
+    "selected_source_read_receipts": [
+      {
+        "path": "packages/provenance/src/index.ts",
+        "sha256": "db440650ab437db23de9f6285b0f2650a721b80432f9da03d03f45b0414a8f59",
+        "lines": 693
+      },
+      {
+        "path": "packages/provenance/schema/import-record.schema.json",
+        "sha256": "6e9d956dcd3b4ec22f66a71fd29cccce31ff5034513b18cadffa5cd61a1b87b8",
+        "lines": 181
+      }
+    ],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}

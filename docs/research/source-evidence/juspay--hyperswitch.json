@@ -1,0 +1,250 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "juspay/hyperswitch",
+    "revision": "c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3",
+    "screening_license": "Apache-2.0 + NOTICE",
+    "permission_basis": "Apache-2.0 plus founder statement reference FOUNDER-HYPERSWITCH-REUSE-2026-10-07",
+    "tracked_file_count_observed": 13996,
+    "license_receipts": [
+      {
+        "path": "LICENSE",
+        "sha256": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5",
+        "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/LICENSE"
+      },
+      {
+        "path": "NOTICE",
+        "sha256": "25e839655d7833de50066f379ab1754e4ab6cf02142c86221d280f8f7e49cd9a",
+        "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch/c64c2365f6f931e5f02ca3d6b98576a3e3c7b9e3/NOTICE"
+      }
+    ],
+    "selected_source_read_receipts": [
+      {
+        "path": "crates/hyperswitch_interfaces/src/api.rs",
+        "sha256": "f60f554ea4f175d466179806de36bdff74afecd16c07cdbac1a52cc0e8e4f386",
+        "lines": 1064
+      },
+      {
+        "path": "crates/hyperswitch_interfaces/src/webhooks.rs",
+        "sha256": "aecfa115abca5903f7639f04dadb295409fc5824da405902a67b153b61093c42",
+        "lines": 473
+      },
+      {
+        "path": "crates/hyperswitch_connectors/src/connectors/stripe.rs",
+        "sha256": "b43af8e2d505304f890deddadead9b7b0a668c2f207e00cca6603427c564c004",
+        "lines": 3869
+      },
+      {
+        "path": "crates/hyperswitch_connectors/src/connectors/stripe/transformers.rs",
+        "sha256": "414eaacd038755613660d6eb2c7bb3eb3a329a9e30cfbb31729ebd4b49164c87",
+        "lines": 5843
+      },
+      {
+        "path": "crates/hyperswitch_connectors/Cargo.toml",
+        "sha256": "15c3658c5bb57294d754429cf5a4ece3006f8e9e7159cfa701e221a988d83396",
+        "lines": 79
+      },
+      {
+        "path": "crates/router/src/core/payments.rs",
+        "sha256": "f34ac5b2bc7b529458c114880b37867dbee5a4278ef401ed1c5b36f16a939900",
+        "lines": 17915
+      },
+      {
+        "path": "crates/router/src/core/refunds.rs",
+        "sha256": "8ec440d0922a5b92c0943d489a8de619d67ca91d84cbec25cc6e0851e98c3663",
+        "lines": 2902
+      },
+      {
+        "path": "crates/router/src/core/disputes.rs",
+        "sha256": "dd688de11e5f137591639c7cdd8cdde6554bb32b2bcde31374f4a02aa4871e7d",
+        "lines": 1303
+      },
+      {
+        "path": "crates/router/src/core/mandate.rs",
+        "sha256": "6aec5d8daa6f9915c91b222b9f0403c89f1ed437575e1e2be08cfbc4e3c330ab",
+        "lines": 449
+      },
+      {
+        "path": "crates/router/src/core/payouts.rs",
+        "sha256": "ab1d563a814314d852251bd0ade02bea44c69db211709dd62a3eab09e074aae2",
+        "lines": 4591
+      },
+      {
+        "path": "crates/router/src/core/webhooks.rs",
+        "sha256": "b186a7c422478cce153d42fc4a81dd5e6aa6a742537638b4e77181551937db2e",
+        "lines": 34
+      },
+      {
+        "path": "crates/router/src/core/routing.rs",
+        "sha256": "f9531eb37daa279f6a97dc3a6394d08fa17f9fc7ed08aecf054fc4d775d71dd1",
+        "lines": 4020
+      },
+      {
+        "path": "crates/router/src/core/revenue_recovery.rs",
+        "sha256": "5ba95af596ae44c9f2155fd3da3f4e8db25973cfaacd8eb9b1b067367a2d7f20",
+        "lines": 2076
+      },
+      {
+        "path": "crates/drainer/src/lib.rs",
+        "sha256": "1514f23a1b8d889480b285136ead419f5b52188544279763f25b12d0e16fdd76",
+        "lines": 76
+      },
+      {
+        "path": "crates/scheduler/src/lib.rs",
+        "sha256": "ef0b7089c1315e3544f1cd52b6c9f0cc7a2799953be8fd18af7586226efdd53a",
+        "lines": 13
+      },
+      {
+        "path": "crates/storage_impl/src/lib.rs",
+        "sha256": "ac4e0e1f625e9276b05fccaa43354a9eaf5cf011de2ef320efbd08523d4aa1ac",
+        "lines": 827
+      },
+      {
+        "path": "crates/diesel_models/src/payment_intent.rs",
+        "sha256": "5a1b730ed2466064605fba19a3fc09fe441301311c3bfa9562a3358919ca422c",
+        "lines": 2140
+      },
+      {
+        "path": "crates/router/src/core/encryption.rs",
+        "sha256": "fe5d5122f1b067f7d8025124f7e0c535cabcec358e4749ed02429cbc6c7b9c6d",
+        "lines": 58
+      },
+      {
+        "path": "crates/router/src/core/fraud_check.rs",
+        "sha256": "d94010a0581268d985e108c62ee701e84421cfd79cb27a7de0ecbba53d4fa477",
+        "lines": 1471
+      },
+      {
+        "path": "crates/events/src/lib.rs",
+        "sha256": "1c53bb4de586b8cc579d7205c981301ed42379a32be0c532e8316b479cfddf77",
+        "lines": 277
+      },
+      {
+        "path": "crates/hyperswitch_connectors/src/connectors/adyen.rs",
+        "sha256": "d019eba547ddf8fa567d90597faabc8df0cdd006aee331146c7d0416a0595643",
+        "lines": 3502
+      },
+      {
+        "path": "crates/hyperswitch_connectors/src/connectors/paypal.rs",
+        "sha256": "280dcbbde2626b8e977d8b2a2b92fa6a46958b6e3d0c7f59687a747f3a13d710",
+        "lines": 2764
+      },
+      {
+        "path": "crates/connector_configs/src/connector.rs",
+        "sha256": "95a053d60dff946d1e6ba13a590638836c88a63c4ad476d0e7575bc237bd025d",
+        "lines": 754
+      },
+      {
+        "path": "crates/api_models/src/payments.rs",
+        "sha256": "b33e35a2f068ba12ca8e869c2cd0c84ca3d34456a6159d68b3dc55a8bc35098f",
+        "lines": 15162
+      },
+      {
+        "path": "crates/api_models/src/customers.rs",
+        "sha256": "a70388412d2c7b329c54d3dfe418ae535b8da2cbb4110e466a8bbd0e710022f0",
+        "lines": 524
+      },
+      {
+        "path": "crates/diesel_models/src/merchant_account.rs",
+        "sha256": "e3815769dee21109115177b15dd1ccddb6a502ba4c3850fafccbacbf6d49dbec",
+        "lines": 362
+      },
+      {
+        "path": "crates/diesel_models/src/merchant_connector_account.rs",
+        "sha256": "b41ea8d71aa2b5e41e95c54697820c0d0c6709cd9a6b218c9867625a887383a7",
+        "lines": 344
+      },
+      {
+        "path": "crates/router/src/core/payments/retry.rs",
+        "sha256": "57f63190e5975abb0d3a720d38ea4b20814258cbf9bcea011fedcbbbdc292f7d",
+        "lines": 1013
+      },
+      {
+        "path": "crates/router/src/core/webhooks/incoming.rs",
+        "sha256": "89ac907514c4797d7b6ca725db91710136310f04af98f03ca78dedf1386a74d5",
+        "lines": 4098
+      },
+      {
+        "path": "crates/router/src/core/webhooks/outgoing.rs",
+        "sha256": "89b4863d8a07c07ed96d3cb3f780edfefe4e8491c11debfe69195a803f0bc69e",
+        "lines": 1848
+      },
+      {
+        "path": "crates/drainer/src/handler.rs",
+        "sha256": "fb55661b028fb8c6d0bd6b1b33edfb4849b055076ca4f482f8d477f517197710",
+        "lines": 306
+      },
+      {
+        "path": "crates/drainer/src/stream.rs",
+        "sha256": "6d56834a06839d1a991e171ac34ca3f2d003e783d9d20e199abf6f5d6cb58ad7",
+        "lines": 140
+      },
+      {
+        "path": "crates/scheduler/src/scheduler.rs",
+        "sha256": "a9c06257e8268bb223f8d498ff98133ce0151b93fa642093abb930c3b10d34a8",
+        "lines": 104
+      },
+      {
+        "path": "crates/router/src/core/payment_link.rs",
+        "sha256": "584e72a0849be90ce0db2ef7afc67f1620cd8227f0c22a8e2923d7a5868f9bca",
+        "lines": 1055
+      },
+      {
+        "path": "crates/router/src/core/payment_methods.rs",
+        "sha256": "18bb1acde39a2a7e812d68f205912f04432e421a7602835d1a4d83c0adfcc1f8",
+        "lines": 8626
+      },
+      {
+        "path": "crates/router/src/core/authentication.rs",
+        "sha256": "9a539586bec500f78aae010aabdc5f81336c6568583f16f48e229ac37cc7986a",
+        "lines": 1810
+      },
+      {
+        "path": "crates/router/src/services/encryption.rs",
+        "sha256": "4fff0769922ada3ff9bff2b9c429ffc93952475cb8a240bf210541029782a921",
+        "lines": 266
+      },
+      {
+        "path": "crates/router/src/services/logger.rs",
+        "sha256": "f31f728394868497344fd1e627d94ce65cc892a1c3b9c236c50c44bd7acd9765",
+        "lines": 3
+      },
+      {
+        "path": "crates/router/src/services/connector_integration_interface.rs",
+        "sha256": "66e6565389723856c9da51abe47083de6abf55be47bfaecdd5ea4865ddd5f87c",
+        "lines": 4
+      },
+      {
+        "path": "crates/analytics/src/payments.rs",
+        "sha256": "161d1a8e5bd1eb2ae978279a955e9da31deecac8d5c12b56947f5f78c9cc8dcc",
+        "lines": 16
+      },
+      {
+        "path": "crates/router/tests/connectors/stripe.rs",
+        "sha256": "4f1ecbe409c82582910e7f7c3d15442f7d4c02c11fabd1789aea0ae8bbe1b347",
+        "lines": 420
+      },
+      {
+        "path": "crates/router/tests/connectors/adyen.rs",
+        "sha256": "b35bead6c4f92f6f034cc5a288ca059c3034a6b00557d5168c3601164851fbc5",
+        "lines": 644
+      },
+      {
+        "path": "crates/router/tests/connectors/paypal.rs",
+        "sha256": "b817d88c4a80ffe4c1fccd573113c96aaa30cdee8e4b13e7a8be4ba1f1d6ba33",
+        "lines": 637
+      },
+      {
+        "path": "config/development.toml",
+        "sha256": "c762158b8a7ec0e8b3c9c7e3dcca74cda576c54c2b40d7e485a0353d6ff24443",
+        "lines": 1799
+      },
+      {
+        "path": "crates/euclid/src/lib.rs",
+        "sha256": "db6f9b5c22525ac1c8097018b501fa6dde2c85f6b01f4f6dd903303dbf0d0c14",
+        "lines": 6
+      }
+    ],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}

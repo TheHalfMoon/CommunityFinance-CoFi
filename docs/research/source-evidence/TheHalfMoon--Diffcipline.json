@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "TheHalfMoon/Diffcipline",
+    "revision": "1e6d14f77b95bb132b42276f10d67f1018ab5bb6",
+    "screening_license": "MIT",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": 157,
+    "license_receipts": [
+      {
+        "path": "LICENSE",
+        "sha256": "682eb5820498195487a145c81e4c2e94478d6b4d430c4962c86fe9a5c1731d1e",
+        "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Diffcipline/1e6d14f77b95bb132b42276f10d67f1018ab5bb6/LICENSE"
+      }
+    ],
+    "selected_source_read_receipts": [
+      {
+        "path": "crates/diffcipline-cli/src/enterprise.rs",
+        "sha256": "9bde7af49e3a5621d050e049596fd7e4e5fbfc2989c008707f95d8db6e5e88a8",
+        "lines": 292
+      },
+      {
+        "path": "schemas/proof-v1.json",
+        "sha256": "eed264633052c52ce0adf3353acb292d6e47854e94300095d5ed3e03c8f3c7ea",
+        "lines": 25
+      }
+    ],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "TheHalfMoon/Ascout",
+    "revision": "ca6b6f514e5a8881e2cfa2789b5e5ea43e3aaaad",
+    "screening_license": "Apache-2.0 + third-party notices",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": 1523,
+    "license_receipts": [
+      {
+        "path": "LICENSE",
+        "sha256": "7a5e2f805c86e2e3e86fe0163a322e7e6b6f00bc5d220e8db1189f785bc216d3",
+        "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Ascout/ca6b6f514e5a8881e2cfa2789b5e5ea43e3aaaad/LICENSE"
+      },
+      {
+        "path": "THIRD_PARTY_NOTICES.md",
+        "sha256": "203b6c7526f4e71ee31dceddcfc601f81f6a988c606a466022c2a16139f5dbac",
+        "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Ascout/ca6b6f514e5a8881e2cfa2789b5e5ea43e3aaaad/THIRD_PARTY_NOTICES.md"
+      }
+    ],
+    "selected_source_read_receipts": [
+      {
+        "path": "src/assurance/workflow/idempotency-reconciliation.ts",
+        "sha256": "69b9d8d66df5cb4163902e58fd9426db288db7c39a7be425a4b472a38d73db57",
+        "lines": 148
+      }
+    ],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}

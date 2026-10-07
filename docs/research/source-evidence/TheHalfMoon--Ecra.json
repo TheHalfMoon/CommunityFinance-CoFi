@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "TheHalfMoon/Ecra",
+    "revision": "0e2ff8c687c93e6f158da6984a7a6915339b5f3f",
+    "screening_license": "No root LICENSE found",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": 274,
+    "license_receipts": [],
+    "selected_source_read_receipts": [
+      {
+        "path": "crates/ecra-core/src/capability.rs",
+        "sha256": "a9f57ee52bc97afb563459bd85cf98d0096f841a82d0407df533500771438ac3",
+        "lines": 358
+      },
+      {
+        "path": "crates/ecra-core/src/evidence.rs",
+        "sha256": "51b9b0750dfaf27299df285d7e05237b821f06213dd59f37dfa2066991014fb8",
+        "lines": 658
+      }
+    ],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}

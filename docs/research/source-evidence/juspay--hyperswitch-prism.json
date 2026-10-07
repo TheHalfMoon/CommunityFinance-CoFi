@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "juspay/hyperswitch-prism",
+    "revision": "c9c0727d99ada0f0eda057f3d8a6f16719a43bbc",
+    "screening_license": "Apache-2.0 remote LICENSE",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": null,
+    "license_receipts": [
+      {
+        "path": "LICENSE",
+        "git_blob_sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64",
+        "inspection": "Pinned raw source fetched; not locally built",
+        "evidence_url": "https://raw.githubusercontent.com/juspay/hyperswitch-prism/c9c0727d99ada0f0eda057f3d8a6f16719a43bbc/LICENSE"
+      }
+    ],
+    "selected_source_read_receipts": [
+      {
+        "path": "LICENSE",
+        "git_blob_sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+      },
+      {
+        "path": "Cargo.toml",
+        "git_blob_sha": "0fbd68ceffe244ad6fb73c79420cdeab2b5ee492"
+      },
+      {
+        "path": "crates/types-traits/interfaces/src/connector_integration_v2.rs",
+        "git_blob_sha": "670a1bca89bdfaf3d52865debe9413a1254c6b21"
+      },
+      {
+        "path": "crates/types-traits/domain_types/src/router_request_types.rs",
+        "git_blob_sha": "1f5e2dba7486826192d95f72f7c2d9a0a2d02023"
+      },
+      {
+        "path": "crates/grpc-server/grpc-server/Cargo.toml",
+        "git_blob_sha": "517a62f7a2e888549604a3a38bbdb6c08fe37713"
+      },
+      {
+        "path": "crates/integrations/connector-integration/src/connectors/stripe.rs",
+        "git_blob_sha": "3838530eb3f807a948e47148876f7831044e723c"
+      }
+    ],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}

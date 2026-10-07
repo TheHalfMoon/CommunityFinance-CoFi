@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "TheHalfMoon/SpecGrain",
+    "revision": "5de7d6499bb0a9e3a191fc0934399cf099d1980a",
+    "screening_license": "MIT",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": 282,
+    "license_receipts": [
+      {
+        "path": "LICENSE",
+        "sha256": "f9bd6621fa5134890f74d185dc23c77d2bf0c22e11c2b4fb87441859ca3bb551",
+        "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/SpecGrain/5de7d6499bb0a9e3a191fc0934399cf099d1980a/LICENSE"
+      }
+    ],
+    "selected_source_read_receipts": [
+      {
+        "path": "src/specgrain/lifecycle.py",
+        "sha256": "ce9ebcd3ad4e429c5c9a59d2085708c9582831592825199310ba09adee0502cb",
+        "lines": 158
+      },
+      {
+        "path": "src/specgrain/store.py",
+        "sha256": "97928f321a4cd5f0f39c6fef6a768e17dd12d84bc4387d0293b1cf7667bb099f",
+        "lines": 1121
+      },
+      {
+        "path": "src/specgrain/dependency.py",
+        "sha256": "b588cbd7bcac7b89566091281d61d20920d90fe71d9b222ba5ce22ac23d423b0",
+        "lines": 296
+      }
+    ],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}

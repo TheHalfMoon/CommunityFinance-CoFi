@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "getlago/lago",
+    "revision": "878c66c1f01d6831016d340674b6e68c2138ccc3",
+    "screening_license": "AGPL-3.0",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": 167,
+    "license_receipts": [
+      {
+        "path": "LICENSE",
+        "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+        "evidence_url": "https://raw.githubusercontent.com/getlago/lago/878c66c1f01d6831016d340674b6e68c2138ccc3/LICENSE"
+      }
+    ],
+    "selected_source_read_receipts": [],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}

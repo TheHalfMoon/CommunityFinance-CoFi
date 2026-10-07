@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "getlago/lago-api",
+    "revision": "25b8b7b0984dae3f64b690750eaa8a8daf7af752",
+    "screening_license": "AGPL-3.0; premium gates",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": 7240,
+    "license_receipts": [
+      {
+        "path": "LICENSE",
+        "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+        "evidence_url": "https://raw.githubusercontent.com/getlago/lago-api/25b8b7b0984dae3f64b690750eaa8a8daf7af752/LICENSE"
+      }
+    ],
+    "selected_source_read_receipts": [
+      {
+        "path": "app/services/billable_metrics/aggregations/apply_rounding_service.rb",
+        "sha256": "c1b7fc317a05ae6b5333ac0b7f7b176bc57a91a0c872f198f9f9e1aebd98b843",
+        "lines": 37
+      },
+      {
+        "path": "app/services/billable_metrics/aggregations/base_service.rb",
+        "sha256": "094c10725017df358bb363fa28c7aaa3865d2c555c0bb38f7448aff8d890265d",
+        "lines": 251
+      },
+      {
+        "path": "app/services/billable_metrics/aggregations/count_service.rb",
+        "sha256": "8514d20adb5893e5de2818da4284b1b4a7d5e4bd5688d874328bfb0e73676c3d",
+        "lines": 73
+      },
+      {
+        "path": "app/services/billable_metrics/aggregations/custom_service.rb",
+        "sha256": "cbcf6334114aa8b95f08a11a1510bf5dc89f9e9b0828348346cf81aea98436af",
+        "lines": 247
+      },
+      {
+        "path": "app/services/billable_metrics/aggregations/latest_service.rb",
+        "sha256": "59f87d13e2dd93ade761cc4386a5ccdcde1a8c46361ebaf8946ada71bc919d6a",
+        "lines": 67
+      },
+      {
+        "path": "app/services/billable_metrics/aggregations/max_service.rb",
+        "sha256": "ed401ea9f769c8de3301d47d50181c768428506ab9d97de5c5d75b7c5ccb1a39",
+        "lines": 74
+      },
+      {
+        "path": "app/services/billable_metrics/aggregations/sum_service.rb",
+        "sha256": "4a9fc00e887376b64b2b45535c6085ffded95417c289ae99671793df0db0330d",
+        "lines": 184
+      },
+      {
+        "path": "app/services/billable_metrics/aggregations/unique_count_service.rb",
+        "sha256": "8a36d2d3112744fdcc488bc665eda82af622bc1e018c7ca471d5034e4a4d199f",
+        "lines": 159
+      },
+      {
+        "path": "app/services/billable_metrics/aggregations/weighted_sum_service.rb",
+        "sha256": "5bdcd4a8629abb6e006db25d7bed1184cdf79efe1ccdf5571003c70a4ecf36ca",
+        "lines": 216
+      },
+      {
+        "path": "app/services/credits/allocate_prepaid_credits_by_wallets_service.rb",
+        "sha256": "e609d76acce055e5c6d022fbcf6af1670aca1f7f193e7f65363285495c1bc58c",
+        "lines": 133
+      },
+      {
+        "path": "app/services/credits/applied_coupon_service.rb",
+        "sha256": "fe44f9900acc7848c8a0f0db251cf70c4654dbfe9e652a3bb339378470e3466d",
+        "lines": 130
+      },
+      {
+        "path": "app/services/credits/applied_coupons_service.rb",
+        "sha256": "6d2c9010b5aca2aae88bd2be9c4db60a51cac1abe86e0cbd13cbaf3ceb21fa94",
+        "lines": 57
+      },
+      {
+        "path": "app/services/credits/applied_prepaid_credits_service.rb",
+        "sha256": "5efa334764743aaddc7274e30f08b25bafcfac6cfb4ade0cb71d418dc71ee146",
+        "lines": 125
+      },
+      {
+        "path": "app/services/credits/credit_note_service.rb",
+        "sha256": "3ae6ff289d6c2aeeffc4f4b8d033a1b9123f3784a1a6156cba9a3fead4aeab2a",
+        "lines": 117
+      },
+      {
+        "path": "app/services/credits/progressive_billing_service.rb",
+        "sha256": "6e7151a1b01ed019fb31d7f20f075e1ff91010463eef2cf1df7a48f961881a49",
+        "lines": 95
+      },
+      {
+        "path": "app/services/wallets/apply_paid_credits_service.rb",
+        "sha256": "ebb9ed2412ac8da5e3cc791239e61ed37edc62d28f759e4b7d311a6b734a1b14",
+        "lines": 30
+      },
+      {
+        "path": "app/services/wallets/create_interval_wallet_transactions_service.rb",
+        "sha256": "f0a154a4b70f2404181ce55c0c0a648600638b0177d9cd71462f99149ca19bc7",
+        "lines": 272
+      },
+      {
+        "path": "app/services/wallets/create_service.rb",
+        "sha256": "e1c88111a26d9ecaa69e22fad29b6adc80ef70e753314dbe72904e1f78cf771d",
+        "lines": 266
+      },
+      {
+        "path": "app/services/wallets/realtime_refresh_service.rb",
+        "sha256": "500f43035db408480085964f146f9b660f0ea7f28d5d3140a9a8c56ee4b373ef",
+        "lines": 113
+      },
+      {
+        "path": "app/services/wallets/terminate_service.rb",
+        "sha256": "4096e224a7cb7e62e03148c637d25809f093ceca36f233cbbd5cba43aa75f3bf",
+        "lines": 35
+      },
+      {
+        "path": "app/services/wallets/threshold_top_up_service.rb",
+        "sha256": "44f264b2ce4d4ea1c251d432fff4affd6e9632405ee769e3da914dcfb4b7c283",
+        "lines": 97
+      },
+      {
+        "path": "app/services/wallets/update_service.rb",
+        "sha256": "399090f36604e0fd5c291ee8d79e0411853c03e0ca6acd4f6358420bc1a2ef4b",
+        "lines": 261
+      },
+      {
+        "path": "app/services/wallets/validate_limitations_service.rb",
+        "sha256": "af1b845753987e23f01512364ee3b701e664e518ab1a61e28ee54e657a1faeee",
+        "lines": 40
+      },
+      {
+        "path": "app/services/wallets/validate_recurring_transaction_rules_service.rb",
+        "sha256": "8e97b04b61d8dfadf12dea6145422324508311819781ea170def5bd37e7341e7",
+        "lines": 35
+      },
+      {
+        "path": "app/services/wallets/validate_service.rb",
+        "sha256": "0f07f76d82fbad3fe660e9f80069d84b7decafd14d45d77bb32e1c138fc7cc4c",
+        "lines": 131
+      },
+      {
+        "path": "app/services/dunning_campaigns/bulk_process_service.rb",
+        "sha256": "08c68543ac0ded89c555f98010b62373fe94dc4ff31415326651a00efb75298b",
+        "lines": 30
+      },
+      {
+        "path": "app/services/dunning_campaigns/create_service.rb",
+        "sha256": "39c398b9a38889521046948112ef0f006a13a8aafcea95507dae40baa2c6c3ec",
+        "lines": 49
+      },
+      {
+        "path": "app/services/dunning_campaigns/destroy_service.rb",
+        "sha256": "0b4e159ce991cd83c763b3983bb05c03d0db4264948c253fba0bbc21876728d5",
+        "lines": 35
+      },
+      {
+        "path": "app/services/dunning_campaigns/process_attempt_service.rb",
+        "sha256": "6a6cacef3603a56a0c90c34aa07b59538f9b34a9a0ac64ddc814a1646d5c4991",
+        "lines": 72
+      },
+      {
+        "path": "app/services/dunning_campaigns/process_customer_service.rb",
+        "sha256": "9fe79b7676cdbd73806829032e1d05f2234a451849ae061348a47ec613b13ad3",
+        "lines": 107
+      },
+      {
+        "path": "app/services/dunning_campaigns/update_service.rb",
+        "sha256": "c2dc86fa537a8ef76651a8cabbc016e99d109744b9eae1aafe46d2792f21ca9f",
+        "lines": 107
+      }
+    ],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}

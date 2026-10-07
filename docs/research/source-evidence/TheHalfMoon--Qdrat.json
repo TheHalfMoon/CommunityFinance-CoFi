@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "TheHalfMoon/Qdrat",
+    "revision": "e2d288940aab52af881786678b2fc86dfa5c272a",
+    "screening_license": "LGPL-2.1 root",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": 8641,
+    "license_receipts": [
+      {
+        "path": "LICENSE",
+        "sha256": "7ffe1954587c77dfba1cf8eb9b2ea743671fa6e63f9e7a2f258119d42e14eefe",
+        "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Qdrat/e2d288940aab52af881786678b2fc86dfa5c272a/LICENSE"
+      }
+    ],
+    "selected_source_read_receipts": [],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}

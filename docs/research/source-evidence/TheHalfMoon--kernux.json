@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "TheHalfMoon/kernux",
+    "revision": "2085b6ed1121b1a94c66c076bdd6b578da4dad0d",
+    "screening_license": "Apache-2.0",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": 321,
+    "license_receipts": [
+      {
+        "path": "LICENSE",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/kernux/2085b6ed1121b1a94c66c076bdd6b578da4dad0d/LICENSE"
+      }
+    ],
+    "selected_source_read_receipts": [
+      {
+        "path": "crates/kernux-contracts/src/lib.rs",
+        "sha256": "2609bbf96798a6698ac330fa3936c60a580107df5676495cc2d40338c1e103f5",
+        "lines": 5
+      },
+      {
+        "path": "crates/kernux-identity/src/lib.rs",
+        "sha256": "d82352cdf4a6c353e360960d39ae2e29013d40c3b0c6afe5ba2b714d5fd40648",
+        "lines": 756
+      },
+      {
+        "path": "crates/kernux-policy/src/lib.rs",
+        "sha256": "e603c94913d62a91027eb5f29d64a81c3bea66ad3b49ecd0f43d7cfd7ef11a74",
+        "lines": 601
+      },
+      {
+        "path": "crates/kernux-secret/src/lib.rs",
+        "sha256": "305fff42c4dda996bde008ec0ef395e8e884390f2273757d5d4ab4d9b733897a",
+        "lines": 116
+      },
+      {
+        "path": "crates/kernux-store/src/lib.rs",
+        "sha256": "dbd58cca36ed50e21b5cc8ad947d89d50dea19cd0438a8301f03999888d55910",
+        "lines": 825
+      },
+      {
+        "path": "crates/kernuxd/src/lib.rs",
+        "sha256": "b5144cbef1ac848932322516d95307a15ed1243e24e7be05b006cce557c314e7",
+        "lines": 261
+      },
+      {
+        "path": "crates/kernux-store/src/recovery.rs",
+        "sha256": "b1b09d3ad8dc09a081e5550d8ed8b33a8105e950deced930aeaced196ee489bb",
+        "lines": 180
+      },
+      {
+        "path": "crates/kernux-secret/src/broker.rs",
+        "sha256": "d7ea94939e21a7f7e2819fd4e6a6e9862b16d705ec3b6ebbe1208974cb94b0a7",
+        "lines": 639
+      },
+      {
+        "path": "crates/kernux-policy/src/egress.rs",
+        "sha256": "203ab65694384905221101d90fd4f760a3a7ab6d0d99e5a4c322c0a837449435",
+        "lines": 1564
+      }
+    ],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}

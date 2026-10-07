@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "TheHalfMoon/CommunityFinance-CoFi",
+    "revision": "c640844675895578ce52e67c591308e4ddb99037",
+    "screening_license": "Apache-2.0 + NOTICE",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": 146,
+    "license_receipts": [
+      {
+        "path": "LICENSE",
+        "sha256": "6987a5c6e83984993a994ab5902e06e3ad262db8ffe5eaa8043b4d118b4c990b",
+        "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/CommunityFinance-CoFi/c640844675895578ce52e67c591308e4ddb99037/LICENSE"
+      },
+      {
+        "path": "NOTICE",
+        "sha256": "f311ea5c2499e27f31c955afcfb6f6af563d2fb0e38a54f671e476f3f78ec11f",
+        "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/CommunityFinance-CoFi/c640844675895578ce52e67c591308e4ddb99037/NOTICE"
+      }
+    ],
+    "selected_source_read_receipts": [],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}

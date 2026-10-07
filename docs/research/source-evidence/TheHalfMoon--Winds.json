@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "repository_evidence": {
+    "repository": "TheHalfMoon/Winds",
+    "revision": "3bfe45fec5c36ef1e407edf12c96ff5444f03847",
+    "screening_license": "MIT OR Apache-2.0",
+    "permission_basis": "Root/unit license subject to dependency closure; no additional permission inferred",
+    "tracked_file_count_observed": 444,
+    "license_receipts": [
+      {
+        "path": "LICENSE-APACHE",
+        "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+        "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Winds/3bfe45fec5c36ef1e407edf12c96ff5444f03847/LICENSE-APACHE"
+      },
+      {
+        "path": "LICENSE-MIT",
+        "sha256": "b7104b35371b26da79cbbf9242e62b7616f47edb5bbe073c48edb202d7674b68",
+        "evidence_url": "https://raw.githubusercontent.com/TheHalfMoon/Winds/3bfe45fec5c36ef1e407edf12c96ff5444f03847/LICENSE-MIT"
+      }
+    ],
+    "selected_source_read_receipts": [
+      {
+        "path": "desktop/src/multiplexer/bridge.ts",
+        "sha256": "83651de0d701810b54c57446f74dd1382ea6e3bacd7b280c9b0a4023e211c882",
+        "lines": 60
+      },
+      {
+        "path": "migrations/0010_resumable_workflow_ledger.sql",
+        "sha256": "735e9624b5c4395b608a212e5c2c8d8e06ba9db29ef93b2ca888a617bfbf0d0a",
+        "lines": 326
+      }
+    ],
+    "qualification": "Not built, benchmarked or security-qualified; no code imported"
+  }
+}
