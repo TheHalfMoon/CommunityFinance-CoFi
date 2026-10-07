@@ -15,6 +15,7 @@ Desktop branding patch release.
 
 - refreshed the official CoFi mark for reliable visibility across GitHub light and dark themes;
 - replaced the Windows and macOS desktop icon assets with the approved cool silver/blue-gray CoFi tile;
+- made Desktop release publication version-driven on qualified `main`, while preserving matching tag-triggered releases;
 - preserved all qualified financial-core behavior from v1.1.0.
 
 ## [1.1.0] - 2026-10-07
