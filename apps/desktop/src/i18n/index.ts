@@ -1,10 +1,10 @@
-import { ar } from "./locales/ar";
-import { de } from "./locales/de";
-import { en, type TranslationKey, type TranslationMessages } from "./locales/en";
-import { es } from "./locales/es";
-import { fr } from "./locales/fr";
-import { it } from "./locales/it";
-import { zhCN } from "./locales/zh-CN";
+import { ar } from "./locales/ar.ts";
+import { de } from "./locales/de.ts";
+import { en, type TranslationKey, type TranslationMessages } from "./locales/en.ts";
+import { es } from "./locales/es.ts";
+import { fr } from "./locales/fr.ts";
+import { it } from "./locales/it.ts";
+import { zhCN } from "./locales/zh-CN.ts";
 
 export const supportedLocales = ["en", "ar", "fr", "de", "es", "it", "zh-CN"] as const;
 
