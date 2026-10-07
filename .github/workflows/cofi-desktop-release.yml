@@ -4,22 +4,95 @@ on:
   push:
     tags:
       - "v*"
+  issue_comment:
+    types:
+      - created
 
 permissions:
   contents: write
+  pull-requests: read
 
 concurrency:
-  group: cofi-desktop-release-${{ github.ref }}
+  group: cofi-desktop-release-${{ github.event_name }}-${{ github.event.issue.number || github.ref }}
   cancel-in-progress: false
 
 jobs:
   windows-release:
     name: Build and publish Windows desktop
+    if: >-
+      github.event_name == 'push' ||
+      (
+        github.event_name == 'issue_comment' &&
+        github.actor == 'TheHalfMoon' &&
+        github.event.issue.pull_request != null &&
+        startsWith(github.event.comment.body, '/release-desktop ')
+      )
     runs-on: windows-latest
     timeout-minutes: 45
     steps:
-      - name: Checkout
+      - name: Resolve release target
+        shell: pwsh
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PUSH_TAG: ${{ github.ref_name }}
+          PUSH_SHA: ${{ github.sha }}
+          RELEASE_COMMAND: ${{ github.event.comment.body }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ($env:EVENT_NAME -eq "push") {
+            $tag = $env:PUSH_TAG
+            $target = $env:PUSH_SHA
+          } else {
+            $parts = ($env:RELEASE_COMMAND ?? "").Trim() -split "\s+"
+            if ($parts.Count -ne 3 -or $parts[0] -ne "/release-desktop") {
+              throw "Expected: /release-desktop <vMAJOR.MINOR.PATCH> <40-char-merge-sha>"
+            }
+
+            $tag = $parts[1]
+            $target = $parts[2].ToLowerInvariant()
+
+            if ($tag -notmatch "^v[0-9]+\.[0-9]+\.[0-9]+$") {
+              throw "Release tag must be strict semver, for example v1.1.1."
+            }
+            if ($target -notmatch "^[0-9a-f]{40}$") {
+              throw "Release target must be a full 40-character commit SHA."
+            }
+
+            $pr = gh api "repos/$env:GITHUB_REPOSITORY/pulls/$env:PR_NUMBER" | ConvertFrom-Json
+            if (-not $pr.merged_at) {
+              throw "Release command must be issued on a merged pull request."
+            }
+            if ($pr.merge_commit_sha -ne $target) {
+              throw "Requested target $target does not match PR merge commit $($pr.merge_commit_sha)."
+            }
+
+            gh api "repos/$env:GITHUB_REPOSITORY/git/ref/tags/$tag" *> $null
+            if ($LASTEXITCODE -eq 0) {
+              throw "Tag $tag already exists."
+            }
+          }
+
+          "RELEASE_TAG=$tag" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          "TARGET_SHA=$target" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Host "RELEASE_TAG=$tag"
+          Write-Host "TARGET_SHA=$target"
+
+      - name: Checkout repository
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Checkout exact release target
+        shell: pwsh
+        run: |
+          git fetch --no-tags origin $env:TARGET_SHA
+          git checkout --detach $env:TARGET_SHA
+          $actual = git rev-parse HEAD
+          if ($actual -ne $env:TARGET_SHA) {
+            throw "Checked out $actual instead of requested release target $env:TARGET_SHA."
+          }
 
       - name: Install Node 24
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
@@ -36,14 +109,21 @@ jobs:
 
       - name: Verify tag matches desktop version
         shell: pwsh
-        env:
-          RELEASE_TAG: ${{ github.ref_name }}
         run: |
           $package = Get-Content apps/desktop/package.json -Raw | ConvertFrom-Json
           $expected = "v$($package.version)"
           if ($env:RELEASE_TAG -ne $expected) {
             throw "Tag $env:RELEASE_TAG does not match desktop version $expected."
           }
+
+      - name: Create annotated release tag
+        if: github.event_name == 'issue_comment'
+        shell: pwsh
+        run: |
+          git config user.name "Abdulaziz M. Shehri"
+          git config user.email "alshehriofficial@gmail.com"
+          git tag -a $env:RELEASE_TAG $env:TARGET_SHA -m "CoFi $env:RELEASE_TAG"
+          git push origin "refs/tags/$env:RELEASE_TAG"
 
       - name: Install desktop dependencies
         working-directory: apps/desktop
@@ -88,7 +168,6 @@ jobs:
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ github.ref_name }}
         run: |
           $tag = $env:RELEASE_TAG
           $msi = (Get-ChildItem apps/desktop/src-tauri/target/release/bundle/msi/*.msi).FullName
