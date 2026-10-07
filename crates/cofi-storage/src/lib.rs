@@ -6,6 +6,7 @@
 
 pub mod audit;
 pub mod authorized_draft;
+pub mod authorized_finalization;
 pub mod authorized_rating;
 pub mod invoice;
 pub mod metering;

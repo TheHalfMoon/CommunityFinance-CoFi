@@ -23,6 +23,7 @@ API, provider execution, or live-money capability is introduced here.
 | Derived subscription indexes/status | cofi-subscriptions::SubscriptionRegistry | Derived, never persisted directly | Existing create, status_at and resolve_for_window | Reference and window boundary parity |
 | Authorized rating from accepted subscription and frozen metering evidence | cofi-rating-authorization::AuthorizedRatingRegistry | authorized.rating v1 (cofi-storage) | Reconstruct original subscription.create and rating.acceptance via domain constructors and meters; reapply AuthorizedRatingRegistry::rate; compare source IDs, scoped plan and full original charge | Exact authorization replay, altered plan/scope/source membership/charge, conflicting same-ID subscription and missing history tests |
 | Authorized invoice draft from accepted P21 rating evidence | cofi-invoice-authorization::AuthorizedDraftRegistry | authorized.draft v1 | Decode each original authorized.rating evidence through P21; reconstruct AuthorizedDraftRequest, use canonical AuthorizedDraftRegistry::assemble, derive draft and rated-charge binding indexes; verify invoice ID, scope/customer, total and each line charge ID | Exact authorization parity/idempotent replay, mutated P21 lineage, changed ID/scope/total, duplicate source use across invoices |
+| Authorized invoice finalization from accepted P22 draft history | cofi-finalization-authorization::AuthorizedFinalizationRegistry | authorized.finalization v1 | Decode original accepted P22 authorized.draft, reconstruct AuthorizedFinalizationRequest, invoke original AuthorizedFinalizationRegistry::finalize, verify original invoice/scope/customer/total and finalization event/times | 3 tests: exact finalization/BillingEvent parity, tampered source/time/amount/ID and double finalization rejected |
 | Accepted draft invoice with frozen rating-line receipts | cofi-invoicing::DraftInvoiceRequest | invoice.draft v1 | Reconstruct every RatedCharge through original rating.acceptance; exact original billing event, invoice, customer/scope and interval; checked DraftInvoiceRequest::new and DraftInvoiceRegistry::assemble | Two-line amount parity, duplicate/missing receipt, changed identity, scope, total and charge-bound conflict tests |
 | Derived draft invoice indexes/charge bindings | cofi-invoicing::DraftInvoiceRegistry | Never persisted directly | Existing canonical assemble method, plus to_billing_event projection | Parity of invoices/events/charge binding count and replay semantics |
 | Accepted reconciliation audit event | cofi-audit::AuditEvent | audit.reconciliation v1 (cofi-audit canonical codec; cofi-storage re-export) | Original audit position/attribution/times/action/resource/typed reconciliation projection; AuditEvent::new and recomputed canonical SHA-256 digest parity | 6 targeted tests: two interleaved streams, original event/digest parity, bad digest/IDs/time/version/type/payload, changed duplicate, missing ancestor, oversized and duplicate JSON keys |
@@ -197,6 +198,29 @@ then exposed a mutable invoice ID not independently checked even within
 the same envelope; the bounded partial-tamper guard was added. Three
 focused tests exercise accepted result parity and negative mutation
 and charge reuse; exact-head CI/Jev/OCR and Graft review are mandatory.
+
+### P23 authorized invoice finalization
+
+The authorized.finalization v1 acceptance record carries original P22
+authorized.draft evidence, original source finalization event, times and
+expected original invoice/scope/customer/total. Decoding P23 first
+reconstructs the actual original AuthorizedDraft via P21 and P22 domain
+registries, then uses **only** AuthorizedFinalizationRegistry::finalize
+to rederive the original FinalizedInvoice and its projected InvoiceEvent.
+No direct FinalizedInvoice construction, unverified authorization DTO,
+new revenue posting algorithm, database mutation or network call occurs.
+
+Same invoice cannot be finalized twice, changed same finalization source
+event cannot silently replay, and changed source evidence/time/total
+fails closed. Three focused P23 tests check exact ancestry and replay,
+negative corruption and duplicate invoice/finalization rejection.
+
+**The trusted source boundary remains open.** Internally consistent
+source evidence still cannot prove authenticity or completeness, and the
+P23 projection is not an external authorization certificate. There is
+no tenant-scoped atomic transaction, durable ledger posting or money
+movement. BillingLedgerBridge remains separate and MUST NOT execute
+during hydration. G002-G008 remain hard gates.
 
 This summary is a coverage *frontier*, not a proof of complete domain transitions.
 The metering slice uses Pstack's narrow TDD/review workflow: first the missing-module
