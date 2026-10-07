@@ -1,9 +1,9 @@
-# G001 codec coverage — ledger, metering, rating, subscription and draft-invoice evidence slices
+# G001 codec coverage — ledger, metering, rating, subscription, draft invoice and audit event slices
 
 Status: **PARTIAL IMPLEMENTATION / NOT G001 QUALIFIED**.
 
 This file records the actual delivered codec slices in issue #22. G001 requires
-**all** economic and authority registries, not just ledger, metering, rating, subscriptions and draft invoices. No database,
+**all** economic and authority registries, not just ledger, metering, rating, subscriptions, draft invoices and audit events. No database,
 API, provider execution, or live-money capability is introduced here.
 
 ## Implemented now
@@ -23,6 +23,8 @@ API, provider execution, or live-money capability is introduced here.
 | Derived subscription indexes/status | cofi-subscriptions::SubscriptionRegistry | Derived, never persisted directly | Existing create, status_at and resolve_for_window | Reference and window boundary parity |
 | Accepted draft invoice with frozen rating-line receipts | cofi-invoicing::DraftInvoiceRequest | invoice.draft v1 | Reconstruct every RatedCharge through original rating.acceptance; exact original billing event, invoice, customer/scope and interval; checked DraftInvoiceRequest::new and DraftInvoiceRegistry::assemble | Two-line amount parity, duplicate/missing receipt, changed identity, scope, total and charge-bound conflict tests |
 | Derived draft invoice indexes/charge bindings | cofi-invoicing::DraftInvoiceRegistry | Never persisted directly | Existing canonical assemble method, plus to_billing_event projection | Parity of invoices/events/charge binding count and replay semantics |
+| Accepted reconciliation audit event | cofi-audit::AuditEvent | audit.reconciliation v1 (cofi-audit canonical codec; cofi-storage re-export) | Original audit position/attribution/times/action/resource/typed reconciliation projection; AuditEvent::new and recomputed canonical SHA-256 digest parity | 6 targeted tests: two interleaved streams, original event/digest parity, bad digest/IDs/time/version/type/payload, changed duplicate, missing ancestor, oversized and duplicate JSON keys |
+| Audit stream/index/tail projections | cofi-audit::AuditLog | Derived only | Existing AuditLog::append, verify_stream, checked previous digest and sequence; no second hash algorithm | Original stream/event counts, tail and event parity |
 
 Record payloads use typed JSON with required version/type, unknown-field rejection,
 canonical decimal **strings** for monetary amounts and timestamps, and a checked
@@ -46,7 +48,7 @@ will be specified before G003. Record type/version rejection is fail-closed.
 | `cofi-community` | organizations, memberships, shared funds, allocations, transfers and distributions |
 | `cofi-governance`, `cofi-spending` | proposals, approvals, quorum, consumed authority and approved spending |
 | `cofi-disbursements`, `cofi-provider-contract` | lifecycle, request, observation and evidence bindings |
-| `cofi-reconciliation`, `cofi-audit` | cases/outcomes and authenticated audit streams |
+| cofi-reconciliation and audit upstream provenance | Full original ReconciliationCase/Outcome/provider-evidence reconstruction, stream completeness/external root authentication, tenant-scoped immutable append ledger |
 | cofi-rating production admission | Authenticated complete source-event cutoff, tenant scope and authorization lineage remain unproven |
 | cofi-billing, finalization and remaining invoicing | Ledger posting/receivables, authorized invoice finalization and lifecycle, authenticated rating checkpoint, complete accepted commercial history and payment integration remain unqualified |
 | `cofi-payments` | capture and payout accounting source events |
@@ -105,6 +107,33 @@ codec. Tenant-scoped atomic stream acceptance is blocked until G002-G004.
 Pstack RED-before-GREEN produced missing module/dependency errors, and the
 focused draft roundtrip/replay/failure tests now pass; Graft and exact-head
 review must qualify the slice before merge.
+
+### Audit event reconstruction limits
+
+The audit.reconciliation record is implemented **in cofi-audit**, where
+canonical SHA-256 digest construction, existing private reconciliation payload
+projection and stream checks already live. cofi-storage only re-exports the
+checked codec. It reconstitutes an original event with AuditEvent::new,
+compares every recorded digest against the canonical calculation, and replays
+the provided source facts with AuditLog::append/verify_stream. Records are
+strictly typed and 1 MiB limited individually; unsupported versions, invalid
+hex, duplicate JSON keys, invalid payload-outcome shapes, missing ancestry,
+sequence gaps and changed duplicate identities fail closed.
+
+**This verifies consistency, not authenticity.** A forged coherent chain
+can compute entirely valid SHA-256 hashes. This first audit slice does not
+persist a trusted digest anchor, external signatures, a verified tenant-bound
+canonical provider/reconciliation event history, or proof that the source
+supplied *all* events. The compact reconciliation audit projection does not
+contain the full ProviderAhead terminal event, so it cannot reconstruct
+a canonical source ReconciliationOutcome and provider input independently.
+Full upstream lineage and verified source completeness are still unresolved
+under issue #31 and G002-G008. No production audit claim is authorized.
+
+Pstack tests were written before implementation and failed on the missing
+codec/serde; after implementation the six focused tests and workspace lint
+checks passed locally. Graft source graph/blast plus exact-head CI, Jev and
+OCR accounting are required before normal merge.
 
 This summary is a coverage *frontier*, not a proof of complete domain transitions.
 The metering slice uses Pstack's narrow TDD/review workflow: first the missing-module

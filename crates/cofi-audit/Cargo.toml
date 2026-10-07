@@ -10,6 +10,8 @@ repository.workspace = true
 cofi-disbursements = { path = "../cofi-disbursements" }
 cofi-reconciliation = { path = "../cofi-reconciliation" }
 sha2 = "=0.10.9"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
 
 [lints]
 workspace = true
