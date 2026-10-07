@@ -17,6 +17,7 @@ cofi-invoicing = { path = "../cofi-invoicing" }
 cofi-audit = { path = "../cofi-audit" }
 cofi-rating-authorization = { path = "../cofi-rating-authorization" }
 cofi-invoice-authorization = { path = "../cofi-invoice-authorization" }
+cofi-finalization-authorization = { path = "../cofi-finalization-authorization" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 
