@@ -204,10 +204,7 @@ fn embedded_usage(value: &serde_json::Value) -> Result<UsageEvent, CodecError> {
     }
 }
 
-fn reconstruct(
-    record: &RatingAcceptanceRecord,
-    registry: &mut RatingRegistry,
-) -> Result<RatedCharge, CodecError> {
+fn checked_rating_request(record: &RatingAcceptanceRecord) -> Result<RatingRequest, CodecError> {
     let definition = embedded_meter(&record.meter)?;
     let plan = record.plan.clone().checked_domain()?;
     let subject = SubjectId::new(record.subject_id.clone())
@@ -255,6 +252,14 @@ fn reconstruct(
         .map_err(|e| CodecError::Replay(e.to_string()))?;
     let request = RatingRequest::new(event_id, aggregate, customer, plan, rated_at)
         .map_err(|e| CodecError::InvalidDomain(e.to_string()))?;
+    Ok(request)
+}
+
+fn reconstruct(
+    record: &RatingAcceptanceRecord,
+    registry: &mut RatingRegistry,
+) -> Result<RatedCharge, CodecError> {
+    let request = checked_rating_request(record)?;
     let outcome = registry
         .rate(request)
         .map_err(|e| CodecError::Replay(e.to_string()))?;
@@ -267,6 +272,16 @@ fn reconstruct(
         ));
     }
     Ok(charge)
+}
+
+/// Recover the *original* rating request and verified aggregate from an
+/// acceptance record. It first proves that the embedded accepted charge is
+/// exactly recomputed through the canonical RatingRegistry before returning
+/// the original request for downstream authorization reconstruction.
+pub fn decode_accepted_rating_request(bytes: &[u8]) -> Result<RatingRequest, CodecError> {
+    let record = typed_record::<RatingAcceptanceRecord>(bytes, ACCEPTANCE_KIND)?;
+    reconstruct(&record, &mut RatingRegistry::new())?;
+    checked_rating_request(&record)
 }
 
 /// Only construct a serialized acceptance if the supplied source facts

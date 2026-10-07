@@ -5,6 +5,7 @@
 //! dedicated codecs, complete inventories, and parity proofs are reviewed.
 
 pub mod audit;
+pub mod authorized_rating;
 pub mod invoice;
 pub mod metering;
 pub mod rating;
