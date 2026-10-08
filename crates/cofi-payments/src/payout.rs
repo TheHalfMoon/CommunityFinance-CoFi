@@ -998,3 +998,117 @@ mod tests {
         assert!(matches!(first, PayoutApplyOutcome::Committed { .. }));
         assert!(matches!(second, PayoutApplyOutcome::Replayed { .. }));
         assert_eq!(ledger.entry_count(), count);
+    }
+
+    #[test]
+    fn conflicting_source_event_reuse_fails_closed() {
+        let mut ledger = ledger_with_payment(1_000, "payment-12");
+        let first = payout_event("shared-source", "payment-12", "payout-12", 1_000, 0, 1_000);
+        PayoutLedgerBridge::new()
+            .apply(&first, &no_fee_accounts(), &mut ledger)
+            .unwrap();
+        let count = ledger.entry_count();
+        let conflicting =
+            payout_event("shared-source", "payment-12", "payout-12b", 1_000, 0, 1_000);
+        assert!(
+            PayoutLedgerBridge::new()
+                .apply(&conflicting, &no_fee_accounts(), &mut ledger)
+                .is_err()
+        );
+        assert_eq!(ledger.entry_count(), count);
+    }
+
+    #[test]
+    fn same_payout_id_cannot_create_second_history() {
+        let mut ledger = ledger_with_payment(1_000, "payment-13");
+        let first = payout_event("source-13a", "payment-13", "payout-13", 1_000, 0, 1_000);
+        PayoutLedgerBridge::new()
+            .apply(&first, &no_fee_accounts(), &mut ledger)
+            .unwrap();
+        let count = ledger.entry_count();
+        let second = payout_event("source-13b", "payment-13", "payout-13", 1_000, 0, 1_000);
+        assert!(
+            PayoutLedgerBridge::new()
+                .apply(&second, &no_fee_accounts(), &mut ledger)
+                .is_err()
+        );
+        assert_eq!(ledger.entry_count(), count);
+    }
+
+    #[test]
+    fn same_payment_cannot_receive_second_full_payout() {
+        let mut ledger = ledger_with_payment(1_000, "payment-14");
+        let first = payout_event("source-14a", "payment-14", "payout-14a", 1_000, 0, 1_000);
+        PayoutLedgerBridge::new()
+            .apply(&first, &no_fee_accounts(), &mut ledger)
+            .unwrap();
+        let count = ledger.entry_count();
+        let second = payout_event("source-14b", "payment-14", "payout-14b", 1_000, 0, 1_000);
+        assert!(
+            PayoutLedgerBridge::new()
+                .apply(&second, &no_fee_accounts(), &mut ledger)
+                .is_err()
+        );
+        assert_eq!(ledger.entry_count(), count);
+    }
+
+    #[test]
+    fn rejected_payout_does_not_reserve_payment_business_key() {
+        let mut ledger = ledger_with_payment(1_000, "payment-15");
+        let invalid = payout_event("source-15a", "payment-15", "payout-15a", 1_000, 100, 850);
+        let before = ledger.entry_count();
+        assert!(
+            PayoutLedgerBridge::new()
+                .apply(&invalid, &fee_accounts(), &mut ledger)
+                .is_err()
+        );
+        assert_eq!(ledger.entry_count(), before);
+
+        let valid = payout_event("source-15b", "payment-15", "payout-15b", 1_000, 100, 900);
+        assert!(matches!(
+            PayoutLedgerBridge::new()
+                .apply(&valid, &fee_accounts(), &mut ledger)
+                .unwrap(),
+            PayoutApplyOutcome::Committed { .. }
+        ));
+    }
+
+    #[test]
+    fn fee_account_must_be_expense_kind() {
+        let mut ledger = ledger_with_payment(1_000, "payment-16");
+        let accounts = PayoutLedgerAccounts::new(
+            account_id("processor-clearing"),
+            account_id("bank-cash"),
+            Some(account_id("revenue")),
+        )
+        .unwrap();
+        let event = payout_event("source-16", "payment-16", "payout-16", 1_000, 100, 900);
+        assert!(matches!(
+            PayoutLedgerBridge::new().apply(&event, &accounts, &mut ledger),
+            Err(PayoutError::AccountKindMismatch { .. })
+        ));
+    }
+
+    #[test]
+    fn configured_clearing_must_match_payment_clearing_posting() {
+        let mut ledger = ledger_with_payment(1_000, "payment-17");
+        register_account(
+            &mut ledger,
+            "alternate-clearing",
+            "org-1",
+            AccountKind::Asset,
+            usd(),
+        );
+        let accounts = PayoutLedgerAccounts::new(
+            account_id("alternate-clearing"),
+            account_id("bank-cash"),
+            None,
+        )
+        .unwrap();
+        let event = payout_event("source-17", "payment-17", "payout-17", 1_000, 0, 1_000);
+        assert!(matches!(
+            PayoutLedgerBridge::new().apply(&event, &accounts, &mut ledger),
+            Err(PayoutError::PaymentClearingPostingMissing { .. })
+        ));
+    }
+}
