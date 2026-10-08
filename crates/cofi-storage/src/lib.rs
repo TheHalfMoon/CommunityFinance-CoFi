@@ -9,6 +9,7 @@ pub mod authorized_draft;
 pub mod authorized_finalization;
 pub mod authorized_rating;
 pub mod community;
+pub mod fund_movement;
 pub mod invoice;
 pub mod metering;
 pub mod rating;
