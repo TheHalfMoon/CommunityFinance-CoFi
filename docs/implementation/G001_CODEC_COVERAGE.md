@@ -19,6 +19,7 @@ API, provider execution, or live-money capability is introduced here.
 | Usage aggregate | `cofi-metering::UsageAggregate` | Derived, never serialized directly | Recomputed by `MeteringEngine::aggregate` | Sum `i128::MAX`, Count, exact reference parity |
 | Rate plan snapshot | cofi-rating::RatePlan | rate.plan v1 | Checked RatePlan constructors, all exact integer fields | i128 bounds, malformed plan and price rejection |
 | Historical accepted rating | cofi-rating::RatingRequest / RatedCharge | rating.acceptance v1 | Frozen original meter/usage/plan; canonical aggregate and rate; verify every charge field | Late-arrival nonretroactivity, altered source, mismatched receipt, identity/key conflict, overflow |
+| Immutable revenue split rule | `cofi-community::RevenueSplitRule` | `community.revenue_split_rule` v1 | Rebuild checked sorted destination legs via `BasisPoints::new`, `RevenueSplitLeg::new` and original `RevenueSplitRule::new` | Three tests cover exact version/leg parity, 10,000 basis-point sum, duplicate destinations, invalid numeric/version, unknown/extra JSON fields and size limit |
 | Base community registrations | `cofi-community::CommunityRegistry` | `community.fact` v1 | Rebuild organization, party, community, membership and fund via original checked register methods, requiring reconstructed `Ledger` for fund account/scope/currency/Asset validation | Six focused tests: roundtrip, reference indexes, exact retry, missing parents, conflicting pairs, ledger kind/scope, changed IDs, invalid types/version/fields and 1MiB bound |
 | Accepted subscription request | cofi-subscriptions::SubscriptionRequest | subscription.create v1 | Checked IDs, organization scope, customer, subject, embedded immutable plan snapshot, original effective interval; SubscriptionRequest::new and SubscriptionRegistry::create | Exact request and schedule parity, adjacent valid periods, overlap rejection, source-event identity and temporal failures |
 | Derived subscription indexes/status | cofi-subscriptions::SubscriptionRegistry | Derived, never persisted directly | Existing create, status_at and resolve_for_window | Reference and window boundary parity |
@@ -252,6 +253,19 @@ distributions; it does not authenticate the supplied event stream, prove
 that it includes every accepted event, or atomically durably persist facts
 under a trusted tenant identity. G001 remains PARTIAL and G002-G008
 production-eligibility gates remain blocked.
+
+### Immutable revenue split rule boundary
+
+The `community.revenue_split_rule` v1 codec preserves the original immutable
+rule ID, positive version, destination funds and exact basis points, using
+CoFi's original `RevenueSplitRule::new` constructor to enforce sorted
+unique destinations and a total of exactly 10,000 basis points.
+
+This **does not** prove that every destination fund exists or is authorized,
+that an accepted distribution referenced this exact rule version, or that
+its original journal postings can be safely replayed. Fund allocation,
+transfer, distribution execution, immutable authority consumption and
+journal/economic replay remain unqualified under Issue #40 and G001.
 
 ## G001 closure gates
 
