@@ -20,6 +20,7 @@ API, provider execution, or live-money capability is introduced here.
 | Rate plan snapshot | cofi-rating::RatePlan | rate.plan v1 | Checked RatePlan constructors, all exact integer fields | i128 bounds, malformed plan and price rejection |
 | Historical accepted rating | cofi-rating::RatingRequest / RatedCharge | rating.acceptance v1 | Frozen original meter/usage/plan; canonical aggregate and rate; verify every charge field | Late-arrival nonretroactivity, altered source, mismatched receipt, identity/key conflict, overflow |
 | Immutable revenue split rule | `cofi-community::RevenueSplitRule` | `community.revenue_split_rule` v1 | Rebuild checked sorted destination legs via `BasisPoints::new`, `RevenueSplitLeg::new` and original `RevenueSplitRule::new` | Three tests cover exact version/leg parity, 10,000 basis-point sum, duplicate destinations, invalid numeric/version, unknown/extra JSON fields and size limit |
+| P25 original capture-to-payout evidence and journal parity | cofi-payout-authorization source plus PayoutLedgerBridge | authorized.payout_evidence v1 | Decode checked P24 capture, validate original payout ID, payment ID, bank ref, gross/fee/net, scope/currency and payout accounts; run original P05/P25 bridges on private Ledger clone, require Replayed | 3 focused tests: accepted P24+P25 journal parity, changed amount/fee/bank/source/times/business, missing journal, schema/ancestry corruption |
 | Checked P24 capture source evidence and exact P05 journal parity | cofi-payment-authorization source + original PaymentLedgerBridge | authorized.capture_evidence v1 | Rebuild checked original P23, preserve capture event/payment/connector IDs, times, and original receivable/processor-clearing accounts; run original bridge on a private Ledger clone and require Replayed | Three tests: accepted original P23+P24 journal, bad source/account/timestamp and changed replay, invalid schema/extra fields/1MiB |
 | Original revenue distribution and immutable split rule/journal parity | `cofi-community::RevenueDistributionBridge` | `community.distribution` v1 | Decode checked original distribution event and typed embedded rate-split rule; run original bridge on private Ledger clone and require original `Replayed`; no real ledger mutation | Three focused tests cover roundtrip, original posting parity, changed rule version/BPS, amount, scope, currency, times, source and business identity, missing ancestor, invalid data and 1 MiB boundary |
 | Original community fund allocation/transfer source fact and journal parity | `cofi-community::FundAllocationBridge` / `FundTransferBridge` | `community.fund_movement` v1 | Rehydrate checked exact event/source-account DTO, then invoke original bridge on a private cloned independently recovered `Ledger`; require `Replayed`, reject `Committed` and altered accepted source/journal; no real Ledger mutation | Three tests: accepted allocation+transfer equality, duplicate/conflicting business identity, altered source IDs/times/accounts/amount/scope/currency, missing original journal and malformed input |
@@ -347,6 +348,23 @@ full authorization/consumed-key lineage remain unqualified.
 
 G001 #22, authorization #43, source trust #25/#31 and G002-G008 remain
 OPEN. No payment, payout or bank endpoint is enabled.
+
+### P25 capture-to-payout evidence boundary
+
+The authorized.payout_evidence v1 codec captures original payout source IDs,
+bank reference, exact gross/fee/net amounts, scope/currency, original
+timestamps and payout account bindings alongside complete checked P24
+capture evidence. The original PaymentLedgerBridge and PayoutLedgerBridge
+are evaluated on a private Ledger clone and require exact Replayed journal
+parity. Missing original payment/payout history is rejected and no actual
+money is posted.
+
+This is NOT AuthorizedPayoutRegistry replay; original first-time
+Committed authorization creation must be reconstructed from causal history
+on a historical Ledger. The caller supplied Ledger and source stream are
+not independently authenticated or proven complete. Consumed mandates,
+tenant durable atomicity, source cutoff, G001 #22, #43, #25, #31 and
+G002-G008 remain open.
 
 ## G001 closure gates
 
