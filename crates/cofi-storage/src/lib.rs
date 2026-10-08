@@ -11,6 +11,7 @@ pub mod authorized_finalization;
 pub mod authorized_rating;
 pub mod causal_allocation;
 pub mod causal_capture_payout;
+pub mod causal_capture_payout_stream;
 pub mod causal_transfer;
 pub mod community;
 pub mod distribution;
