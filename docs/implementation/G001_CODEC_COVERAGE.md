@@ -29,6 +29,7 @@ API, provider execution, or live-money capability is introduced here.
 | Checked P24 capture source evidence and exact P05 journal parity | cofi-payment-authorization source + original PaymentLedgerBridge | authorized.capture_evidence v1 | Rebuild checked original P23, preserve capture event/payment/connector IDs, times, and original receivable/processor-clearing accounts; run original bridge on a private Ledger clone and require Replayed | Three tests: accepted original P23+P24 journal, bad source/account/timestamp and changed replay, invalid schema/extra fields/1MiB |
 | Original revenue distribution and immutable split rule/journal parity | `cofi-community::RevenueDistributionBridge` | `community.distribution` v1 | Decode checked original distribution event and typed embedded rate-split rule; run original bridge on private Ledger clone and require original `Replayed`; no real ledger mutation | Three focused tests cover roundtrip, original posting parity, changed rule version/BPS, amount, scope, currency, times, source and business identity, missing ancestor, invalid data and 1 MiB boundary |
 | Original community fund allocation/transfer source fact and journal parity | `cofi-community::FundAllocationBridge` / `FundTransferBridge` | `community.fund_movement` v1 | Rehydrate checked exact event/source-account DTO, then invoke original bridge on a private cloned independently recovered `Ledger`; require `Replayed`, reject `Committed` and altered accepted source/journal; no real Ledger mutation | Three tests: accepted allocation+transfer equality, duplicate/conflicting business identity, altered source IDs/times/accounts/amount/scope/currency, missing original journal and malformed input |
+| Immutable governance approval policy registrations | `cofi-governance::SpendingApprovalPolicy` + `GovernanceEngine` | `governance.policy` v1 | Decode checked ID/version/org/community/fund/currency/amount/quorum/eligible-role snapshot; register only through original GovernanceEngine with independently reconstructed CommunityRegistry to validate fund boundary and monotonic versions | Three tests: canonical policy and original proposal validation, idempotent duplicate versus changed same policy/version, nonmonotonic policy, missing community/fund/scope, invalid role/version/quorum/cap and malformed JSON |
 | Base community registrations | `cofi-community::CommunityRegistry` | `community.fact` v1 | Rebuild organization, party, community, membership and fund via original checked register methods, requiring reconstructed `Ledger` for fund account/scope/currency/Asset validation | Six focused tests: roundtrip, reference indexes, exact retry, missing parents, conflicting pairs, ledger kind/scope, changed IDs, invalid types/version/fields and 1MiB bound |
 | Accepted subscription request | cofi-subscriptions::SubscriptionRequest | subscription.create v1 | Checked IDs, organization scope, customer, subject, embedded immutable plan snapshot, original effective interval; SubscriptionRequest::new and SubscriptionRegistry::create | Exact request and schedule parity, adjacent valid periods, overlap rejection, source-event identity and temporal failures |
 | Derived subscription indexes/status | cofi-subscriptions::SubscriptionRegistry | Derived, never persisted directly | Existing create, status_at and resolve_for_window | Reference and window boundary parity |
@@ -511,6 +512,23 @@ complete account list, prove source stream order/cutoff, or authorize
 account registrations between checkpoints. Arbitrary event interleaving,
 unrelated economic facts, G001 #22 and G002-G008 remain unqualified.
 A forged coherent genesis/reference pair is still possible.
+
+### Versioned governance approval policy facts
+
+The governance.policy v1 record rehydrates the ORIGINAL immutable SpendingApprovalPolicy
+through its checked constructor, then registers it only via GovernanceEngine::register_policy
+against the independently reconstructed CommunityRegistry. This rebuilds policy
+versions and their original community/fund/organization/currency constraints.
+Byte-equivalent repeated registration facts are idempotent in the codec wrapper;
+different contents under the same policy identity/version or nonmonotonic
+versions are refused. Eligible roles use checked original enum variants,
+original role sorting and strict integer amounts.
+
+**A registered policy is not an approval**: SpendingProposal, SpendingApproval,
+quorum votes, original ApprovedSpendingAuthorization, consumed spend authority,
+and FundSpendBridge journals are not persisted or rehydrated by this slice.
+It cannot establish an externally authentic source stream, cutoff, tenant binding
+or G002 atomic durability. G001 parent #22 and G002–G008 remain open.
 
 ## G001 closure gates
 
