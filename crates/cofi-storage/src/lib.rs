@@ -1,13 +1,14 @@
 //! Validated, versioned persistence records.
 //!
-//! G001 currently admits ledger accounts/journals and metering definitions/events.
-//! All other financial and authorization registries remain blocked until
+//! G001 currently includes bounded ledger, metering, commercial authorization, audit and community codecs.
+//! Other financial, community movement and authority registries remain blocked until
 //! dedicated codecs, complete inventories, and parity proofs are reviewed.
 
 pub mod audit;
 pub mod authorized_draft;
 pub mod authorized_finalization;
 pub mod authorized_rating;
+pub mod community;
 pub mod invoice;
 pub mod metering;
 pub mod rating;
@@ -48,7 +49,7 @@ impl Display for CodecError {
             }
             Self::InvalidInteger(field) => write!(f, "noncanonical integer in field {field}"),
             Self::InvalidDomain(reason) => write!(f, "domain rejected persistence fact: {reason}"),
-            Self::Replay(reason) => write!(f, "ledger replay rejected persistence fact: {reason}"),
+            Self::Replay(reason) => write!(f, "persistence replay rejected fact: {reason}"),
         }
     }
 }

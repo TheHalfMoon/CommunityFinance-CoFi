@@ -19,6 +19,7 @@ API, provider execution, or live-money capability is introduced here.
 | Usage aggregate | `cofi-metering::UsageAggregate` | Derived, never serialized directly | Recomputed by `MeteringEngine::aggregate` | Sum `i128::MAX`, Count, exact reference parity |
 | Rate plan snapshot | cofi-rating::RatePlan | rate.plan v1 | Checked RatePlan constructors, all exact integer fields | i128 bounds, malformed plan and price rejection |
 | Historical accepted rating | cofi-rating::RatingRequest / RatedCharge | rating.acceptance v1 | Frozen original meter/usage/plan; canonical aggregate and rate; verify every charge field | Late-arrival nonretroactivity, altered source, mismatched receipt, identity/key conflict, overflow |
+| Base community registrations | `cofi-community::CommunityRegistry` | `community.fact` v1 | Rebuild organization, party, community, membership and fund via original checked register methods, requiring reconstructed `Ledger` for fund account/scope/currency/Asset validation | Six focused tests: roundtrip, reference indexes, exact retry, missing parents, conflicting pairs, ledger kind/scope, changed IDs, invalid types/version/fields and 1MiB bound |
 | Accepted subscription request | cofi-subscriptions::SubscriptionRequest | subscription.create v1 | Checked IDs, organization scope, customer, subject, embedded immutable plan snapshot, original effective interval; SubscriptionRequest::new and SubscriptionRegistry::create | Exact request and schedule parity, adjacent valid periods, overlap rejection, source-event identity and temporal failures |
 | Derived subscription indexes/status | cofi-subscriptions::SubscriptionRegistry | Derived, never persisted directly | Existing create, status_at and resolve_for_window | Reference and window boundary parity |
 | Authorized rating from accepted subscription and frozen metering evidence | cofi-rating-authorization::AuthorizedRatingRegistry | authorized.rating v1 (cofi-storage) | Reconstruct original subscription.create and rating.acceptance via domain constructors and meters; reapply AuthorizedRatingRegistry::rate; compare source IDs, scoped plan and full original charge | Exact authorization replay, altered plan/scope/source membership/charge, conflicting same-ID subscription and missing history tests |
@@ -48,14 +49,14 @@ will be specified before G003. Record type/version rejection is fail-closed.
 
 | Current crate(s) | Missing G001 accepted-fact/replay coverage |
 | --- | --- |
-| `cofi-community` | organizations, memberships, shared funds, allocations, transfers and distributions |
+| `cofi-community` remaining modules | Allocation, transfer and distribution acceptance, ledger effects and consumed authority still unqualified; base community registration has a bounded checked codec. |
 | `cofi-governance`, `cofi-spending` | proposals, approvals, quorum, consumed authority and approved spending |
 | `cofi-disbursements`, `cofi-provider-contract` | lifecycle, request, observation and evidence bindings |
 | cofi-reconciliation and audit upstream provenance | Full original ReconciliationCase/Outcome/provider-evidence reconstruction, stream completeness/external root authentication, tenant-scoped immutable append ledger |
 | cofi-rating production admission | Authenticated complete source-event cutoff, tenant scope and authorization lineage remain unproven |
 | cofi-billing, finalization and remaining invoicing | Ledger posting/receivables, authorized invoice finalization and lifecycle, authenticated rating checkpoint, complete accepted commercial history and payment integration remain unqualified |
 | `cofi-payments` | capture and payout accounting source events |
-| `cofi-rating-authorization`, `cofi-invoice-authorization`, `cofi-finalization-authorization` | lineage, immutable authorization results and consumed keys |
+| `cofi-rating-authorization`, `cofi-invoice-authorization`, `cofi-finalization-authorization` remaining production admission | P21/P22/P23 replay source evidence exists; complete independently authenticated scope/consumed authority and durable result lineage remain unqualified. |
 | `cofi-payment-authorization`, `cofi-payout-authorization` | capture/payout authorization and exact source-event binding |
 | `cofi-fund-allocation-authorization`, `cofi-fund-transfer-authorization` | fund movement authorization/budget lineage |
 
@@ -123,7 +124,7 @@ strictly typed and 1 MiB limited individually; unsupported versions, invalid
 hex, duplicate JSON keys, invalid payload-outcome shapes, missing ancestry,
 sequence gaps and changed duplicate identities fail closed.
 
-**A second G001 slice adds typed caller-provided AuditStreamAnchor and
+A second G001 slice adds typed caller-provided AuditStreamAnchor and
 replay_audit_events_anchored, comparing **all and only** expected streams to
 both their known terminal sequence and digest. This detects a truncated or
 coherently rewritten chain when the original trusted anchor is retained
@@ -132,7 +133,7 @@ assign tenant scope to the anchor**. A malicious caller who supplies a forged
 matching digest defeats it. This remains a local verification primitive,
 not a production source-of-truth or a completed G001 provenance chain.
 
-This verifies consistency, not authenticity.** A forged coherent chain
+This verifies consistency, not authenticity. A forged coherent chain
 can compute entirely valid SHA-256 hashes. This first audit slice does not
 persist a trusted digest anchor, external signatures, a verified tenant-bound
 canonical provider/reconciliation event history, or proof that the source
@@ -176,7 +177,7 @@ exact-head CI/Jev/OCR are required before merging this slice.
 
 ### Authorized P22 draft source ancestry
 
-The \`authorized.draft\` v1 record contains the original accepted P21
+The `authorized.draft` v1 record contains the original accepted P21
 authorized.rating source receipt per rated line. Rehydration recomputes
 each AuthorizedRating through the P21 domain registry, reconstructs the
 original AuthorizedDraftRequest, and invokes only the canonical
@@ -190,7 +191,7 @@ invoice fails closed.
 values and all P21 source evidence are in the same untrusted v1 envelope,
 not independently authenticated. A coherent forged record can pass
 internal parity. Source-event completeness, tenant-scoped trusted
-sequence/transaction, and finalization authorization P23 remain OPEN.
+sequence/transaction, and independently trusted P23 source provenance remain OPEN.
 This is not a released or production-authorized billing workflow.
 
 The Pstack-style RED-before-GREEN test first reported missing P22 codec,
@@ -235,6 +236,22 @@ For each outstanding registry, map: constructor and all accepted commands, immut
 facts, resulting indexes, exact identities, timestamps/sequence, dependencies,
 snapshot references, conflicts and state-read APIs. Record any missing public
 getter/constructor as an explicit blocker rather than deserializing private state.
+
+### Community base registration replay boundary
+
+The `community.fact` v1 codec preserves the original accepted
+organization, party, community, membership and fund registration facts
+in supplied order. Only original domain constructors and CommunityRegistry
+registration methods rebuild lookup indexes and parent associations.
+Fund reconstruction requires the separately rehydrated Ledger and validates
+Asset account kind, organization scope, currency and unique account binding.
+Identical repeated records are idempotent; changed identity is rejected.
+
+This slice does **not** cover community allocations, transfers or
+distributions; it does not authenticate the supplied event stream, prove
+that it includes every accepted event, or atomically durably persist facts
+under a trusted tenant identity. G001 remains PARTIAL and G002-G008
+production-eligibility gates remain blocked.
 
 ## G001 closure gates
 
