@@ -900,3 +900,123 @@ fn accepted_disbursement_lifecycle_rejects_duplicate_historical_facts() {
         .is_ok()
     );
 }
+
+use cofi_storage::financial_history::{
+    AcceptedFinancialFact as FinancialFact, replay_accepted_financial_history,
+};
+
+#[test]
+fn shared_financial_chronology_rebuilds_original_governance_and_disbursement() {
+    let (ledger, _) = original_ledger();
+    let (policy, proposal, votes) = sources();
+    let spend = encode_governance_fund_spend(&spend()).unwrap();
+    let creation = encode_disbursement_creation(&original_disbursement_creation(
+        "create-1",
+        "disb-1",
+        "beneficiary-a",
+        1800,
+    ))
+    .unwrap();
+    let submission =
+        encode_disbursement_submission(&submitted_event("submit-1", "request-1", 1900)).unwrap();
+    let terminal = encode_disbursement_terminal(&terminal_event("terminal-1", 2000)).unwrap();
+    use FinancialFact::{Approval, Creation, FundSpend, Policy, Proposal, Submission, Terminal};
+    let stream = [
+        Policy(policy.as_slice()),
+        Proposal(proposal.as_slice()),
+        Approval(votes[0].as_slice()),
+        Approval(votes[1].as_slice()),
+        FundSpend(spend.as_slice()),
+        Creation {
+            creation: creation.as_slice(),
+            spend_source_event_id: "spend-event-1",
+        },
+        Submission(submission.as_slice()),
+        Terminal(terminal.as_slice()),
+    ];
+    let result = replay_accepted_financial_history(stream, &community(), &ledger).unwrap();
+    assert_eq!(result.governance().proposal_count(), 1);
+    assert_eq!(result.governance().approval_count(), 2);
+    assert_eq!(result.verified_spends().len(), 1);
+    let id = DisbursementId::new("disb-1").unwrap();
+    assert_eq!(
+        result.disbursements().disbursement(&id).unwrap().status(),
+        DisbursementStatus::Settled
+    );
+    assert_eq!(ledger.entry_count(), 2);
+}
+
+#[test]
+fn shared_financial_chronology_rejects_preaccepted_spend_and_duplicate_or_missing_sources() {
+    let (ledger, _) = original_ledger();
+    let (policy, proposal, votes) = sources();
+    let spend = encode_governance_fund_spend(&spend()).unwrap();
+    let creation = encode_disbursement_creation(&original_disbursement_creation(
+        "create-1",
+        "disb-1",
+        "beneficiary-a",
+        1800,
+    ))
+    .unwrap();
+    let submission =
+        encode_disbursement_submission(&submitted_event("submit-1", "request-1", 1900)).unwrap();
+    let terminal = encode_disbursement_terminal(&terminal_event("terminal-1", 2000)).unwrap();
+    use FinancialFact::{Approval, Creation, FundSpend, Policy, Proposal, Submission, Terminal};
+    let created = Creation {
+        creation: creation.as_slice(),
+        spend_source_event_id: "spend-event-1",
+    };
+    let history = vec![
+        Policy(policy.as_slice()),
+        Proposal(proposal.as_slice()),
+        Approval(votes[0].as_slice()),
+        Approval(votes[1].as_slice()),
+    ];
+    let cases = [
+        vec![created, FundSpend(spend.as_slice())],
+        vec![FundSpend(spend.as_slice()), created, created],
+        vec![
+            FundSpend(spend.as_slice()),
+            FundSpend(spend.as_slice()),
+            created,
+        ],
+        vec![
+            FundSpend(spend.as_slice()),
+            created,
+            Terminal(terminal.as_slice()),
+        ],
+        vec![
+            FundSpend(spend.as_slice()),
+            created,
+            Submission(submission.as_slice()),
+            Submission(submission.as_slice()),
+        ],
+        vec![
+            FundSpend(spend.as_slice()),
+            created,
+            Submission(submission.as_slice()),
+            Terminal(terminal.as_slice()),
+            Terminal(terminal.as_slice()),
+        ],
+        vec![Creation {
+            creation: creation.as_slice(),
+            spend_source_event_id: "missing-spend",
+        }],
+        vec![
+            FundSpend(spend.as_slice()),
+            Creation {
+                creation: creation.as_slice(),
+                spend_source_event_id: "missing-spend",
+            },
+        ],
+    ];
+    for (i, tail) in cases.into_iter().enumerate() {
+        let mut events = history.clone();
+        events.extend(tail);
+        assert!(
+            replay_accepted_financial_history(events, &community(), &ledger).is_err(),
+            "must reject impossible original financial chronology case {i}"
+        );
+    }
+    assert_eq!(ledger.entry_count(), 2);
+}

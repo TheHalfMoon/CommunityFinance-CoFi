@@ -667,6 +667,25 @@ does not establish tenant/source authentication, an external history cutoff,
 provider-signed receipts, completeness, or G002 transactional persistence.
 Parent #22 and G002-G008 remain open.
 
+### Shared governance-to-disbursement acceptance order (Issue #79)
+
+The `financial_history` bounded adapter consumes one caller-supplied,
+interleaved accepted Policy, Proposal, Approval, FundSpend, Creation,
+Submission and Terminal stream. Original `GovernanceEngine`,
+`FundSpendBridge::verify_committed` and `DisbursementEngine` alone
+rebuild state. A creation references an **already encountered** verified
+original fund-spend source event ID, not an arbitrary accepted source supplied
+later or a separately prebuilt governance engine. Exact duplicate accepted
+policy, proposal, vote, spend, creation, submission and terminal facts are
+rejected, even when a domain command's retry would be idempotent.
+
+This adapter does **not** authenticate the external record source or its
+completeness/tenant-global chronology and cutoff; it reads an independently
+supplied immutable reference Ledger but cannot prove its real-world origin.
+No PostgreSQL storage, transaction, original Ledger mutation, provider
+observation, money movement or release enablement is introduced. Parent
+G001 #22 and G002-G008 remain OPEN.
+
 ## G001 closure gates
 
 1. Enumerate every accepted current transition/result across all 21 original crates.

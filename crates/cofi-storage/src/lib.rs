@@ -19,6 +19,7 @@ pub mod community;
 pub mod disbursement_creation;
 pub mod disbursement_lifecycle;
 pub mod distribution;
+pub mod financial_history;
 pub mod fund_movement;
 pub mod governance_approval;
 pub mod governance_fund_spend;
