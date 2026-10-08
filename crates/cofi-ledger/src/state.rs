@@ -122,6 +122,12 @@ impl Ledger {
         self.accounts.get(id)
     }
 
+    /// Read-only, deterministic ledger account inventory in identifier order.
+    /// Used to qualify the *entire* supplied historical account snapshot,
+    /// including accounts not touched by any journal in the current flow.
+    pub fn accounts(&self) -> impl ExactSizeIterator<Item = &Account> {
+        self.accounts.values()
+    }
     #[must_use]
     pub fn entry(&self, id: &JournalEntryId) -> Option<&JournalEntry> {
         self.entries.get(id)

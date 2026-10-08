@@ -16,6 +16,7 @@ use cofi_payout_authorization::{
 };
 
 use crate::CodecError;
+use crate::account_parity::verify_all_accounts;
 use crate::payout_evidence::{decode_payout_evidence, verify_payout_journal};
 
 pub struct CausalPaymentFlow<'a> {
@@ -193,6 +194,7 @@ pub fn rebuild_causal_capture_payout_stream(
             ));
         }
     }
+    verify_all_accounts(genesis, &ledger, reference)?;
     Ok(CausalPaymentStream {
         captures,
         payouts,

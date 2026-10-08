@@ -483,11 +483,34 @@ missing reference stages and changed times fail closed in focused tests.
 **Strict nonqualification:** this is NOT arbitrary interleaved tenant
 history, partial capture/payout, refund/distribution/proprietary provider
 ordering, complete source cutoff, independent signature/attestation or
-durable atomic tenant storage. It cannot prove completeness of unrelated
+durable atomic tenant storage. It cannot prove external completeness of unrelated
 accounts/financial facts or protect against coherently forged source +
 reference Ledger. Parent G001 #22, #55, #43, #25/#31 and G002–G008 remain
 OPEN; no live money, bank or provider dispatch is authorized.
 
+
+### Entire Ledger account inventory at the P25/P26/P27 checkpoints
+
+The bounded multi-flow replay adapters now require **read-only full account
+inventory and balance parity** between the supplied account-only genesis,
+the privately reconstructed historical Ledger, and each supplied reference
+checkpoint. The read-only Ledger::accounts() method exposes the entire
+deterministic account inventory without permitting unchecked mutation.
+Account additions, removals, definition changes and changed balances are
+rejected even for accounts not referenced by P23-P27 financial journals.
+
+Two test-first regressions initially FAILED against the former touched-only
+checks (an extra P25 reference account and extra genesis/P25/P26/P27 account
+registrations). Both pass after the full inventory guard. Tests exercise
+all four failure cases on the shared two-tenant original-domain stream.
+No persistence DTOs directly populate a Ledger or authorization index.
+
+This strengthens **internal parity only**. It does not independently
+authenticate the genesis or reference Ledgers, establish an externally
+complete account list, prove source stream order/cutoff, or authorize
+account registrations between checkpoints. Arbitrary event interleaving,
+unrelated economic facts, G001 #22 and G002-G008 remain unqualified.
+A forged coherent genesis/reference pair is still possible.
 
 ## G001 closure gates
 
