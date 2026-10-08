@@ -203,6 +203,40 @@ impl SpendingProposal {
         })
     }
 
+    /// Original accepted proposal source and immutable policy binding.
+    #[must_use]
+    pub const fn source_event_id(&self) -> &SpendingProposalEventId {
+        &self.source_event_id
+    }
+    #[must_use]
+    pub const fn policy_id(&self) -> &SpendingApprovalPolicyId {
+        &self.policy_id
+    }
+    #[must_use]
+    pub const fn policy_version(&self) -> u32 {
+        self.policy_version
+    }
+    #[must_use]
+    pub const fn requester_party_id(&self) -> &PartyId {
+        &self.requester_party_id
+    }
+    #[must_use]
+    pub const fn organization_id(&self) -> &OrganizationId {
+        &self.organization_id
+    }
+    #[must_use]
+    pub const fn fund_id(&self) -> &FundId {
+        &self.fund_id
+    }
+    #[must_use]
+    pub const fn created_at_unix_ms(&self) -> i64 {
+        self.created_at_unix_ms
+    }
+    #[must_use]
+    pub const fn expires_at_unix_ms(&self) -> i64 {
+        self.expires_at_unix_ms
+    }
+
     #[must_use]
     pub const fn id(&self) -> &SpendingProposalId {
         &self.id
