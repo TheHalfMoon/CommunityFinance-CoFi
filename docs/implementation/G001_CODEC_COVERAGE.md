@@ -29,6 +29,7 @@ API, provider execution, or live-money capability is introduced here.
 | Checked P24 capture source evidence and exact P05 journal parity | cofi-payment-authorization source + original PaymentLedgerBridge | authorized.capture_evidence v1 | Rebuild checked original P23, preserve capture event/payment/connector IDs, times, and original receivable/processor-clearing accounts; run original bridge on a private Ledger clone and require Replayed | Three tests: accepted original P23+P24 journal, bad source/account/timestamp and changed replay, invalid schema/extra fields/1MiB |
 | Original revenue distribution and immutable split rule/journal parity | `cofi-community::RevenueDistributionBridge` | `community.distribution` v1 | Decode checked original distribution event and typed embedded rate-split rule; run original bridge on private Ledger clone and require original `Replayed`; no real ledger mutation | Three focused tests cover roundtrip, original posting parity, changed rule version/BPS, amount, scope, currency, times, source and business identity, missing ancestor, invalid data and 1 MiB boundary |
 | Original community fund allocation/transfer source fact and journal parity | `cofi-community::FundAllocationBridge` / `FundTransferBridge` | `community.fund_movement` v1 | Rehydrate checked exact event/source-account DTO, then invoke original bridge on a private cloned independently recovered `Ledger`; require `Replayed`, reject `Committed` and altered accepted source/journal; no real Ledger mutation | Three tests: accepted allocation+transfer equality, duplicate/conflicting business identity, altered source IDs/times/accounts/amount/scope/currency, missing original journal and malformed input |
+| Original authorized governance fund spend journal parity | `cofi-spending::ApprovedFundSpendEvent` + `FundSpendBridge::verify_committed` | `governance.fund_spend` v1 | Decode checked source/spend/proposal/org/community/fund, exact amount/purpose/currency/account/timestamps; reconstruct original policy, proposal and approval quorum engine first; verify only the existing original immutable posted journal through read-only original bridge | Three tests: accepted quorum and exact preexisting journal, missing vote/history and changed source/amount/scope/account/times, strict schema and conflicting business/proposal/source identity |
 | Original governance spending approval vote and quorum state | `cofi-governance::SpendingApproval` + `GovernanceEngine::approve` | `governance.approval` v1 | Decode checked source/approval/proposal/approver/timestamp, reconstruct policy and proposal history, apply only original GovernanceEngine::approve; derive original Pending/Approved transitions, immutable approver IDs and ApprovedSpendingAuthorization at quorum | Three tests: reference equality of pending/quorum authorization, duplicate ID/person/suspended/ineligible approver and missing policy/proposal/early or extra vote, strict record and 1MiB boundary |
 | Immutable governance spending proposal submission facts | `cofi-governance::SpendingProposal` + original `GovernanceEngine::submit_proposal` | `governance.proposal` v1 | Rehydrate checked source event/proposal/policy/version/requester/org/community/fund/currency/amount/purpose/created/expiry; first rebuild policy history, then original GovernanceEngine validates source, active requester membership, amount/policy and owner indexes | Three tests: checked roundtrip, duplicate idempotence and status, missing policy/community, changed same-source business identity, invalid requester/amount/expiry/scope/version and JSON |
 | Immutable governance approval policy registrations | `cofi-governance::SpendingApprovalPolicy` + `GovernanceEngine` | `governance.policy` v1 | Decode checked ID/version/org/community/fund/currency/amount/quorum/eligible-role snapshot; register only through original GovernanceEngine with independently reconstructed CommunityRegistry to validate fund boundary and monotonic versions | Three tests: canonical policy and original proposal validation, idempotent duplicate versus changed same policy/version, nonmonotonic policy, missing community/fund/scope, invalid role/version/quorum/cap and malformed JSON |
@@ -567,6 +568,25 @@ cofi-spending ApprovedFundSpendEvent and FundSpendBridge accepted journal
 and consumed authority require independent source proof, G001 coverage and
 all externally trusted tenant/source sequence checks. #66, #64, #22,
 source #25/#31 and G002-G008 remain independently open.
+
+### Bounded governed fund spend source-to-journal parity
+
+The governance.fund_spend v1 codec retains accepted source-event identity,
+business spend/proposal keys, scope, community, fund, currency, exact amount,
+purpose, expense account and effective/observed timestamps. It rehydrates
+the original GovernanceEngine only through policies, accepted proposals and
+ordered approval votes before invoking FundSpendBridge::verify_committed.
+No Apply/Commit endpoint is called, and no Ledger mutation occurs.
+
+Changed source or spend ID, reused consumed proposal, missing quorum, wrong
+expense kind/tenant/currency, altered amount, purpose or posting metadata
+fail the original domain check. An existing exact journal is necessary.
+
+External caller-provided history and Ledger may still be forged together;
+neither quorum nor journal parity alone proves global accepted event order,
+authorization source completeness, immutable consumption across all tenants,
+transactional persistence or external funds. Parent G001 #22, #64/#66/#68,
+#25/#31, G002-G008 remain OPEN. Production spending remains blocked.
 
 ## G001 closure gates
 
