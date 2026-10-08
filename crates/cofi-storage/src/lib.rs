@@ -17,6 +17,7 @@ pub mod causal_fund_stream;
 pub mod causal_transfer;
 pub mod community;
 pub mod disbursement_creation;
+pub mod disbursement_lifecycle;
 pub mod distribution;
 pub mod fund_movement;
 pub mod governance_approval;

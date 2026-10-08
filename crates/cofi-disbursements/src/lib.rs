@@ -111,6 +111,23 @@ impl DisbursementSubmission {
             submitted_at_unix_ms,
         }
     }
+
+    #[must_use]
+    pub const fn source_event_id(&self) -> &DisbursementEventId {
+        &self.source_event_id
+    }
+    #[must_use]
+    pub const fn disbursement_id(&self) -> &DisbursementId {
+        &self.disbursement_id
+    }
+    #[must_use]
+    pub const fn provider_request_reference(&self) -> &ProviderRequestReference {
+        &self.provider_request_reference
+    }
+    #[must_use]
+    pub const fn submitted_at_unix_ms(&self) -> i64 {
+        self.submitted_at_unix_ms
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -172,6 +189,22 @@ impl DisbursementTerminalEvent {
     #[must_use]
     pub const fn kind(&self) -> &TerminalKind {
         &self.kind
+    }
+    #[must_use]
+    pub const fn source_event_id(&self) -> &DisbursementEventId {
+        &self.source_event_id
+    }
+    #[must_use]
+    pub const fn disbursement_id(&self) -> &DisbursementId {
+        &self.disbursement_id
+    }
+    #[must_use]
+    pub const fn provider_event_reference(&self) -> &ProviderEventReference {
+        &self.provider_event_reference
+    }
+    #[must_use]
+    pub const fn terminal_at_unix_ms(&self) -> i64 {
+        self.terminal_at_unix_ms
     }
 }
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
