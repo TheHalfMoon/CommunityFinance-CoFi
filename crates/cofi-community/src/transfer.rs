@@ -72,6 +72,24 @@ impl FundTransferEvent {
         }
     }
 
+    /// Original accepted source identity.
+    #[must_use]
+    pub fn source_event_id(&self) -> &FundTransferEventId {
+        &self.source_event_id
+    }
+
+    /// Original effective time.
+    #[must_use]
+    pub const fn effective_at_unix_ms(&self) -> i64 {
+        self.effective_at_unix_ms
+    }
+
+    /// Original observed time.
+    #[must_use]
+    pub const fn observed_at_unix_ms(&self) -> i64 {
+        self.observed_at_unix_ms
+    }
+
     #[must_use]
     pub fn organization_scope(&self) -> &LedgerScopeId {
         &self.organization_scope

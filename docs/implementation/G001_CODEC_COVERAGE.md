@@ -20,6 +20,7 @@ API, provider execution, or live-money capability is introduced here.
 | Rate plan snapshot | cofi-rating::RatePlan | rate.plan v1 | Checked RatePlan constructors, all exact integer fields | i128 bounds, malformed plan and price rejection |
 | Historical accepted rating | cofi-rating::RatingRequest / RatedCharge | rating.acceptance v1 | Frozen original meter/usage/plan; canonical aggregate and rate; verify every charge field | Late-arrival nonretroactivity, altered source, mismatched receipt, identity/key conflict, overflow |
 | Immutable revenue split rule | `cofi-community::RevenueSplitRule` | `community.revenue_split_rule` v1 | Rebuild checked sorted destination legs via `BasisPoints::new`, `RevenueSplitLeg::new` and original `RevenueSplitRule::new` | Three tests cover exact version/leg parity, 10,000 basis-point sum, duplicate destinations, invalid numeric/version, unknown/extra JSON fields and size limit |
+| Original community fund allocation/transfer source fact and journal parity | `cofi-community::FundAllocationBridge` / `FundTransferBridge` | `community.fund_movement` v1 | Rehydrate checked exact event/source-account DTO, then invoke original bridge on a private cloned independently recovered `Ledger`; require `Replayed`, reject `Committed` and altered accepted source/journal; no real Ledger mutation | Three tests: accepted allocation+transfer equality, duplicate/conflicting business identity, altered source IDs/times/accounts/amount/scope/currency, missing original journal and malformed input |
 | Base community registrations | `cofi-community::CommunityRegistry` | `community.fact` v1 | Rebuild organization, party, community, membership and fund via original checked register methods, requiring reconstructed `Ledger` for fund account/scope/currency/Asset validation | Six focused tests: roundtrip, reference indexes, exact retry, missing parents, conflicting pairs, ledger kind/scope, changed IDs, invalid types/version/fields and 1MiB bound |
 | Accepted subscription request | cofi-subscriptions::SubscriptionRequest | subscription.create v1 | Checked IDs, organization scope, customer, subject, embedded immutable plan snapshot, original effective interval; SubscriptionRequest::new and SubscriptionRegistry::create | Exact request and schedule parity, adjacent valid periods, overlap rejection, source-event identity and temporal failures |
 | Derived subscription indexes/status | cofi-subscriptions::SubscriptionRegistry | Derived, never persisted directly | Existing create, status_at and resolve_for_window | Reference and window boundary parity |
@@ -50,7 +51,7 @@ will be specified before G003. Record type/version rejection is fail-closed.
 
 | Current crate(s) | Missing G001 accepted-fact/replay coverage |
 | --- | --- |
-| `cofi-community` remaining modules | Allocation, transfer and distribution acceptance, ledger effects and consumed authority still unqualified; base community registration has a bounded checked codec. |
+| `cofi-community` remaining economic/authorization state | Allocation/transfer source facts now have bounded original-ledger parity verification only; distribution journal parity, allocation/transfer authorization consumption and durable canonical order remain unqualified. |
 | `cofi-governance`, `cofi-spending` | proposals, approvals, quorum, consumed authority and approved spending |
 | `cofi-disbursements`, `cofi-provider-contract` | lifecycle, request, observation and evidence bindings |
 | cofi-reconciliation and audit upstream provenance | Full original ReconciliationCase/Outcome/provider-evidence reconstruction, stream completeness/external root authentication, tenant-scoped immutable append ledger |
@@ -266,6 +267,36 @@ that an accepted distribution referenced this exact rule version, or that
 its original journal postings can be safely replayed. Fund allocation,
 transfer, distribution execution, immutable authority consumption and
 journal/economic replay remain unqualified under Issue #40 and G001.
+
+### Fund movement source-to-journal parity (bounded)
+
+The community.fund_movement v1 codec preserves original accepted allocation
+and transfer source event IDs, scope/fund identities, immutable business keys,
+currency, positive amount, original effective/observed timestamps, and
+for allocation the original source-cash Ledger account. Minimal public
+readers were added to the two original domain event types for the source
+event identity and timestamps; the domain bridges and posting algorithms
+remain unchanged.
+
+After the independently recovered original Ledger and CommunityRegistry
+have been supplied, the verifier runs the **original**
+FundAllocationBridge::apply or FundTransferBridge::apply on a **private
+clone of Ledger** and requires the exact Replayed result. If that bridge
+would commit an absent entry, or the original source facts conflict with
+journal identity/postings/metadata/times, verification fails. The original
+Ledger is never mutated, and no network/provider action is invoked.
+Same business IDs with changed source records fail closed; exact repeated
+source snapshots are idempotent.
+
+**Not proved:** the caller's canonical Ledger and source stream are
+complete, trustworthy, independently authenticated, tenant-bound,
+properly ordered or transactionally accepted; neither allocation nor
+transfer authorization decision/consumed grant lineage is recovered
+here. RevenueDistributionEvent and its journal/posting parity are not
+yet covered. An internally consistent forged Ledger plus matching
+source can still satisfy local parity; G002-G008 and provenance issues
+remain hard gates. No live fund movement is authorized by this adapter.
+
 
 ## G001 closure gates
 
