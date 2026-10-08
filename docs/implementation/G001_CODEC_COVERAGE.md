@@ -20,6 +20,7 @@ API, provider execution, or live-money capability is introduced here.
 | Rate plan snapshot | cofi-rating::RatePlan | rate.plan v1 | Checked RatePlan constructors, all exact integer fields | i128 bounds, malformed plan and price rejection |
 | Historical accepted rating | cofi-rating::RatingRequest / RatedCharge | rating.acceptance v1 | Frozen original meter/usage/plan; canonical aggregate and rate; verify every charge field | Late-arrival nonretroactivity, altered source, mismatched receipt, identity/key conflict, overflow |
 | Immutable revenue split rule | `cofi-community::RevenueSplitRule` | `community.revenue_split_rule` v1 | Rebuild checked sorted destination legs via `BasisPoints::new`, `RevenueSplitLeg::new` and original `RevenueSplitRule::new` | Three tests cover exact version/leg parity, 10,000 basis-point sum, duplicate destinations, invalid numeric/version, unknown/extra JSON fields and size limit |
+| Causal P23→P27 original complete payout-to-fund-transfer authorization (one flow) | Original AuthorizedFundTransferRegistry and FundTransferBridge on P23–P26 causal predecessor | checked causal reconstruction (no new record kind) | Supply P25, P26 and typed P27 sources, trusted zero-journal genesis, original community, and exact accepted after-P25/P26/P27 snapshots; first-time Committed creates actual P27 allocation consumption registry; require five original journal entries and matching account balances | Three tests: real P27 accepted authority and indexes, second transfer of same allocation rejected, wrong source/destination/funds/scope/amount/timing and missing intermediate/last journal |
 | Causal P23/P24/P25 payout → P26 authorized full fund allocation (one flow) | Original AuthorizedFundAllocationRegistry / FundAllocationBridge plus causal P23–P25 | checked causal reconstruction (no new record kind) | Accept typed P26 source, exact separately supplied after-P25 and after-P26 reference Ledgers, original CommunityRegistry; original first-time Committed allocation consumes reconstructed payout authority, then match four original journals, original accounts and balances | 4 tests: original consumed-payout index and funds, reject duplicate payout allocation, source/scope/account/timestamp corruption, missing/extra journal and missing fund |
 | Causal authorized P23 invoice → P24 capture → P25 payout acceptance (one flow) | BillingLedgerBridge + AuthorizedCaptureRegistry + AuthorizedPayoutRegistry | checked causal reconstruction (no new record kind) | Original P23/P24/P25 source fact and trusted zero-journal genesis; apply original invoice, capture and payout transitions in causal order on private Ledger; require first-time Committed and compare all three journal entries and involved account balances against supplied exact reference Ledger | 3 tests: original registry index and journal parity, missing/extra previous ledger state, tampered payout/capture source, bad billing accounts |
 | P25 original capture-to-payout evidence and journal parity | cofi-payout-authorization source plus PayoutLedgerBridge | authorized.payout_evidence v1 | Decode checked P24 capture, validate original payout ID, payment ID, bank ref, gross/fee/net, scope/currency and payout accounts; run original P05/P25 bridges on private Ledger clone, require Replayed | 3 focused tests: accepted P24+P25 journal parity, changed amount/fee/bank/source/times/business, missing journal, schema/ancestry corruption |
@@ -405,6 +406,25 @@ and final Ledgers are not externally authenticated. Multiple simultaneous
 payments/allocations, authorized fund transfers, source completeness/cutoff
 and durable tenant-atomic persistence are not qualified. G001 #22, #43,
 source-trust #25/#31 and G002-G008 remain OPEN.
+
+### Bounded causal P27 transfer authorization from original allocation
+
+The causal_transfer module reconstructs exactly one P23→P27 accepted chain.
+It uses real previously accepted domain authorizations P24, P25 and P26
+constructed from original transitions, then creates an original P27
+AuthorizedFundTransfer using the actual P26 AuthorizedFundAllocation.
+The original FundTransferBridge must commit a new historical journal,
+and the P27 registry's allocation consumption index must be rebuilt.
+The resulting five journal objects, relevant account definitions and
+balances must equal the externally supplied after-P27 historical Ledger.
+All writes are to a private local historical Ledger, never actual funds.
+
+This single-flow result is not independent authentication of any event
+stream, tenant, community registration, genesis or reference snapshot.
+Multiple accepted financial flows, refunds, external bank/provenance
+evidence and G002 tenant-atomic persistent history remain outside scope.
+G001 #22/#43, audit/reconciliation #31, source trust #25 and G002-G008
+remain OPEN; no production authorization is implied.
 
 ## G001 closure gates
 
