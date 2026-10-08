@@ -18,6 +18,7 @@ pub mod causal_transfer;
 pub mod community;
 pub mod distribution;
 pub mod fund_movement;
+pub mod governance_approval;
 pub mod governance_policy;
 pub mod governance_proposal;
 pub mod invoice;

@@ -285,6 +285,24 @@ impl SpendingApproval {
         }
     }
 
+    /// Exact original source-event identity and approver record.
+    #[must_use]
+    pub const fn source_event_id(&self) -> &SpendingApprovalEventId {
+        &self.source_event_id
+    }
+    #[must_use]
+    pub const fn proposal_id(&self) -> &SpendingProposalId {
+        &self.proposal_id
+    }
+    #[must_use]
+    pub const fn approver_party_id(&self) -> &PartyId {
+        &self.approver_party_id
+    }
+    #[must_use]
+    pub const fn approved_at_unix_ms(&self) -> i64 {
+        self.approved_at_unix_ms
+    }
+
     #[must_use]
     pub const fn id(&self) -> &SpendingApprovalId {
         &self.id
