@@ -635,3 +635,222 @@ fn disbursement_creation_strict_record_and_times_fail_closed() {
     assert!(decode_disbursement_creation(&serde_json::to_vec(&extra).unwrap()).is_err());
     assert!(decode_disbursement_creation(&vec![b' '; 1024 * 1024 + 1]).is_err());
 }
+
+use cofi_disbursements::{
+    DisbursementSubmission, DisbursementTerminalEvent, ProviderEventReference,
+    ProviderRequestReference, ProviderSettlementReference,
+};
+use cofi_storage::disbursement_lifecycle::{
+    DisbursementLifecycleFact, decode_disbursement_submission, decode_disbursement_terminal,
+    encode_disbursement_submission, encode_disbursement_terminal, replay_disbursement_lifecycle,
+};
+
+fn submitted_event(event_id: &str, reference: &str, at: i64) -> DisbursementSubmission {
+    DisbursementSubmission::new(
+        DisbursementEventId::new(event_id).unwrap(),
+        DisbursementId::new("disb-1").unwrap(),
+        ProviderRequestReference::new(reference).unwrap(),
+        at,
+    )
+}
+
+fn terminal_event(event_id: &str, at: i64) -> DisbursementTerminalEvent {
+    DisbursementTerminalEvent::settled(
+        DisbursementEventId::new(event_id).unwrap(),
+        DisbursementId::new("disb-1").unwrap(),
+        ProviderEventReference::new("pe-1").unwrap(),
+        ProviderSettlementReference::new("settlement-1").unwrap(),
+        at,
+    )
+}
+
+#[test]
+fn original_disbursement_submission_and_terminal_state_replays_exactly() {
+    let (ledger, _) = original_ledger();
+    let governance = original_governance_fixture();
+    let creation = original_disbursement_creation("create-1", "disb-1", "beneficiary-a", 1800);
+    let submission = submitted_event("submit-1", "request-1", 1900);
+    let terminal = terminal_event("terminal-1", 2000);
+    let creation_bytes = encode_disbursement_creation(&creation).unwrap();
+    let spend_bytes = encode_governance_fund_spend(&spend()).unwrap();
+    let submission_bytes = encode_disbursement_submission(&submission).unwrap();
+    let terminal_bytes = encode_disbursement_terminal(&terminal).unwrap();
+    assert_eq!(
+        decode_disbursement_submission(&submission_bytes).unwrap(),
+        submission
+    );
+    assert_eq!(
+        decode_disbursement_terminal(&terminal_bytes).unwrap(),
+        terminal
+    );
+    use DisbursementLifecycleFact::{Creation, Submission, Terminal};
+    let rebuilt = replay_disbursement_lifecycle(
+        [
+            Creation {
+                creation: creation_bytes.as_slice(),
+                spend: spend_bytes.as_slice(),
+            },
+            Submission(submission_bytes.as_slice()),
+            Terminal(terminal_bytes.as_slice()),
+        ],
+        &community(),
+        &governance,
+        &ledger,
+    )
+    .unwrap();
+    let mut reference = DisbursementEngine::new();
+    reference
+        .create(
+            &community(),
+            &governance,
+            &ledger,
+            &spend(),
+            creation.clone(),
+        )
+        .unwrap();
+    reference.submit(submission).unwrap();
+    reference.record_terminal(terminal).unwrap();
+    let restored = rebuilt.disbursement(creation.id()).unwrap();
+    assert_eq!(Some(restored), reference.disbursement(creation.id()));
+    assert_eq!(restored.status(), DisbursementStatus::Settled);
+    assert_eq!(
+        restored.provider_settlement_reference().unwrap().as_str(),
+        "settlement-1"
+    );
+    assert_eq!(ledger.entry_count(), 2);
+}
+
+#[test]
+fn disbursement_lifecycle_rejects_missing_predecessor_wrong_order_and_timing() {
+    let (ledger, _) = original_ledger();
+    let governance = original_governance_fixture();
+    let creation = encode_disbursement_creation(&original_disbursement_creation(
+        "create-1",
+        "disb-1",
+        "beneficiary-a",
+        1800,
+    ))
+    .unwrap();
+    let spend = encode_governance_fund_spend(&spend()).unwrap();
+    let submit =
+        encode_disbursement_submission(&submitted_event("submit-1", "request-1", 1900)).unwrap();
+    let terminal = encode_disbursement_terminal(&terminal_event("terminal-1", 2000)).unwrap();
+    use DisbursementLifecycleFact::{Creation, Submission, Terminal};
+    for (i, stream) in [
+        vec![Submission(submit.as_slice())],
+        vec![Terminal(terminal.as_slice())],
+        vec![
+            Creation {
+                creation: creation.as_slice(),
+                spend: spend.as_slice(),
+            },
+            Terminal(terminal.as_slice()),
+            Submission(submit.as_slice()),
+        ],
+    ]
+    .into_iter()
+    .enumerate()
+    {
+        assert!(
+            replay_disbursement_lifecycle(stream, &community(), &governance, &ledger).is_err(),
+            "invalid order {i}"
+        );
+    }
+    let early_submit =
+        encode_disbursement_submission(&submitted_event("submit-early", "request-early", 1700))
+            .unwrap();
+    assert!(
+        replay_disbursement_lifecycle(
+            [
+                Creation {
+                    creation: creation.as_slice(),
+                    spend: spend.as_slice()
+                },
+                Submission(early_submit.as_slice())
+            ],
+            &community(),
+            &governance,
+            &ledger
+        )
+        .is_err()
+    );
+    let early_terminal =
+        encode_disbursement_terminal(&terminal_event("terminal-early", 1850)).unwrap();
+    assert!(
+        replay_disbursement_lifecycle(
+            [
+                Creation {
+                    creation: creation.as_slice(),
+                    spend: spend.as_slice()
+                },
+                Submission(submit.as_slice()),
+                Terminal(early_terminal.as_slice())
+            ],
+            &community(),
+            &governance,
+            &ledger
+        )
+        .is_err()
+    );
+}
+
+#[test]
+fn disbursement_lifecycle_rejects_changed_source_and_malformed_records() {
+    let (ledger, _) = original_ledger();
+    let governance = original_governance_fixture();
+    let creation = encode_disbursement_creation(&original_disbursement_creation(
+        "create-1",
+        "disb-1",
+        "beneficiary-a",
+        1800,
+    ))
+    .unwrap();
+    let spend = encode_governance_fund_spend(&spend()).unwrap();
+    let submit =
+        encode_disbursement_submission(&submitted_event("submit-1", "request-1", 1900)).unwrap();
+    let changed =
+        encode_disbursement_submission(&submitted_event("submit-1", "changed", 1900)).unwrap();
+    use DisbursementLifecycleFact::{Creation, Submission};
+    assert!(
+        replay_disbursement_lifecycle(
+            [
+                Creation {
+                    creation: creation.as_slice(),
+                    spend: spend.as_slice()
+                },
+                Submission(submit.as_slice()),
+                Submission(changed.as_slice())
+            ],
+            &community(),
+            &governance,
+            &ledger
+        )
+        .is_err()
+    );
+    let original: serde_json::Value = serde_json::from_slice(&submit).unwrap();
+    for (path, value) in [
+        ("/schema_version", serde_json::json!(2)),
+        ("/record_type", serde_json::json!("other")),
+        ("/payload/submitted_at_unix_ms", serde_json::json!("1.5")),
+        (
+            "/payload/submitted_at_unix_ms",
+            serde_json::json!("9223372036854775808"),
+        ),
+        ("/payload/source_event_id", serde_json::json!(" ")),
+    ] {
+        let mut altered = original.clone();
+        *altered.pointer_mut(path).unwrap() = value;
+        assert!(
+            decode_disbursement_submission(&serde_json::to_vec(&altered).unwrap()).is_err(),
+            "{path}"
+        );
+    }
+    let mut extra = original;
+    extra["payload"]["extra"] = serde_json::json!(true);
+    assert!(decode_disbursement_submission(&serde_json::to_vec(&extra).unwrap()).is_err());
+    let terminal = encode_disbursement_terminal(&terminal_event("terminal-1", 2000)).unwrap();
+    let mut invalid: serde_json::Value = serde_json::from_slice(&terminal).unwrap();
+    invalid["payload"]["kind"] = serde_json::json!({"settled":{"settlement_reference":""}});
+    assert!(decode_disbursement_terminal(&serde_json::to_vec(&invalid).unwrap()).is_err());
+    assert!(decode_disbursement_terminal(&vec![b' '; 1024 * 1024 + 1]).is_err());
+}

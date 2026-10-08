@@ -627,6 +627,29 @@ reference Ledger, G002 atomicity or live transfers. Issue #72 is a bounded
 partial codec only. Parent G001 #22, provenance #25/#31, and G002-G008 stay
 OPEN. No real provider network activity or economic posting is enabled.
 
+### Original disbursement submission and terminal lifecycle facts (Issue #74)
+
+The `disbursement.submission` and `disbursement.terminal` v1 records retain
+original accepted disbursement/source/provider references, exact i64 event
+timestamps and typed Settled/Failed settlement or failure identities. Small
+read-only getters expose original immutable source fields; the codecs use
+only original constructors, reject unknown/duplicate JSON fields and oversized
+records, and never hydrate original domain maps directly.
+
+The bounded `replay_disbursement_lifecycle` consumes a **caller-supplied**
+interleaved creation → submission → terminal stream, invokes only original
+DisbursementEngine::create/submit/record_terminal against checked original
+spend and immutable Ledger, and rebuilds original Ready/Submitted/Settled/
+Failed state plus original consumed provider reference indexes. Original domain
+checks reject impossible order/times, changed source IDs and replay conflict.
+
+**No trusted provider observation or live settlement is proven**: these are
+internally consistent caller-supplied lifecycle facts, not authenticated
+webhooks or bank evidence. Full tenant admission/sequence/cutoff, source
+completeness, durable transaction boundary, actual external attempt and
+provider verification remain unqualified. G001 #22, provenance #25/#31,
+G002-G008 and all production financial gates remain OPEN.
+
 ## G001 closure gates
 
 1. Enumerate every accepted current transition/result across all 21 original crates.
