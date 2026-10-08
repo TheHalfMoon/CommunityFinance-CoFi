@@ -20,6 +20,7 @@ API, provider execution, or live-money capability is introduced here.
 | Rate plan snapshot | cofi-rating::RatePlan | rate.plan v1 | Checked RatePlan constructors, all exact integer fields | i128 bounds, malformed plan and price rejection |
 | Historical accepted rating | cofi-rating::RatingRequest / RatedCharge | rating.acceptance v1 | Frozen original meter/usage/plan; canonical aggregate and rate; verify every charge field | Late-arrival nonretroactivity, altered source, mismatched receipt, identity/key conflict, overflow |
 | Immutable revenue split rule | `cofi-community::RevenueSplitRule` | `community.revenue_split_rule` v1 | Rebuild checked sorted destination legs via `BasisPoints::new`, `RevenueSplitLeg::new` and original `RevenueSplitRule::new` | Three tests cover exact version/leg parity, 10,000 basis-point sum, duplicate destinations, invalid numeric/version, unknown/extra JSON fields and size limit |
+| Original revenue distribution and immutable split rule/journal parity | `cofi-community::RevenueDistributionBridge` | `community.distribution` v1 | Decode checked original distribution event and typed embedded rate-split rule; run original bridge on private Ledger clone and require original `Replayed`; no real ledger mutation | Three focused tests cover roundtrip, original posting parity, changed rule version/BPS, amount, scope, currency, times, source and business identity, missing ancestor, invalid data and 1 MiB boundary |
 | Original community fund allocation/transfer source fact and journal parity | `cofi-community::FundAllocationBridge` / `FundTransferBridge` | `community.fund_movement` v1 | Rehydrate checked exact event/source-account DTO, then invoke original bridge on a private cloned independently recovered `Ledger`; require `Replayed`, reject `Committed` and altered accepted source/journal; no real Ledger mutation | Three tests: accepted allocation+transfer equality, duplicate/conflicting business identity, altered source IDs/times/accounts/amount/scope/currency, missing original journal and malformed input |
 | Base community registrations | `cofi-community::CommunityRegistry` | `community.fact` v1 | Rebuild organization, party, community, membership and fund via original checked register methods, requiring reconstructed `Ledger` for fund account/scope/currency/Asset validation | Six focused tests: roundtrip, reference indexes, exact retry, missing parents, conflicting pairs, ledger kind/scope, changed IDs, invalid types/version/fields and 1MiB bound |
 | Accepted subscription request | cofi-subscriptions::SubscriptionRequest | subscription.create v1 | Checked IDs, organization scope, customer, subject, embedded immutable plan snapshot, original effective interval; SubscriptionRequest::new and SubscriptionRegistry::create | Exact request and schedule parity, adjacent valid periods, overlap rejection, source-event identity and temporal failures |
@@ -296,6 +297,34 @@ here. RevenueDistributionEvent and its journal/posting parity are not
 yet covered. An internally consistent forged Ledger plus matching
 source can still satisfy local parity; G002-G008 and provenance issues
 remain hard gates. No live fund movement is authorized by this adapter.
+
+
+
+### Immutable revenue distribution source-to-journal parity
+
+The community.distribution v1 acceptance record stores original source
+event ID, tenant scope, source fund and distribution business ID, original
+immutable rule ID/version, currency, exact decimal i128 amount and
+effective/observed timestamps, plus the original typed versioned revenue
+split rule evidence. Parsing rejects duplicate and unknown nested fields,
+fractional amounts, malformed identifiers, mismatched rule versions and
+nonpositive amounts. The original RevenueSplitRule codec qualifies the
+10,000-basis-point split and unique canonical destination set.
+
+On a private Ledger clone, the verifier invokes ONLY
+RevenueDistributionBridge::apply and requires its exact Replayed outcome:
+every journal posting (including largest-remainder allocations), original
+rule, identifiers, metadata and timestamps must match the independently
+rehydrated original Ledger. No caller Ledger mutation occurs; missing
+journals that would be newly Committed fail. Same distribution business key
+and source-event identity conflicts fail closed.
+
+This is a local consistency proof **against untrusted caller-supplied
+source and Ledger**. It does NOT prove external authenticity, history
+completeness/ordering, tenant-scoped atomic acceptance, destination
+authorization/consumed mandate or durable source provenance. The same
+limits apply to allocation and transfer parity. Issues #25, #31, #43,
+G001 #22 and G002-G008 remain OPEN; do not enable money movement.
 
 
 ## G001 closure gates

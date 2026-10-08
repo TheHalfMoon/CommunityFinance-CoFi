@@ -175,6 +175,27 @@ impl RevenueDistributionEvent {
         }
     }
 
+    /// Original accepted source identity and immutable rule evidence.
+    #[must_use]
+    pub const fn source_event_id(&self) -> &RevenueDistributionEventId {
+        &self.source_event_id
+    }
+    #[must_use]
+    pub const fn rule_id(&self) -> &RevenueSplitRuleId {
+        &self.rule_id
+    }
+    #[must_use]
+    pub const fn rule_version(&self) -> u32 {
+        self.rule_version
+    }
+    #[must_use]
+    pub const fn effective_at_unix_ms(&self) -> i64 {
+        self.effective_at_unix_ms
+    }
+    #[must_use]
+    pub const fn observed_at_unix_ms(&self) -> i64 {
+        self.observed_at_unix_ms
+    }
     #[must_use]
     pub fn organization_scope(&self) -> &LedgerScopeId {
         &self.organization_scope
