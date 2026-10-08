@@ -20,6 +20,7 @@ API, provider execution, or live-money capability is introduced here.
 | Rate plan snapshot | cofi-rating::RatePlan | rate.plan v1 | Checked RatePlan constructors, all exact integer fields | i128 bounds, malformed plan and price rejection |
 | Historical accepted rating | cofi-rating::RatingRequest / RatedCharge | rating.acceptance v1 | Frozen original meter/usage/plan; canonical aggregate and rate; verify every charge field | Late-arrival nonretroactivity, altered source, mismatched receipt, identity/key conflict, overflow |
 | Immutable revenue split rule | `cofi-community::RevenueSplitRule` | `community.revenue_split_rule` v1 | Rebuild checked sorted destination legs via `BasisPoints::new`, `RevenueSplitLeg::new` and original `RevenueSplitRule::new` | Three tests cover exact version/leg parity, 10,000 basis-point sum, duplicate destinations, invalid numeric/version, unknown/extra JSON fields and size limit |
+| Ordered multi-flow two-tenant P23→P24→P25 causal authorization (bounded complete-flow stream) | Original BillingLedgerBridge, AuthorizedCaptureRegistry and AuthorizedPayoutRegistry | Shared causal registry reconstruction, not new fact kind | Require contiguous ordered complete P25 receipts, original P23/P24 checked facts, zero-journal genesis; rebuild both ORIGINAL shared authority registries via Created and compare exact 3×N journals and touched accounts/balances with final reference | 3 focused tests: two tenants and six journal parity, duplicate/gapped/order/ref failures, source tampering and cross-tenant account mix |
 | Causal P23→P27 original complete payout-to-fund-transfer authorization (one flow) | Original AuthorizedFundTransferRegistry and FundTransferBridge on P23–P26 causal predecessor | checked causal reconstruction (no new record kind) | Supply P25, P26 and typed P27 sources, trusted zero-journal genesis, original community, and exact accepted after-P25/P26/P27 snapshots; first-time Committed creates actual P27 allocation consumption registry; require five original journal entries and matching account balances | Three tests: real P27 accepted authority and indexes, second transfer of same allocation rejected, wrong source/destination/funds/scope/amount/timing and missing intermediate/last journal |
 | Causal P23/P24/P25 payout → P26 authorized full fund allocation (one flow) | Original AuthorizedFundAllocationRegistry / FundAllocationBridge plus causal P23–P25 | checked causal reconstruction (no new record kind) | Accept typed P26 source, exact separately supplied after-P25 and after-P26 reference Ledgers, original CommunityRegistry; original first-time Committed allocation consumes reconstructed payout authority, then match four original journals, original accounts and balances | 4 tests: original consumed-payout index and funds, reject duplicate payout allocation, source/scope/account/timestamp corruption, missing/extra journal and missing fund |
 | Causal authorized P23 invoice → P24 capture → P25 payout acceptance (one flow) | BillingLedgerBridge + AuthorizedCaptureRegistry + AuthorizedPayoutRegistry | checked causal reconstruction (no new record kind) | Original P23/P24/P25 source fact and trusted zero-journal genesis; apply original invoice, capture and payout transitions in causal order on private Ledger; require first-time Committed and compare all three journal entries and involved account balances against supplied exact reference Ledger | 3 tests: original registry index and journal parity, missing/extra previous ledger state, tampered payout/capture source, bad billing accounts |
@@ -425,6 +426,38 @@ Multiple accepted financial flows, refunds, external bank/provenance
 evidence and G002 tenant-atomic persistent history remain outside scope.
 G001 #22/#43, audit/reconciliation #31, source trust #25 and G002-G008
 remain OPEN; no production authorization is implied.
+
+### Ordered two-tenant causal P23/P24/P25 acceptance slice
+
+`causal_capture_payout_stream` accepts a **nonempty contiguous**
+1-based sequence of complete P25 source receipts, each containing checked
+P24/P23 ancestry, with independently supplied billing account bindings.
+It reconstructs the ORIGINAL shared AuthorizedCaptureRegistry and
+AuthorizedPayoutRegistry on a PRIVATE zero-journal Ledger for several
+complete, **noninterleaved** invoice/capture/payout flows. Each original
+billing/capture/payout call must newly Committed/Created, so consumed payment
+and payout keys remain shared across the entire supplied stream; changing
+or reusing an accepted source is refused. It compares all expected exact
+journals, touched account definitions and running balances with a separately
+supplied final Ledger and rejects missing/extra journals. No live Ledger,
+provider, payment network or bank is touched.
+
+Focused tests cover two different organizations with six original journals,
+both real original authorization registries with two accepted authorizations,
+duplicate/gapped/reordered stream positions, repeated consumed payment,
+incomplete reference journal list, corrupted source and cross-tenant account
+mixing.
+
+**Scope / limitations:** caller-supplied sequence numbers do NOT prove an
+externally authoritative stream order or cutoff. This does not replay
+interleaved arbitrary historical events, multiple partial captures/payouts,
+payout-to-allocation-to-transfer consumption across **all** flows, or all
+registered/unreferenced accounts. The provided genesis and final Ledger are
+NOT cryptographically authenticated, nor is source completeness or
+transactional tenant durability established. This is local consistency
+only, not complete G001 or G002 production qualification. #55, #43,
+#22, #25, #31 and G002-G008 stay OPEN.
+
 
 ## G001 closure gates
 
