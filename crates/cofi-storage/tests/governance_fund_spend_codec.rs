@@ -854,3 +854,49 @@ fn disbursement_lifecycle_rejects_changed_source_and_malformed_records() {
     assert!(decode_disbursement_terminal(&serde_json::to_vec(&invalid).unwrap()).is_err());
     assert!(decode_disbursement_terminal(&vec![b' '; 1024 * 1024 + 1]).is_err());
 }
+
+#[test]
+fn accepted_disbursement_lifecycle_rejects_duplicate_historical_facts() {
+    use DisbursementLifecycleFact::{Creation, Submission, Terminal};
+    let (ledger, _) = original_ledger();
+    let governance = original_governance_fixture();
+    let creation = encode_disbursement_creation(&original_disbursement_creation(
+        "create-1",
+        "disb-1",
+        "beneficiary-a",
+        1800,
+    ))
+    .unwrap();
+    let spend = encode_governance_fund_spend(&spend()).unwrap();
+    let submission =
+        encode_disbursement_submission(&submitted_event("submit-1", "request-1", 1900)).unwrap();
+    let terminal = encode_disbursement_terminal(&terminal_event("terminal-1", 2000)).unwrap();
+
+    let created = Creation {
+        creation: creation.as_slice(),
+        spend: spend.as_slice(),
+    };
+    let submitted = Submission(submission.as_slice());
+    let settled = Terminal(terminal.as_slice());
+
+    for (label, stream) in [
+        ("creation", vec![created, created]),
+        ("submission", vec![created, submitted, submitted]),
+        ("terminal", vec![created, submitted, settled, settled]),
+    ] {
+        assert!(
+            replay_disbursement_lifecycle(stream, &community(), &governance, &ledger).is_err(),
+            "an accepted source stream cannot repeat a previously accepted {label} fact"
+        );
+    }
+
+    assert!(
+        replay_disbursement_lifecycle(
+            [created, submitted, settled],
+            &community(),
+            &governance,
+            &ledger
+        )
+        .is_ok()
+    );
+}

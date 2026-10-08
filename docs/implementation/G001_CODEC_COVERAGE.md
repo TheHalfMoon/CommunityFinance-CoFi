@@ -650,6 +650,23 @@ completeness, durable transaction boundary, actual external attempt and
 provider verification remain unqualified. G001 #22, provenance #25/#31,
 G002-G008 and all production financial gates remain OPEN.
 
+### Accepted lifecycle source uniqueness (Issue #77)
+
+The original `DisbursementEngine` intentionally returns `Replayed` for exact
+command retries. An ordered **accepted historical fact stream** must not
+reinterpret those retries as additional accepted transitions. The bounded
+`replay_disbursement_lifecycle` therefore accepts only first-time original
+`Created`, `Submitted`, `Settled` or `Failed` results and rejects `Replayed`
+for creation, submission and terminal facts. The regression uses three
+identical duplicate accepted-source events and verifies a complete unique
+Ready -> Submitted -> Settled stream remains accepted. No original domain
+engine behavior, financial posting or provider execution was changed.
+
+This guards against duplicated entries **inside caller-supplied history**; it
+does not establish tenant/source authentication, an external history cutoff,
+provider-signed receipts, completeness, or G002 transactional persistence.
+Parent #22 and G002-G008 remain open.
+
 ## G001 closure gates
 
 1. Enumerate every accepted current transition/result across all 21 original crates.

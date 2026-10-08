@@ -6,9 +6,10 @@
 
 use cofi_community::CommunityRegistry;
 use cofi_disbursements::{
-    DisbursementEngine, DisbursementEventId, DisbursementId, DisbursementSubmission,
-    DisbursementTerminalEvent, FailureCode, ProviderEventReference, ProviderRequestReference,
-    ProviderSettlementReference, TerminalKind,
+    CreationOutcome, DisbursementEngine, DisbursementEventId, DisbursementId,
+    DisbursementSubmission, DisbursementTerminalEvent, FailureCode, ProviderEventReference,
+    ProviderRequestReference, ProviderSettlementReference, SubmissionOutcome, TerminalKind,
+    TerminalOutcome,
 };
 use cofi_governance::GovernanceEngine;
 use cofi_ledger::Ledger;
@@ -187,7 +188,7 @@ pub fn replay_disbursement_lifecycle<'a>(
     for fact in facts {
         match fact {
             DisbursementLifecycleFact::Creation { creation, spend } => {
-                engine
+                let outcome = engine
                     .create(
                         community,
                         governance,
@@ -196,16 +197,31 @@ pub fn replay_disbursement_lifecycle<'a>(
                         decode_disbursement_creation(creation)?,
                     )
                     .map_err(|e| CodecError::Replay(e.to_string()))?;
+                if outcome != CreationOutcome::Created {
+                    return Err(CodecError::Replay(
+                        "duplicate accepted disbursement creation fact".into(),
+                    ));
+                }
             }
             DisbursementLifecycleFact::Submission(bytes) => {
-                engine
+                let outcome = engine
                     .submit(decode_disbursement_submission(bytes)?)
                     .map_err(|e| CodecError::Replay(e.to_string()))?;
+                if outcome != SubmissionOutcome::Submitted {
+                    return Err(CodecError::Replay(
+                        "duplicate accepted disbursement submission fact".into(),
+                    ));
+                }
             }
             DisbursementLifecycleFact::Terminal(bytes) => {
-                engine
+                let outcome = engine
                     .record_terminal(decode_disbursement_terminal(bytes)?)
                     .map_err(|e| CodecError::Replay(e.to_string()))?;
+                if !matches!(outcome, TerminalOutcome::Settled | TerminalOutcome::Failed) {
+                    return Err(CodecError::Replay(
+                        "duplicate accepted disbursement terminal fact".into(),
+                    ));
+                }
             }
         }
     }
