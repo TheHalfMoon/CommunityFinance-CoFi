@@ -588,6 +588,25 @@ authorization source completeness, immutable consumption across all tenants,
 transactional persistence or external funds. Parent G001 #22, #64/#66/#68,
 #25/#31, G002-G008 remain OPEN. Production spending remains blocked.
 
+### Strict single-pass governance acceptance order (Issue #70)
+
+The `governance_history` checked adapter consumes one **caller-supplied** stream of
+versioned original policy, proposal, approval and fund-spend records in their
+asserted acceptance order. It invokes only the original GovernanceEngine
+registrations, submissions and approval decisions; for spending it calls the
+original read-only FundSpendBridge::verify_committed against the supplied
+preexisting Ledger. No domain algorithm or accounting journal is duplicated
+or mutated. Duplicate accepted events, proposals before their policy,
+approvals before their proposal, spending before quorum, duplicate consumed
+proposal authority and missing/changed committed journals fail closed.
+
+This does **not** establish independent chronological authenticity. A caller
+can forge, omit or reorder source records and a coherent reference Ledger;
+no external source witness, trusted tenant sequence/cutoff, durable consumed
+mandate, migration, signature or provider effect is provided. Existing grouped
+codecs retain their documented bounded semantics. Parent #22, source trust
+#25/#31 and G002-G008 remain OPEN. Production money remains disabled.
+
 ## G001 closure gates
 
 1. Enumerate every accepted current transition/result across all 21 original crates.
