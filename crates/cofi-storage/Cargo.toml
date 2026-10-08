@@ -10,6 +10,7 @@ description = "Versioned, validated persistence records for CoFi canonical domai
 [dependencies]
 cofi-ledger = { path = "../cofi-ledger" }
 cofi-community = { path = "../cofi-community" }
+cofi-governance = { path = "../cofi-governance" }
 cofi-metering = { path = "../cofi-metering" }
 cofi-billing = { path = "../cofi-billing" }
 cofi-rating = { path = "../cofi-rating" }
