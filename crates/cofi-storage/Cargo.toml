@@ -12,6 +12,7 @@ cofi-ledger = { path = "../cofi-ledger" }
 cofi-community = { path = "../cofi-community" }
 cofi-governance = { path = "../cofi-governance" }
 cofi-spending = { path = "../cofi-spending" }
+cofi-disbursements = { path = "../cofi-disbursements" }
 cofi-metering = { path = "../cofi-metering" }
 cofi-billing = { path = "../cofi-billing" }
 cofi-rating = { path = "../cofi-rating" }
