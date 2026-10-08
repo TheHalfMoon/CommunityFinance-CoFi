@@ -20,6 +20,7 @@ API, provider execution, or live-money capability is introduced here.
 | Rate plan snapshot | cofi-rating::RatePlan | rate.plan v1 | Checked RatePlan constructors, all exact integer fields | i128 bounds, malformed plan and price rejection |
 | Historical accepted rating | cofi-rating::RatingRequest / RatedCharge | rating.acceptance v1 | Frozen original meter/usage/plan; canonical aggregate and rate; verify every charge field | Late-arrival nonretroactivity, altered source, mismatched receipt, identity/key conflict, overflow |
 | Immutable revenue split rule | `cofi-community::RevenueSplitRule` | `community.revenue_split_rule` v1 | Rebuild checked sorted destination legs via `BasisPoints::new`, `RevenueSplitLeg::new` and original `RevenueSplitRule::new` | Three tests cover exact version/leg parity, 10,000 basis-point sum, duplicate destinations, invalid numeric/version, unknown/extra JSON fields and size limit |
+| Causal authorized P23 invoice → P24 capture → P25 payout acceptance (one flow) | BillingLedgerBridge + AuthorizedCaptureRegistry + AuthorizedPayoutRegistry | checked causal reconstruction (no new record kind) | Original P23/P24/P25 source fact and trusted zero-journal genesis; apply original invoice, capture and payout transitions in causal order on private Ledger; require first-time Committed and compare all three journal entries and involved account balances against supplied exact reference Ledger | 3 tests: original registry index and journal parity, missing/extra previous ledger state, tampered payout/capture source, bad billing accounts |
 | P25 original capture-to-payout evidence and journal parity | cofi-payout-authorization source plus PayoutLedgerBridge | authorized.payout_evidence v1 | Decode checked P24 capture, validate original payout ID, payment ID, bank ref, gross/fee/net, scope/currency and payout accounts; run original P05/P25 bridges on private Ledger clone, require Replayed | 3 focused tests: accepted P24+P25 journal parity, changed amount/fee/bank/source/times/business, missing journal, schema/ancestry corruption |
 | Checked P24 capture source evidence and exact P05 journal parity | cofi-payment-authorization source + original PaymentLedgerBridge | authorized.capture_evidence v1 | Rebuild checked original P23, preserve capture event/payment/connector IDs, times, and original receivable/processor-clearing accounts; run original bridge on a private Ledger clone and require Replayed | Three tests: accepted original P23+P24 journal, bad source/account/timestamp and changed replay, invalid schema/extra fields/1MiB |
 | Original revenue distribution and immutable split rule/journal parity | `cofi-community::RevenueDistributionBridge` | `community.distribution` v1 | Decode checked original distribution event and typed embedded rate-split rule; run original bridge on private Ledger clone and require original `Replayed`; no real ledger mutation | Three focused tests cover roundtrip, original posting parity, changed rule version/BPS, amount, scope, currency, times, source and business identity, missing ancestor, invalid data and 1 MiB boundary |
@@ -365,6 +366,25 @@ on a historical Ledger. The caller supplied Ledger and source stream are
 not independently authenticated or proven complete. Consumed mandates,
 tenant durable atomicity, source cutoff, G001 #22, #43, #25, #31 and
 G002-G008 remain open.
+
+### Bounded causal P23 → P24 → P25 original authorization reconstruction
+
+The causal_capture_payout module reconstructs ONE complete P23 invoice,
+P24 AuthorizedCapture and P25 AuthorizedPayout flow using original
+BillingLedgerBridge, AuthorizedCaptureRegistry and AuthorizedPayoutRegistry
+constructors on a PRIVATE, externally supplied zero-journal genesis Ledger.
+The original first-time Committed transitions rebuild real authorization maps.
+It then requires exactly three matching canonical journal entries and
+matching involved account definitions and balances in an independently
+supplied reference Ledger. No live Ledger is ever changed.
+
+This is an inspectable restricted integration proof, **not a global G001
+acceptance certificate**: the trustworthiness/completeness of the genesis
+and final reference Ledger is not independently established; any additional
+historical invoices, payments, refunds, multiple payouts, unrelated
+journals, other tenants or provider events are explicitly unsupported.
+Original consumed payout-to-allocation and allocation-to-transfer lineage
+remains unqualified; G001 #22, #43, #25/#31, G002-G008 remain OPEN.
 
 ## G001 closure gates
 
