@@ -85,6 +85,43 @@ impl ApprovedFundSpendEvent {
         })
     }
 
+    /// Original accepted immutable spend source event.
+    #[must_use]
+    pub const fn source_event_id(&self) -> &FundSpendEventId {
+        &self.source_event_id
+    }
+    #[must_use]
+    pub const fn organization_id(&self) -> &OrganizationId {
+        &self.organization_id
+    }
+    #[must_use]
+    pub const fn community_id(&self) -> &CommunityId {
+        &self.community_id
+    }
+    #[must_use]
+    pub const fn fund_id(&self) -> &FundId {
+        &self.fund_id
+    }
+    #[must_use]
+    pub const fn currency(&self) -> Currency {
+        self.currency
+    }
+    #[must_use]
+    pub fn purpose_reference(&self) -> &str {
+        &self.purpose_reference
+    }
+    #[must_use]
+    pub const fn expense_account_id(&self) -> &AccountId {
+        &self.expense_account_id
+    }
+    #[must_use]
+    pub const fn executed_at_unix_ms(&self) -> i64 {
+        self.executed_at_unix_ms
+    }
+    #[must_use]
+    pub const fn observed_at_unix_ms(&self) -> i64 {
+        self.observed_at_unix_ms
+    }
     #[must_use]
     pub const fn spend_id(&self) -> &FundSpendId {
         &self.spend_id
