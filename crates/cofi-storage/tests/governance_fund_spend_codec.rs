@@ -361,3 +361,115 @@ fn invalid_schema_conflicting_spend_identity_and_huge_receipt_reject() {
     assert!(decode_governance_fund_spend(&serde_json::to_vec(&injected).unwrap()).is_err());
     assert!(decode_governance_fund_spend(&vec![b' '; 1024 * 1024 + 1]).is_err());
 }
+
+use cofi_storage::governance_history::{GovernanceHistoryFact, verify_ordered_governance_history};
+
+#[test]
+fn ordered_governance_stream_preserves_original_quorum_and_journal() {
+    let (ledger, _) = original_ledger();
+    let (p, q, votes) = sources();
+    let receipt = encode_governance_fund_spend(&spend()).unwrap();
+    let stream = [
+        GovernanceHistoryFact::Policy(p.as_slice()),
+        GovernanceHistoryFact::Proposal(q.as_slice()),
+        GovernanceHistoryFact::Approval(votes[0].as_slice()),
+        GovernanceHistoryFact::Approval(votes[1].as_slice()),
+        GovernanceHistoryFact::FundSpend(receipt.as_slice()),
+    ];
+    let result = verify_ordered_governance_history(stream, &community(), &ledger).unwrap();
+    let reference = replay_governance_approvals(
+        [p.as_slice()],
+        [q.as_slice()],
+        votes.iter().map(Vec::as_slice),
+        &community(),
+    )
+    .unwrap();
+    let proposal_id = SpendingProposalId::new("proposal-a").unwrap();
+    assert_eq!(
+        result.governance().proposal_count(),
+        reference.proposal_count()
+    );
+    assert_eq!(
+        result.governance().approval_count(),
+        reference.approval_count()
+    );
+    assert_eq!(
+        result.governance().authorization(&proposal_id),
+        reference.authorization(&proposal_id)
+    );
+    assert_eq!(result.verified_spends().len(), 1);
+    assert_eq!(
+        result.verified_spends()[0].journal_entry_id().as_str(),
+        "spending:fund-spend:spend-1"
+    );
+    assert_eq!(ledger.entry_count(), 2);
+}
+
+#[test]
+fn ordered_governance_stream_rejects_historically_impossible_acceptance_order() {
+    let (ledger, _) = original_ledger();
+    let (p, q, votes) = sources();
+    let receipt = encode_governance_fund_spend(&spend()).unwrap();
+    use GovernanceHistoryFact::{Approval, FundSpend, Policy, Proposal};
+    let invalid_streams = [
+        vec![Proposal(q.as_slice()), Policy(p.as_slice())],
+        vec![
+            Policy(p.as_slice()),
+            Approval(votes[0].as_slice()),
+            Proposal(q.as_slice()),
+        ],
+        vec![
+            Policy(p.as_slice()),
+            Proposal(q.as_slice()),
+            Approval(votes[0].as_slice()),
+            FundSpend(receipt.as_slice()),
+            Approval(votes[1].as_slice()),
+        ],
+        vec![
+            Policy(p.as_slice()),
+            Proposal(q.as_slice()),
+            Approval(votes[0].as_slice()),
+            Approval(votes[1].as_slice()),
+            FundSpend(receipt.as_slice()),
+            FundSpend(receipt.as_slice()),
+        ],
+    ];
+    for (idx, stream) in invalid_streams.into_iter().enumerate() {
+        assert!(
+            verify_ordered_governance_history(stream, &community(), &ledger).is_err(),
+            "invalid historical ordering case {idx}"
+        );
+    }
+}
+
+#[test]
+fn ordered_governance_stream_rejects_repeated_accepted_events_and_missing_journal() {
+    let (ledger, prior) = original_ledger();
+    let (p, q, votes) = sources();
+    let receipt = encode_governance_fund_spend(&spend()).unwrap();
+    use GovernanceHistoryFact::{Approval, FundSpend, Policy, Proposal};
+    for stream in [
+        vec![Policy(p.as_slice()), Policy(p.as_slice())],
+        vec![
+            Policy(p.as_slice()),
+            Proposal(q.as_slice()),
+            Proposal(q.as_slice()),
+        ],
+        vec![
+            Policy(p.as_slice()),
+            Proposal(q.as_slice()),
+            Approval(votes[0].as_slice()),
+            Approval(votes[0].as_slice()),
+        ],
+    ] {
+        assert!(verify_ordered_governance_history(stream, &community(), &ledger).is_err());
+    }
+    let stream = [
+        Policy(p.as_slice()),
+        Proposal(q.as_slice()),
+        Approval(votes[0].as_slice()),
+        Approval(votes[1].as_slice()),
+        FundSpend(receipt.as_slice()),
+    ];
+    assert!(verify_ordered_governance_history(stream, &community(), &prior).is_err());
+}
