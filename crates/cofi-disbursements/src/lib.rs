@@ -68,6 +68,24 @@ impl DisbursementCreation {
     pub const fn id(&self) -> &DisbursementId {
         &self.id
     }
+
+    /// Immutable accepted creation source event identity.
+    #[must_use]
+    pub const fn source_event_id(&self) -> &DisbursementEventId {
+        &self.source_event_id
+    }
+    #[must_use]
+    pub const fn beneficiary_reference(&self) -> &BeneficiaryReference {
+        &self.beneficiary_reference
+    }
+    #[must_use]
+    pub const fn destination_reference(&self) -> &DestinationReference {
+        &self.destination_reference
+    }
+    #[must_use]
+    pub const fn created_at_unix_ms(&self) -> i64 {
+        self.created_at_unix_ms
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]

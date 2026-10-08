@@ -473,3 +473,165 @@ fn ordered_governance_stream_rejects_repeated_accepted_events_and_missing_journa
     ];
     assert!(verify_ordered_governance_history(stream, &community(), &prior).is_err());
 }
+
+use cofi_disbursements::{
+    BeneficiaryReference, CreationOutcome, DestinationReference, DisbursementCreation,
+    DisbursementEngine, DisbursementEventId, DisbursementId, DisbursementStatus,
+};
+use cofi_storage::disbursement_creation::{
+    decode_disbursement_creation, encode_disbursement_creation, replay_disbursement_creations,
+};
+
+fn original_disbursement_creation(
+    event_id: &str,
+    disbursement_id: &str,
+    beneficiary: &str,
+    timestamp: i64,
+) -> DisbursementCreation {
+    DisbursementCreation::new(
+        DisbursementEventId::new(event_id).unwrap(),
+        DisbursementId::new(disbursement_id).unwrap(),
+        BeneficiaryReference::new(beneficiary).unwrap(),
+        DestinationReference::new("destination-one").unwrap(),
+        timestamp,
+    )
+}
+
+fn original_governance_fixture() -> cofi_governance::GovernanceEngine {
+    let (p, q, votes) = sources();
+    replay_governance_approvals(
+        [p.as_slice()],
+        [q.as_slice()],
+        votes.iter().map(Vec::as_slice),
+        &community(),
+    )
+    .unwrap()
+}
+
+#[test]
+fn disbursement_creation_replay_matches_original_domain_registry() {
+    let (ledger, _) = original_ledger();
+    let gov = original_governance_fixture();
+    let creation = original_disbursement_creation("create-1", "disb-1", "beneficiary-a", 1800);
+    let bytes = encode_disbursement_creation(&creation).unwrap();
+    let spend_bytes = encode_governance_fund_spend(&spend()).unwrap();
+    assert_eq!(decode_disbursement_creation(&bytes).unwrap(), creation);
+    let rebuilt = replay_disbursement_creations(
+        [
+            (bytes.as_slice(), spend_bytes.as_slice()),
+            (bytes.as_slice(), spend_bytes.as_slice()),
+        ],
+        &community(),
+        &gov,
+        &ledger,
+    )
+    .unwrap();
+    let mut reference = DisbursementEngine::new();
+    assert_eq!(
+        reference
+            .create(&community(), &gov, &ledger, &spend(), creation.clone())
+            .unwrap(),
+        CreationOutcome::Created
+    );
+    assert_eq!(
+        rebuilt.disbursement(creation.id()),
+        reference.disbursement(creation.id())
+    );
+    assert_eq!(
+        rebuilt.disbursement(creation.id()).unwrap().status(),
+        DisbursementStatus::Ready
+    );
+    assert_eq!(ledger.entry_count(), 2);
+}
+
+#[test]
+fn disbursement_creation_rejects_reused_spend_changed_source_and_missing_journal() {
+    let (ledger, prior) = original_ledger();
+    let gov = original_governance_fixture();
+    let spend_bytes = encode_governance_fund_spend(&spend()).unwrap();
+    let source = encode_disbursement_creation(&original_disbursement_creation(
+        "create-1",
+        "disb-1",
+        "beneficiary-a",
+        1800,
+    ))
+    .unwrap();
+    for altered in [
+        original_disbursement_creation("create-1", "disb-1", "beneficiary-b", 1800),
+        original_disbursement_creation("create-2", "disb-2", "beneficiary-a", 1800),
+    ] {
+        let changed = encode_disbursement_creation(&altered).unwrap();
+        assert!(
+            replay_disbursement_creations(
+                [
+                    (source.as_slice(), spend_bytes.as_slice()),
+                    (changed.as_slice(), spend_bytes.as_slice()),
+                ],
+                &community(),
+                &gov,
+                &ledger
+            )
+            .is_err()
+        );
+    }
+    let early = encode_disbursement_creation(&original_disbursement_creation(
+        "create-early",
+        "disb-early",
+        "beneficiary-a",
+        1599,
+    ))
+    .unwrap();
+    assert!(
+        replay_disbursement_creations(
+            [(early.as_slice(), spend_bytes.as_slice())],
+            &community(),
+            &gov,
+            &ledger
+        )
+        .is_err()
+    );
+    assert!(
+        replay_disbursement_creations(
+            [(source.as_slice(), spend_bytes.as_slice())],
+            &community(),
+            &gov,
+            &prior
+        )
+        .is_err()
+    );
+}
+
+#[test]
+fn disbursement_creation_strict_record_and_times_fail_closed() {
+    let original = encode_disbursement_creation(&original_disbursement_creation(
+        "create-1",
+        "disb-1",
+        "beneficiary-a",
+        1800,
+    ))
+    .unwrap();
+    let value: serde_json::Value = serde_json::from_slice(&original).unwrap();
+    for (path, bad) in [
+        ("/schema_version", serde_json::json!(2)),
+        ("/record_type", serde_json::json!("other")),
+        ("/payload/id", serde_json::json!("")),
+        ("/payload/beneficiary_reference", serde_json::json!(" ")),
+        ("/payload/created_at_unix_ms", serde_json::json!("1.2")),
+        ("/payload/created_at_unix_ms", serde_json::json!("01800")),
+        (
+            "/payload/created_at_unix_ms",
+            serde_json::json!("9223372036854775808"),
+        ),
+    ] {
+        let mut changed = value.clone();
+        *changed.pointer_mut(path).unwrap() = bad;
+        assert!(
+            decode_disbursement_creation(&serde_json::to_vec(&changed).unwrap()).is_err(),
+            "{path}"
+        );
+    }
+    let mut extra = value;
+    extra["payload"]["unknown"] = serde_json::json!(true);
+    assert!(decode_disbursement_creation(&serde_json::to_vec(&extra).unwrap()).is_err());
+    assert!(decode_disbursement_creation(&vec![b' '; 1024 * 1024 + 1]).is_err());
+}

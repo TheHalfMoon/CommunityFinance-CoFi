@@ -607,6 +607,26 @@ mandate, migration, signature or provider effect is provided. Existing grouped
 codecs retain their documented bounded semantics. Parent #22, source trust
 #25/#31 and G002-G008 remain OPEN. Production money remains disabled.
 
+### Original disbursement-creation source and spend-bound replay (Issue #72)
+
+The `disbursement.creation` v1 codec retains the original immutable creation
+source-event/disbursement IDs, beneficiary/destination references and exact i64
+creation timestamp. It reconstructs only the original DisbursementCreation
+constructor. On a separately supplied original governance engine, community
+registry and preexisting Ledger, the bounded replay adapter invokes only
+original DisbursementEngine::create with each checked original committed fund
+spend source. It restores the original Ready state, spend-to-disbursement
+consumption index and idempotent source retry semantics; changed accepted
+source IDs, second disbursements for one spend, creation before execution and
+missing/mismatched original journals fail closed. Ledger remains read-only.
+
+**Not qualified:** original submission/terminal lifecycle, independently
+verified provider origin/signature, complete accepted event/observation
+history, cross-tenant durable consumption and sequence, authenticated
+reference Ledger, G002 atomicity or live transfers. Issue #72 is a bounded
+partial codec only. Parent G001 #22, provenance #25/#31, and G002-G008 stay
+OPEN. No real provider network activity or economic posting is enabled.
+
 ## G001 closure gates
 
 1. Enumerate every accepted current transition/result across all 21 original crates.
