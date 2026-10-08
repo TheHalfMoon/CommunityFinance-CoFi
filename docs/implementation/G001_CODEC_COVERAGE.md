@@ -20,6 +20,7 @@ API, provider execution, or live-money capability is introduced here.
 | Rate plan snapshot | cofi-rating::RatePlan | rate.plan v1 | Checked RatePlan constructors, all exact integer fields | i128 bounds, malformed plan and price rejection |
 | Historical accepted rating | cofi-rating::RatingRequest / RatedCharge | rating.acceptance v1 | Frozen original meter/usage/plan; canonical aggregate and rate; verify every charge field | Late-arrival nonretroactivity, altered source, mismatched receipt, identity/key conflict, overflow |
 | Immutable revenue split rule | `cofi-community::RevenueSplitRule` | `community.revenue_split_rule` v1 | Rebuild checked sorted destination legs via `BasisPoints::new`, `RevenueSplitLeg::new` and original `RevenueSplitRule::new` | Three tests cover exact version/leg parity, 10,000 basis-point sum, duplicate destinations, invalid numeric/version, unknown/extra JSON fields and size limit |
+| Staged multi-flow two-tenant complete P23–P27 shared payout/transfer authority | Original shared AuthorizedCaptureRegistry, AuthorizedPayoutRegistry, AuthorizedFundAllocationRegistry, AuthorizedFundTransferRegistry | Shared staged causal registry reconstruction (not a new record kind) | Verify multi-flow original P23–P25 on zero-journal genesis, then all P26 allocations and all P27 transfers in explicitly staged historical order on private Ledger; require actual first-time Committed/Created, match 3×N, 4×N, 5×N journal snapshots and involved original accounts/balances | 4 focused tests: two independently scoped complete five-journal flows, real shared consumed payout/allocation indexes, conflicting reconsumption, wrong tenant/fund/cash/amount/time and missing after-stage reference |
 | Ordered multi-flow two-tenant P23→P24→P25 causal authorization (bounded complete-flow stream) | Original BillingLedgerBridge, AuthorizedCaptureRegistry and AuthorizedPayoutRegistry | Shared causal registry reconstruction, not new fact kind | Require contiguous ordered complete P25 receipts, original P23/P24 checked facts, zero-journal genesis; rebuild both ORIGINAL shared authority registries via Created and compare exact 3×N journals and touched accounts/balances with final reference | 3 focused tests: two tenants and six journal parity, duplicate/gapped/order/ref failures, source tampering and cross-tenant account mix |
 | Causal P23→P27 original complete payout-to-fund-transfer authorization (one flow) | Original AuthorizedFundTransferRegistry and FundTransferBridge on P23–P26 causal predecessor | checked causal reconstruction (no new record kind) | Supply P25, P26 and typed P27 sources, trusted zero-journal genesis, original community, and exact accepted after-P25/P26/P27 snapshots; first-time Committed creates actual P27 allocation consumption registry; require five original journal entries and matching account balances | Three tests: real P27 accepted authority and indexes, second transfer of same allocation rejected, wrong source/destination/funds/scope/amount/timing and missing intermediate/last journal |
 | Causal P23/P24/P25 payout → P26 authorized full fund allocation (one flow) | Original AuthorizedFundAllocationRegistry / FundAllocationBridge plus causal P23–P25 | checked causal reconstruction (no new record kind) | Accept typed P26 source, exact separately supplied after-P25 and after-P26 reference Ledgers, original CommunityRegistry; original first-time Committed allocation consumes reconstructed payout authority, then match four original journals, original accounts and balances | 4 tests: original consumed-payout index and funds, reject duplicate payout allocation, source/scope/account/timestamp corruption, missing/extra journal and missing fund |
@@ -457,6 +458,35 @@ NOT cryptographically authenticated, nor is source completeness or
 transactional tenant durability established. This is local consistency
 only, not complete G001 or G002 production qualification. #55, #43,
 #22, #25, #31 and G002-G008 stay OPEN.
+
+
+### Staged two-tenant original P23–P27 authority reconstruction
+
+`causal_fund_stream` extends the bounded shared payment stream by
+rebuilding original AuthorizedFundAllocationRegistry and
+AuthorizedFundTransferRegistry with the genuine domain apply methods on
+a PRIVATE historical Ledger. It accepts complete typed P25/P26/P27 sources
+for multiple organizations, in the **explicitly staged order**: all P23–P25
+flows, all P26 allocations, then all P27 transfers. No private authority
+maps or substitute balance/transfer algorithms are imported.
+
+All canonical initial accepts must be Committed/Created and the same
+original registries track consumed payout and allocation keys across
+the entire supplied stream. After each stage, 3×N, 4×N and 5×N accepted
+journal entries must match the corresponding independently supplied
+reference, including exact postings/metadata, all involved original
+accounts and balances. The untouched genesis and source references are
+caller supplied, not independently proven authentic. Corruption, wrong
+tenant/fund, consumed authority reuse, reordered/incomplete evidence,
+missing reference stages and changed times fail closed in focused tests.
+
+**Strict nonqualification:** this is NOT arbitrary interleaved tenant
+history, partial capture/payout, refund/distribution/proprietary provider
+ordering, complete source cutoff, independent signature/attestation or
+durable atomic tenant storage. It cannot prove completeness of unrelated
+accounts/financial facts or protect against coherently forged source +
+reference Ledger. Parent G001 #22, #55, #43, #25/#31 and G002–G008 remain
+OPEN; no live money, bank or provider dispatch is authorized.
 
 
 ## G001 closure gates
