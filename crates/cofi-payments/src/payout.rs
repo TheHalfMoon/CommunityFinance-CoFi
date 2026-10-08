@@ -89,6 +89,35 @@ impl ProcessorPayoutEvent {
         &self.payout_id
     }
 
+    /// Original payout source event and immutable journal inputs.
+    #[must_use]
+    pub const fn source_event_id(&self) -> &ProcessorPayoutEventId {
+        &self.source_event_id
+    }
+    #[must_use]
+    pub const fn bank_transaction_reference(&self) -> &BankTransactionReference {
+        &self.bank_transaction_reference
+    }
+    #[must_use]
+    pub const fn gross_amount_minor(&self) -> i128 {
+        self.gross_amount_minor
+    }
+    #[must_use]
+    pub const fn processor_fee_minor(&self) -> i128 {
+        self.processor_fee_minor
+    }
+    #[must_use]
+    pub const fn net_amount_minor(&self) -> i128 {
+        self.net_amount_minor
+    }
+    #[must_use]
+    pub const fn paid_at_unix_ms(&self) -> i64 {
+        self.paid_at_unix_ms
+    }
+    #[must_use]
+    pub const fn observed_at_unix_ms(&self) -> i64 {
+        self.observed_at_unix_ms
+    }
     #[must_use]
     pub fn organization_scope(&self) -> &LedgerScopeId {
         &self.organization_scope

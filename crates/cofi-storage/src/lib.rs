@@ -14,6 +14,7 @@ pub mod distribution;
 pub mod fund_movement;
 pub mod invoice;
 pub mod metering;
+pub mod payout_evidence;
 pub mod rating;
 pub mod revenue_split_rule;
 pub mod subscription;
