@@ -20,6 +20,7 @@ API, provider execution, or live-money capability is introduced here.
 | Rate plan snapshot | cofi-rating::RatePlan | rate.plan v1 | Checked RatePlan constructors, all exact integer fields | i128 bounds, malformed plan and price rejection |
 | Historical accepted rating | cofi-rating::RatingRequest / RatedCharge | rating.acceptance v1 | Frozen original meter/usage/plan; canonical aggregate and rate; verify every charge field | Late-arrival nonretroactivity, altered source, mismatched receipt, identity/key conflict, overflow |
 | Immutable revenue split rule | `cofi-community::RevenueSplitRule` | `community.revenue_split_rule` v1 | Rebuild checked sorted destination legs via `BasisPoints::new`, `RevenueSplitLeg::new` and original `RevenueSplitRule::new` | Three tests cover exact version/leg parity, 10,000 basis-point sum, duplicate destinations, invalid numeric/version, unknown/extra JSON fields and size limit |
+| Causal P23/P24/P25 payout → P26 authorized full fund allocation (one flow) | Original AuthorizedFundAllocationRegistry / FundAllocationBridge plus causal P23–P25 | checked causal reconstruction (no new record kind) | Accept typed P26 source, exact separately supplied after-P25 and after-P26 reference Ledgers, original CommunityRegistry; original first-time Committed allocation consumes reconstructed payout authority, then match four original journals, original accounts and balances | 4 tests: original consumed-payout index and funds, reject duplicate payout allocation, source/scope/account/timestamp corruption, missing/extra journal and missing fund |
 | Causal authorized P23 invoice → P24 capture → P25 payout acceptance (one flow) | BillingLedgerBridge + AuthorizedCaptureRegistry + AuthorizedPayoutRegistry | checked causal reconstruction (no new record kind) | Original P23/P24/P25 source fact and trusted zero-journal genesis; apply original invoice, capture and payout transitions in causal order on private Ledger; require first-time Committed and compare all three journal entries and involved account balances against supplied exact reference Ledger | 3 tests: original registry index and journal parity, missing/extra previous ledger state, tampered payout/capture source, bad billing accounts |
 | P25 original capture-to-payout evidence and journal parity | cofi-payout-authorization source plus PayoutLedgerBridge | authorized.payout_evidence v1 | Decode checked P24 capture, validate original payout ID, payment ID, bank ref, gross/fee/net, scope/currency and payout accounts; run original P05/P25 bridges on private Ledger clone, require Replayed | 3 focused tests: accepted P24+P25 journal parity, changed amount/fee/bank/source/times/business, missing journal, schema/ancestry corruption |
 | Checked P24 capture source evidence and exact P05 journal parity | cofi-payment-authorization source + original PaymentLedgerBridge | authorized.capture_evidence v1 | Rebuild checked original P23, preserve capture event/payment/connector IDs, times, and original receivable/processor-clearing accounts; run original bridge on a private Ledger clone and require Replayed | Three tests: accepted original P23+P24 journal, bad source/account/timestamp and changed replay, invalid schema/extra fields/1MiB |
@@ -385,6 +386,25 @@ historical invoices, payments, refunds, multiple payouts, unrelated
 journals, other tenants or provider events are explicitly unsupported.
 Original consumed payout-to-allocation and allocation-to-transfer lineage
 remains unqualified; G001 #22, #43, #25/#31, G002-G008 remain OPEN.
+
+### Bounded P26 causal fund allocation from original reconstructed payout
+
+The causal_allocation module requires account-only genesis, checked P25 and
+P26 source, original CommunityRegistry, and separately supplied canonical
+after-P25 and after-P26 reference Ledgers. It reconstructs original P23
+invoice, original AuthorizedCapture and AuthorizedPayout, then constructs
+AuthorizedFundAllocationRequest using the actual reconstructed payout
+authorization. Only the original domain registry's first-time Created
+allocation is accepted. It must produce the exact fourth canonical journal,
+preserve fund and bank cash balances and rebuild the payout consumption index.
+The original ledger is never modified; this is private historical replay.
+
+This proves exactly one accepted full payout-to-allocation chain ONLY.
+The supplied source chronology, tenant/fund registration and intermediate
+and final Ledgers are not externally authenticated. Multiple simultaneous
+payments/allocations, authorized fund transfers, source completeness/cutoff
+and durable tenant-atomic persistence are not qualified. G001 #22, #43,
+source-trust #25/#31 and G002-G008 remain OPEN.
 
 ## G001 closure gates
 
