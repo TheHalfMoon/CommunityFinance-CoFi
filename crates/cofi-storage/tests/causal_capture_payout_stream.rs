@@ -128,3 +128,30 @@ fn altered_capture_payout_source_and_cross_tenant_account_binding_fail_closed() 
     ];
     assert!(rebuild_causal_capture_payout_stream(&flows, &genesis, &reference).is_err());
 }
+
+#[test]
+fn rejects_unlisted_reference_account_even_with_matching_financial_journals() {
+    let (receipts, billing, genesis, reference) = input();
+    let mut augmented_reference = reference.clone();
+    augmented_reference
+        .register_account(Account::new(
+            AccountId::new("unlisted-reference-account").unwrap(),
+            LedgerScopeId::new("unknown-scope").unwrap(),
+            AccountKind::Asset,
+            Currency::new("SAR").unwrap(),
+        ))
+        .unwrap();
+    let flows = [
+        CausalPaymentFlow {
+            sequence: 1,
+            p25_receipt: &receipts[0],
+            billing_accounts: &billing[0],
+        },
+        CausalPaymentFlow {
+            sequence: 2,
+            p25_receipt: &receipts[1],
+            billing_accounts: &billing[1],
+        },
+    ];
+    assert!(rebuild_causal_capture_payout_stream(&flows, &genesis, &augmented_reference).is_err());
+}

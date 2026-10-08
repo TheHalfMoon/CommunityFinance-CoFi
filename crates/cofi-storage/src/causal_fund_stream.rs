@@ -17,6 +17,7 @@ use cofi_fund_transfer_authorization::{
 use cofi_ledger::{AccountId, JournalEntryId, Ledger};
 
 use crate::CodecError;
+use crate::account_parity::verify_all_accounts;
 use crate::causal_capture_payout_stream::{
     CausalPaymentFlow, CausalPaymentStream, rebuild_causal_capture_payout_stream,
 };
@@ -94,6 +95,7 @@ fn verify_snapshot(
             ));
         }
     }
+    verify_all_accounts(genesis, ledger, expected)?;
     Ok(())
 }
 

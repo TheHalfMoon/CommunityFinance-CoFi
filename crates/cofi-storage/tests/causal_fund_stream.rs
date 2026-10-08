@@ -355,3 +355,70 @@ fn rejects_changed_original_transfer_receipt_and_reference_cutoff() {
         .is_err()
     );
 }
+
+#[test]
+fn rejects_unreferenced_accounts_at_every_staged_fund_checkpoint() {
+    let b = full_two_tenant_fund_reference();
+    let flows = inputs(&b);
+    let extra = Account::new(
+        AccountId::new("unlisted-fund-checkpoint-account").unwrap(),
+        LedgerScopeId::new("unknown-scope").unwrap(),
+        AccountKind::Asset,
+        Currency::new("SAR").unwrap(),
+    );
+    let mut altered_genesis = b.genesis.clone();
+    altered_genesis.register_account(extra.clone()).unwrap();
+    assert!(
+        rebuild_causal_fund_stream(
+            &flows,
+            &b.community,
+            &altered_genesis,
+            &b.after_p25,
+            &b.after_p26,
+            &b.after_p27
+        )
+        .is_err()
+    );
+
+    let mut altered_p25 = b.after_p25.clone();
+    altered_p25.register_account(extra.clone()).unwrap();
+    assert!(
+        rebuild_causal_fund_stream(
+            &flows,
+            &b.community,
+            &b.genesis,
+            &altered_p25,
+            &b.after_p26,
+            &b.after_p27
+        )
+        .is_err()
+    );
+
+    let mut altered_p26 = b.after_p26.clone();
+    altered_p26.register_account(extra.clone()).unwrap();
+    assert!(
+        rebuild_causal_fund_stream(
+            &flows,
+            &b.community,
+            &b.genesis,
+            &b.after_p25,
+            &altered_p26,
+            &b.after_p27
+        )
+        .is_err()
+    );
+
+    let mut altered_p27 = b.after_p27.clone();
+    altered_p27.register_account(extra).unwrap();
+    assert!(
+        rebuild_causal_fund_stream(
+            &flows,
+            &b.community,
+            &b.genesis,
+            &b.after_p25,
+            &b.after_p26,
+            &altered_p27
+        )
+        .is_err()
+    );
+}

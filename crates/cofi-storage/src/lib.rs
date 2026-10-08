@@ -4,6 +4,7 @@
 //! Other financial, community movement and authority registries remain blocked until
 //! dedicated codecs, complete inventories, and parity proofs are reviewed.
 
+mod account_parity;
 pub mod audit;
 pub mod authorized_capture_evidence;
 pub mod authorized_draft;
