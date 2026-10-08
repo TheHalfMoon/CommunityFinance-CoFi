@@ -20,6 +20,7 @@ API, provider execution, or live-money capability is introduced here.
 | Rate plan snapshot | cofi-rating::RatePlan | rate.plan v1 | Checked RatePlan constructors, all exact integer fields | i128 bounds, malformed plan and price rejection |
 | Historical accepted rating | cofi-rating::RatingRequest / RatedCharge | rating.acceptance v1 | Frozen original meter/usage/plan; canonical aggregate and rate; verify every charge field | Late-arrival nonretroactivity, altered source, mismatched receipt, identity/key conflict, overflow |
 | Immutable revenue split rule | `cofi-community::RevenueSplitRule` | `community.revenue_split_rule` v1 | Rebuild checked sorted destination legs via `BasisPoints::new`, `RevenueSplitLeg::new` and original `RevenueSplitRule::new` | Three tests cover exact version/leg parity, 10,000 basis-point sum, duplicate destinations, invalid numeric/version, unknown/extra JSON fields and size limit |
+| Checked P24 capture source evidence and exact P05 journal parity | cofi-payment-authorization source + original PaymentLedgerBridge | authorized.capture_evidence v1 | Rebuild checked original P23, preserve capture event/payment/connector IDs, times, and original receivable/processor-clearing accounts; run original bridge on a private Ledger clone and require Replayed | Three tests: accepted original P23+P24 journal, bad source/account/timestamp and changed replay, invalid schema/extra fields/1MiB |
 | Original revenue distribution and immutable split rule/journal parity | `cofi-community::RevenueDistributionBridge` | `community.distribution` v1 | Decode checked original distribution event and typed embedded rate-split rule; run original bridge on private Ledger clone and require original `Replayed`; no real ledger mutation | Three focused tests cover roundtrip, original posting parity, changed rule version/BPS, amount, scope, currency, times, source and business identity, missing ancestor, invalid data and 1 MiB boundary |
 | Original community fund allocation/transfer source fact and journal parity | `cofi-community::FundAllocationBridge` / `FundTransferBridge` | `community.fund_movement` v1 | Rehydrate checked exact event/source-account DTO, then invoke original bridge on a private cloned independently recovered `Ledger`; require `Replayed`, reject `Committed` and altered accepted source/journal; no real Ledger mutation | Three tests: accepted allocation+transfer equality, duplicate/conflicting business identity, altered source IDs/times/accounts/amount/scope/currency, missing original journal and malformed input |
 | Base community registrations | `cofi-community::CommunityRegistry` | `community.fact` v1 | Rebuild organization, party, community, membership and fund via original checked register methods, requiring reconstructed `Ledger` for fund account/scope/currency/Asset validation | Six focused tests: roundtrip, reference indexes, exact retry, missing parents, conflicting pairs, ledger kind/scope, changed IDs, invalid types/version/fields and 1MiB bound |
@@ -326,6 +327,26 @@ authorization/consumed mandate or durable source provenance. The same
 limits apply to allocation and transfer parity. Issues #25, #31, #43,
 G001 #22 and G002-G008 remain OPEN; do not enable money movement.
 
+
+### P24 checked capture evidence is not authorization replay
+
+The authorized.capture_evidence v1 record binds checked P23 source history to
+the original P24 capture source, IDs, timestamps, account pair and canonical
+payment journal ID. The original PaymentLedgerBridge::apply is invoked only
+on a PRIVATE clone of the supplied independently reconstructed original
+Ledger. Only an identical preexisting Replayed journal is accepted; no money
+is posted to the original Ledger.
+
+**Important:** P24 capture authorization registry is NOT recovered. The
+canonical AuthorizedCaptureRegistry::capture method requires first-time
+Committed journal acceptance in a causal pre-capture Ledger and cannot
+be reconstructed by importing DTOs or calling capture on a fully hydrated
+Ledger. This bounded codec proves local consistency only; external source
+authenticity, stream completeness, tenant-scope atomic durability and
+full authorization/consumed-key lineage remain unqualified.
+
+G001 #22, authorization #43, source trust #25/#31 and G002-G008 remain
+OPEN. No payment, payout or bank endpoint is enabled.
 
 ## G001 closure gates
 
