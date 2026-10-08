@@ -12,6 +12,7 @@ pub mod community;
 pub mod invoice;
 pub mod metering;
 pub mod rating;
+pub mod revenue_split_rule;
 pub mod subscription;
 
 use std::error::Error;
