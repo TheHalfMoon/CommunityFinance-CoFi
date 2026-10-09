@@ -48,26 +48,46 @@ impl SupportedSourceKind {
         }
     }
 
-    fn check_original_identity(self, key: &str, bytes: &[u8]) -> Result<(), CodecError> {
+    fn check_original_identity(
+        self,
+        key: &str,
+        organization_id: &str,
+        bytes: &[u8],
+    ) -> Result<(), CodecError> {
         let expected = match self {
             Self::Policy => {
                 let policy = decode_governance_policy(bytes)?;
                 // The policy has no original accepted *event* identity. This
                 // derived policy ID/version key is not external source proof.
+                if policy.organization_id().as_str() != organization_id {
+                    return Err(CodecError::Replay(
+                        "original policy organization differs from declared scope".into(),
+                    ));
+                }
                 format!("policy:{}:{}", policy.id().as_str(), policy.version())
             }
-            Self::Proposal => decode_governance_proposal(bytes)?
-                .source_event_id()
-                .as_str()
-                .to_owned(),
+            Self::Proposal => {
+                let proposal = decode_governance_proposal(bytes)?;
+                if proposal.organization_id().as_str() != organization_id {
+                    return Err(CodecError::Replay(
+                        "original proposal organization differs from declared scope".into(),
+                    ));
+                }
+                proposal.source_event_id().as_str().to_owned()
+            }
             Self::Approval => decode_governance_approval(bytes)?
                 .source_event_id()
                 .as_str()
                 .to_owned(),
-            Self::FundSpend => decode_governance_fund_spend(bytes)?
-                .source_event_id()
-                .as_str()
-                .to_owned(),
+            Self::FundSpend => {
+                let spend = decode_governance_fund_spend(bytes)?;
+                if spend.organization_id().as_str() != organization_id {
+                    return Err(CodecError::Replay(
+                        "original fund spend organization differs from declared scope".into(),
+                    ));
+                }
+                spend.source_event_id().as_str().to_owned()
+            }
             Self::Creation => decode_disbursement_creation(bytes)?
                 .source_event_id()
                 .as_str()
@@ -263,8 +283,11 @@ pub fn compute_untrusted_range(
         if total > MAX_TOTAL_BYTES {
             return Err(invalid("source range exceeds total byte bound"));
         }
-        fact.kind
-            .check_original_identity(fact.source_record_key, fact.bytes)?;
+        fact.kind.check_original_identity(
+            fact.source_record_key,
+            scope.organization_id,
+            fact.bytes,
+        )?;
         frame(&mut hash, fact.sequence.as_bytes());
         frame(&mut hash, fact.kind.record_type().as_bytes());
         frame(&mut hash, fact.source_record_key.as_bytes());

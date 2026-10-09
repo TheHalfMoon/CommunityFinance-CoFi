@@ -1161,3 +1161,64 @@ fn source_checkpoint_checks_range_but_never_authenticates_self_declared_history(
     );
     assert!(inspect_untrusted_source_checkpoint(&vec![b' '; 4097], &facts).is_err());
 }
+
+#[test]
+fn checkpoint_cannot_relabel_original_financial_organization() {
+    let (policy, proposal, _) = sources();
+    let spend_bytes = encode_governance_fund_spend(&spend()).unwrap();
+    use cofi_storage::source_checkpoint::{
+        DeclaredSourceFact, DeclaredSourceScope, SupportedSourceKind, compute_untrusted_range,
+    };
+    let cases = [
+        (
+            SupportedSourceKind::Policy,
+            "policy:policy-a:1",
+            policy.as_slice(),
+        ),
+        (
+            SupportedSourceKind::Proposal,
+            "proposal-event",
+            proposal.as_slice(),
+        ),
+        (
+            SupportedSourceKind::FundSpend,
+            "spend-event-1",
+            spend_bytes.as_slice(),
+        ),
+    ];
+    for (kind, source_record_key, bytes) in cases {
+        let valid = DeclaredSourceFact {
+            sequence: "1",
+            authority_id: "source",
+            organization_id: "org-a",
+            environment_id: "test",
+            source_record_key,
+            kind,
+            bytes,
+        };
+        let valid_scope = DeclaredSourceScope {
+            authority_id: "source",
+            organization_id: "org-a",
+            environment_id: "test",
+            previous_digest_hex: None,
+        };
+        let verified_consistency = compute_untrusted_range(valid_scope, &[valid]).unwrap();
+        assert!(
+            verified_consistency
+                .require_independent_source_authentication()
+                .is_err()
+        );
+        let claimed = DeclaredSourceFact {
+            organization_id: "org-b",
+            ..valid
+        };
+        let claimed_scope = DeclaredSourceScope {
+            organization_id: "org-b",
+            ..valid_scope
+        };
+        assert!(
+            compute_untrusted_range(claimed_scope, &[claimed]).is_err(),
+            "original {kind:?} organization may not be relabeled"
+        );
+    }
+}
