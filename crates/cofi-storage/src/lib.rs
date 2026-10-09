@@ -6,6 +6,7 @@
 
 mod account_parity;
 pub mod audit;
+pub mod authorized_billing_history;
 pub mod authorized_capture_evidence;
 pub mod authorized_draft;
 pub mod authorized_finalization;

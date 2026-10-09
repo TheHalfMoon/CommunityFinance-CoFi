@@ -249,3 +249,74 @@ fn same_invoice_cannot_finalized_twice_or_change_source_id() {
         .is_err()
     );
 }
+
+use cofi_storage::authorized_billing_history::{
+    AcceptedBillingFact, replay_ordered_authorized_billing_history,
+};
+
+#[test]
+fn accepted_billing_stream_requires_original_p21_then_p22_then_p23() {
+    let (draft_request, p21, draft) = p22_fixture();
+    let p22 = encode_authorized_draft(&draft_request, &p21, &draft).unwrap();
+    let request = AuthorizedFinalizationRequest::new(
+        BillingEventId::new("accepted-finalization").unwrap(),
+        draft,
+        3 * DAY,
+        4 * DAY,
+    );
+    let expected = AuthorizedFinalizationRegistry::new()
+        .finalize(request.clone())
+        .unwrap()
+        .authorization()
+        .clone();
+    let p23 = encode_authorized_finalization(&request, &p22, &expected).unwrap();
+    use AcceptedBillingFact::{Draft, Finalization, Rating};
+    let original = [
+        Rating(p21[0].as_slice()),
+        Draft(p22.as_slice()),
+        Finalization(p23.as_slice()),
+    ];
+    let recovered = replay_ordered_authorized_billing_history(original).unwrap();
+    assert_eq!(recovered.ratings().authorization_count(), 1);
+    assert_eq!(recovered.drafts().authorization_count(), 1);
+    assert_eq!(recovered.finalizations().authorization_count(), 1);
+    assert_eq!(
+        recovered
+            .finalizations()
+            .authorization_for_event(request.source_event_id()),
+        Some(&expected)
+    );
+
+    let p21_only = Rating(p21[0].as_slice());
+    let p22_only = Draft(p22.as_slice());
+    let p23_only = Finalization(p23.as_slice());
+    for (case, stream) in [
+        vec![p22_only, p21_only, p23_only],
+        vec![p21_only, p23_only, p22_only],
+        vec![p21_only, p23_only],
+        vec![p22_only, p23_only],
+        vec![p23_only],
+        vec![p21_only, p21_only, p22_only, p23_only],
+        vec![p21_only, p22_only, p22_only, p23_only],
+        vec![p21_only, p22_only, p23_only, p23_only],
+    ]
+    .into_iter()
+    .enumerate()
+    {
+        assert!(
+            replay_ordered_authorized_billing_history(stream).is_err(),
+            "historically impossible accepted billing stream {case}"
+        );
+    }
+
+    // An otherwise well-formed embedded P21 source must match the
+    // previously accepted P21 source, never a late substituted receipt.
+    let mut changed: serde_json::Value = serde_json::from_slice(&p22).unwrap();
+    changed["payload"]["authorizations"][0]["payload"]["expected_subscription_id"] =
+        serde_json::json!("different-subscription");
+    let tampered = serde_json::to_vec(&changed).unwrap();
+    assert!(
+        replay_ordered_authorized_billing_history([p21_only, Draft(tampered.as_slice()), p23_only])
+            .is_err()
+    );
+}
