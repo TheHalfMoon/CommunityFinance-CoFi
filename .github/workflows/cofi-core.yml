@@ -9,6 +9,8 @@ on:
       - Cargo.lock
       - crates/**
       - .github/workflows/cofi-core.yml
+      - .github/workflows/jev-review.yml
+      - .github/scripts/jev-concurrency.test.mjs
       - README.md
       - CHANGELOG.md
       - PROJECT_STATUS.md
@@ -18,6 +20,8 @@ on:
       - Cargo.lock
       - crates/**
       - .github/workflows/cofi-core.yml
+      - .github/workflows/jev-review.yml
+      - .github/scripts/jev-concurrency.test.mjs
       - README.md
       - CHANGELOG.md
       - PROJECT_STATUS.md
@@ -43,6 +47,9 @@ jobs:
         with:
           toolchain: stable
           components: rustfmt, clippy
+
+      - name: Check Jev review comment isolation
+        run: node --test .github/scripts/jev-concurrency.test.mjs
 
       - name: Format
         run: cargo fmt --all --check
