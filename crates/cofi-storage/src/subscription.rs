@@ -18,6 +18,7 @@ use crate::{CodecError, parse_i64_exact};
 
 const VERSION: u64 = 1;
 const CREATE_KIND: &str = "subscription.create";
+const MAX_SUBSCRIPTION_FACT_BYTES: usize = 1024 * 1024;
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -53,15 +54,26 @@ pub fn encode_subscription_request(request: &SubscriptionRequest) -> Result<Vec<
         active_from_unix_ms: request.active_from_unix_ms().to_string(),
         active_until_unix_ms: request.active_until_unix_ms().map(|v| v.to_string()),
     };
-    serde_json::to_vec(&Envelope {
+    let bytes = serde_json::to_vec(&Envelope {
         schema_version: VERSION,
         record_type: CREATE_KIND.to_owned(),
         payload: record,
     })
-    .map_err(|e| CodecError::InvalidPayload(e.to_string()))
+    .map_err(|e| CodecError::InvalidPayload(e.to_string()))?;
+    if bytes.len() > MAX_SUBSCRIPTION_FACT_BYTES {
+        return Err(CodecError::InvalidPayload(
+            "subscription fact exceeds 1MiB".to_owned(),
+        ));
+    }
+    Ok(bytes)
 }
 
 pub fn decode_subscription_request(bytes: &[u8]) -> Result<SubscriptionRequest, CodecError> {
+    if bytes.len() > MAX_SUBSCRIPTION_FACT_BYTES {
+        return Err(CodecError::InvalidPayload(
+            "subscription fact exceeds 1MiB".to_owned(),
+        ));
+    }
     let header: Envelope<serde_json::Value> =
         serde_json::from_slice(bytes).map_err(|e| CodecError::InvalidPayload(e.to_string()))?;
     if header.schema_version != VERSION {

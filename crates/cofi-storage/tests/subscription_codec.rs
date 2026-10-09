@@ -178,3 +178,37 @@ fn dependency_order_must_preserve_original_creation_sequence() {
     // Replays never infer a new schedule; the canonical event stream must
     // eventually carry an authoritative ordering and cutoff in G002-G004.
 }
+
+#[test]
+fn subscription_codec_rejects_oversize_original_fact_before_deserialization() {
+    let original = request(
+        "event-sized",
+        "sub-sized",
+        plan("rate-1"),
+        60_000,
+        Some(120_000),
+    );
+    let mut bytes = encode_subscription_request(&original).unwrap();
+    // Valid JSON trailing whitespace must count toward the persistence envelope.
+    bytes.resize(1024 * 1024, b' ');
+    assert_eq!(decode_subscription_request(&bytes), Ok(original));
+    bytes.push(b' ');
+    assert!(matches!(
+        decode_subscription_request(&bytes),
+        Err(CodecError::InvalidPayload(_))
+    ));
+    assert!(matches!(
+        replay_subscriptions([bytes.as_slice()]),
+        Err(CodecError::InvalidPayload(_))
+    ));
+}
+
+#[test]
+fn subscription_codec_rejects_oversize_original_domain_encoding() {
+    let huge_source = format!("event-{}", "x".repeat(1024 * 1024));
+    let original = request(&huge_source, "sub-1", plan("rate-1"), 60_000, None);
+    assert!(matches!(
+        encode_subscription_request(&original),
+        Err(CodecError::InvalidPayload(_))
+    ));
+}

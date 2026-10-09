@@ -17,6 +17,8 @@ use crate::{CodecError, parse_i64_exact, parse_i128_exact};
 
 const VERSION: u64 = 1;
 const DRAFT_KIND: &str = "invoice.draft";
+const MAX_DRAFT_FACT_BYTES: usize = 1024 * 1024;
+const MAX_RATING_RECEIPT_BYTES: usize = 1024 * 1024;
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -57,6 +59,11 @@ pub fn encode_draft_invoice(
     let ratings = rating_receipts
         .iter()
         .map(|bytes| {
+            if bytes.len() > MAX_RATING_RECEIPT_BYTES {
+                return Err(CodecError::InvalidPayload(
+                    "embedded rating receipt exceeds 1MiB".to_owned(),
+                ));
+            }
             let evidence: serde_json::Value = serde_json::from_slice(bytes)
                 .map_err(|e| CodecError::InvalidPayload(e.to_string()))?;
             let event_id = evidence
@@ -88,6 +95,11 @@ pub fn encode_draft_invoice(
         },
     })
     .map_err(|e| CodecError::InvalidPayload(e.to_string()))?;
+    if bytes.len() > MAX_DRAFT_FACT_BYTES {
+        return Err(CodecError::InvalidPayload(
+            "draft invoice fact exceeds 1MiB".to_owned(),
+        ));
+    }
     if decode_draft_invoice(&bytes)? != *request {
         return Err(CodecError::Replay(
             "draft request differs from recomputed original rating source evidence".to_owned(),
@@ -99,6 +111,11 @@ pub fn encode_draft_invoice(
 /// Recompute source charges and invoice totals through checked domain engines.
 /// Duplicate/missing/modified rated-charge identity and lineage fail closed.
 pub fn decode_draft_invoice(bytes: &[u8]) -> Result<DraftInvoiceRequest, CodecError> {
+    if bytes.len() > MAX_DRAFT_FACT_BYTES {
+        return Err(CodecError::InvalidPayload(
+            "draft invoice fact exceeds 1MiB".to_owned(),
+        ));
+    }
     let header: Envelope<serde_json::Value> =
         serde_json::from_slice(bytes).map_err(|e| CodecError::InvalidPayload(e.to_string()))?;
     if header.schema_version != VERSION {
