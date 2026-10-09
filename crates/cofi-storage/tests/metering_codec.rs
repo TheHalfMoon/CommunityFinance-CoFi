@@ -230,3 +230,32 @@ fn malformed_values_types_and_versions_fail_closed() {
         Err(CodecError::InvalidPayload(_))
     ));
 }
+
+#[test]
+fn metering_codec_rejects_oversized_original_fact_before_json_parse() {
+    let definition = meter("meter-size", Aggregation::Sum, None);
+    let usage = event("usage-size", "meter-size", 9);
+    for mut source in [
+        encode_meter_definition(&definition).unwrap(),
+        encode_usage_event(&usage).unwrap(),
+    ] {
+        // Valid JSON trailing whitespace previously bypassed any intake size bound.
+        source.resize(1024 * 1024, b' ');
+        assert!(decode_metering_fact(&source).is_ok());
+        source.push(b' ');
+        assert!(matches!(
+            decode_metering_fact(&source),
+            Err(CodecError::InvalidPayload(_))
+        ));
+    }
+}
+
+#[test]
+fn metering_codec_rejects_oversized_original_encoded_event() {
+    let huge_id = format!("usage-{}", "x".repeat(1024 * 1024));
+    let source = event(&huge_id, "meter-size", 9);
+    assert!(matches!(
+        encode_usage_event(&source),
+        Err(CodecError::InvalidPayload(_))
+    ));
+}

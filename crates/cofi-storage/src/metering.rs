@@ -15,6 +15,7 @@ use crate::{CodecError, parse_i64_exact, parse_i128_exact};
 const VERSION: u64 = 1;
 const DEFINITION_KIND: &str = "meter.definition";
 const USAGE_KIND: &str = "meter.event";
+const MAX_METER_FACT_BYTES: usize = 1024 * 1024;
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -112,12 +113,18 @@ pub enum MeteringFact {
 }
 
 fn encode<T: Serialize>(kind: &str, payload: T) -> Result<Vec<u8>, CodecError> {
-    serde_json::to_vec(&Envelope {
+    let bytes = serde_json::to_vec(&Envelope {
         schema_version: VERSION,
         record_type: kind.to_owned(),
         payload,
     })
-    .map_err(|err| CodecError::InvalidPayload(err.to_string()))
+    .map_err(|err| CodecError::InvalidPayload(err.to_string()))?;
+    if bytes.len() > MAX_METER_FACT_BYTES {
+        return Err(CodecError::InvalidPayload(
+            "metering fact exceeds 1MiB".to_owned(),
+        ));
+    }
+    Ok(bytes)
 }
 
 /// Store the original definition, never a computed aggregate.
@@ -161,6 +168,11 @@ pub fn encode_usage_event(event: &UsageEvent) -> Result<Vec<u8>, CodecError> {
 /// Interpret a single versioned record, rejecting unknown schema/type and
 /// malformed data before invoking the checked domain constructors.
 pub fn decode_metering_fact(bytes: &[u8]) -> Result<MeteringFact, CodecError> {
+    if bytes.len() > MAX_METER_FACT_BYTES {
+        return Err(CodecError::InvalidPayload(
+            "metering fact exceeds 1MiB".to_owned(),
+        ));
+    }
     let header: Envelope<serde_json::Value> =
         serde_json::from_slice(bytes).map_err(|e| CodecError::InvalidPayload(e.to_string()))?;
     if header.schema_version != VERSION {
