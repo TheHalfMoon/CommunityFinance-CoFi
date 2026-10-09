@@ -686,6 +686,30 @@ No PostgreSQL storage, transaction, original Ledger mutation, provider
 observation, money movement or release enablement is introduced. Parent
 G001 #22 and G002-G008 remain OPEN.
 
+### Unauthenticated tenant source-range consistency (Issue #82)
+
+The bounded `source_checkpoint` v1 declaration inspects *caller-provided*
+authority, organization, environment, contiguous source sequences, event count,
+source-record keys, seven supported original source codecs, size bounds,
+prior-digest shape and a domain-separated canonical ordered SHA-256 digest.
+It rejects duplicate/reordered/omitted source facts, noncanonical or
+overflowing sequences, changed scopes, source-ID mismatch, changed digests,
+unknown versions/fields and oversized records. Original policy identity is
+derived from its checked policy ID/version; this is **not** an externally
+accepted policy-event identity. Other financial/authority registries are
+not admitted by this bounded partial inspector.
+
+**Security boundary:** `UnauthenticatedRange` is expressly *not* a
+`TrustedSourceCheckpoint`. A caller can forge a coherent dataset and
+self-compute its matching digest. The method
+`require_independent_source_authentication` always refuses with
+`UNAUTHENTICATED` until a separately approved pinned external source key
+or independent witness is implemented, cryptographically checked and
+qualified with real trust material. Hash parity alone does not prove
+completeness, immutable external custody, tenant-global cutoff, or source
+authenticity, nor is it a PostgreSQL G002 store. Issue #81, parent #22 and
+G002-G008 remain OPEN; no provider/live-money effect is enabled.
+
 ## G001 closure gates
 
 1. Enumerate every accepted current transition/result across all 21 original crates.

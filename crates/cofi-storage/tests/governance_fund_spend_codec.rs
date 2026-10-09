@@ -1020,3 +1020,144 @@ fn shared_financial_chronology_rejects_preaccepted_spend_and_duplicate_or_missin
     }
     assert_eq!(ledger.entry_count(), 2);
 }
+
+use cofi_storage::source_checkpoint::{
+    DeclaredSourceFact, DeclaredSourceScope, SupportedSourceKind, compute_untrusted_range,
+    inspect_untrusted_source_checkpoint,
+};
+
+#[test]
+fn source_checkpoint_checks_range_but_never_authenticates_self_declared_history() {
+    let (policy_bytes, proposal_bytes, votes) = sources();
+    let scope = DeclaredSourceScope {
+        authority_id: "external-source-a",
+        organization_id: "org-a",
+        environment_id: "test",
+        previous_digest_hex: None,
+    };
+    let facts = [
+        DeclaredSourceFact {
+            sequence: "1",
+            authority_id: "external-source-a",
+            organization_id: "org-a",
+            environment_id: "test",
+            source_record_key: "policy:policy-a:1",
+            kind: SupportedSourceKind::Policy,
+            bytes: policy_bytes.as_slice(),
+        },
+        DeclaredSourceFact {
+            sequence: "2",
+            authority_id: "external-source-a",
+            organization_id: "org-a",
+            environment_id: "test",
+            source_record_key: "proposal-event",
+            kind: SupportedSourceKind::Proposal,
+            bytes: proposal_bytes.as_slice(),
+        },
+        DeclaredSourceFact {
+            sequence: "3",
+            authority_id: "external-source-a",
+            organization_id: "org-a",
+            environment_id: "test",
+            source_record_key: "v-1",
+            kind: SupportedSourceKind::Approval,
+            bytes: votes[0].as_slice(),
+        },
+    ];
+    let calculated = compute_untrusted_range(scope, &facts).unwrap();
+    let declared = serde_json::json!({
+        "schema_version": 1,
+        "record_type": "source.checkpoint.declaration",
+        "authority_id": "external-source-a",
+        "organization_id": "org-a",
+        "environment_id": "test",
+        "first_sequence": "1",
+        "last_sequence": "3",
+        "accepted_event_count": "3",
+        "previous_digest_hex": null,
+        "ordered_digest_hex": calculated.ordered_digest_hex(),
+    });
+    let data = serde_json::to_vec(&declared).unwrap();
+    let inspected = inspect_untrusted_source_checkpoint(&data, &facts).unwrap();
+    assert_eq!(inspected.count(), 3);
+    assert_eq!(inspected.first_sequence(), 1);
+    assert_eq!(inspected.last_sequence(), 3);
+    assert!(
+        inspected
+            .require_independent_source_authentication()
+            .is_err()
+    );
+
+    // A coherent, fully recomputed, caller-created checkpoint remains
+    // unauthenticated: hash consistency is not an independently pinned key.
+    let forged = serde_json::to_vec(&declared).unwrap();
+    assert!(
+        inspect_untrusted_source_checkpoint(&forged, &facts)
+            .unwrap()
+            .require_independent_source_authentication()
+            .is_err()
+    );
+
+    for (path, bad) in [
+        ("/schema_version", serde_json::json!(2)),
+        (
+            "/record_type",
+            serde_json::json!("source.checkpoint.trusted"),
+        ),
+        ("/authority_id", serde_json::json!("other")),
+        ("/organization_id", serde_json::json!("other-tenant")),
+        ("/environment_id", serde_json::json!("production")),
+        ("/first_sequence", serde_json::json!("0")),
+        ("/last_sequence", serde_json::json!("2")),
+        ("/accepted_event_count", serde_json::json!("4")),
+        ("/accepted_event_count", serde_json::json!("3.0")),
+        ("/ordered_digest_hex", serde_json::json!("bad")),
+        ("/previous_digest_hex", serde_json::json!("bad")),
+    ] {
+        let mut modified = declared.clone();
+        *modified.pointer_mut(path).unwrap() = bad;
+        assert!(
+            inspect_untrusted_source_checkpoint(&serde_json::to_vec(&modified).unwrap(), &facts)
+                .is_err(),
+            "{path}"
+        );
+    }
+    for bad in [
+        {
+            let mut a = facts;
+            a[1].sequence = "3";
+            a
+        },
+        {
+            let mut a = facts;
+            a[1].source_record_key = "v-1";
+            a
+        },
+        {
+            let mut a = facts;
+            a[1].organization_id = "other";
+            a
+        },
+        {
+            let mut a = facts;
+            a[2].source_record_key = "fake-vote";
+            a
+        },
+        {
+            let mut a = facts;
+            a[2].sequence = "18446744073709551616";
+            a
+        },
+    ] {
+        assert!(inspect_untrusted_source_checkpoint(&data, &bad).is_err());
+    }
+    assert!(inspect_untrusted_source_checkpoint(&data, &facts[..2]).is_err());
+    assert!(inspect_untrusted_source_checkpoint(&data, &[facts[1], facts[0], facts[2]]).is_err());
+    let mut unknown = declared.clone();
+    unknown["unexpected"] = serde_json::json!(true);
+    assert!(
+        inspect_untrusted_source_checkpoint(&serde_json::to_vec(&unknown).unwrap(), &facts)
+            .is_err()
+    );
+    assert!(inspect_untrusted_source_checkpoint(&vec![b' '; 4097], &facts).is_err());
+}
