@@ -39,8 +39,8 @@ use std::error::Error;
 use std::fmt::{Display, Formatter};
 
 use cofi_ledger::{
-    Account, AccountId, AccountKind, Currency, EntryMetadata, JournalEntry, JournalEntryId, Ledger,
-    LedgerScopeId, Posting, Side,
+    Account, AccountId, AccountKind, CommitOutcome, Currency, EntryMetadata, JournalEntry,
+    JournalEntryId, Ledger, LedgerScopeId, Posting, Side,
 };
 use serde::{Deserialize, Serialize};
 
@@ -335,9 +335,14 @@ pub fn replay_ledger<'a>(facts: impl IntoIterator<Item = &'a [u8]>) -> Result<Le
                 .register_account(account)
                 .map_err(|err| CodecError::Replay(err.to_string()))?,
             LedgerFact::Entry(entry) => {
-                ledger
+                let outcome = ledger
                     .commit(entry)
                     .map_err(|err| CodecError::Replay(err.to_string()))?;
+                if outcome != CommitOutcome::Committed {
+                    return Err(CodecError::Replay(
+                        "duplicate accepted journal fact in immutable ledger history".to_owned(),
+                    ));
+                }
             }
         }
     }

@@ -210,3 +210,36 @@ fn invalid_domain_facts_and_fractional_json_numbers_fail_closed() {
         Err(CodecError::InvalidDomain(_))
     ));
 }
+
+#[test]
+fn immutable_accepted_ledger_history_rejects_exact_duplicate_journal() {
+    let (asset, revenue, journal) = accounts_and_entry();
+    let accepted = [
+        encode_account(&asset).unwrap(),
+        encode_account(&revenue).unwrap(),
+        encode_entry(&journal).unwrap(),
+    ];
+    assert!(replay_ledger(accepted.iter().map(Vec::as_slice)).is_ok());
+
+    // An actual command retry still uses the original Ledger's Replayed outcome.
+    let mut original_domain = Ledger::new();
+    original_domain.register_account(asset).unwrap();
+    original_domain.register_account(revenue).unwrap();
+    assert_eq!(
+        original_domain.commit(journal.clone()),
+        Ok(CommitOutcome::Committed)
+    );
+    assert_eq!(original_domain.commit(journal), Ok(CommitOutcome::Replayed));
+
+    // But two occurrences of one accepted journal in an immutable source
+    // are not two independent accepted economic transitions.
+    assert!(matches!(
+        replay_ledger(
+            accepted
+                .iter()
+                .chain(accepted[2..].iter())
+                .map(Vec::as_slice)
+        ),
+        Err(CodecError::Replay(_))
+    ));
+}

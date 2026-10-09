@@ -11,7 +11,7 @@ API, provider execution, or live-money capability is introduced here.
 | Canonical fact | Origin | Codec | Rebuild mechanism | Proof |
 | --- | --- | --- | --- | --- |
 | Account registration | `cofi-ledger::Account` | `ledger.account`, v1 | `AccountId::new`, `LedgerScopeId::new`, `Currency::new`, `Account::new`, then `Ledger::register_account` | Checked roundtrip; account parity |
-| Journal entry and ordered postings | `cofi-ledger::JournalEntry` | `ledger.entry`, v1 | `Posting::new`, `EntryMetadata::new`, `JournalEntry::new`, then `Ledger::commit` | i128 boundary; exact timestamps/metadata/order; replay, conflict, missing account |
+| Journal entry and ordered postings | `cofi-ledger::JournalEntry` | `ledger.entry`, v1 | `Posting::new`, `EntryMetadata::new`, `JournalEntry::new`, then `Ledger::commit` | i128 boundary; exact timestamps/metadata/order; replay, conflict, missing account; reject duplicate accepted journal facts without changing command retry idempotency |
 | Replay/business-key indexes | `cofi-ledger::Ledger` | Derived, never serialized directly | Rebuilt by `Ledger::commit` | Identical replay and changed-key conflict |
 | Debit/credit balance projections | `cofi-ledger::Ledger` | Derived, never serialized directly | Recomputed using domain postings and checked `u128` arithmetic | Reference balance comparison; decimal `u128::MAX` codec |
 | Meter definition | `cofi-metering::MeterDefinition` | `meter.definition`, v1 | `MeterId::new`, `EventType::new`, `MeterDefinition::new`, `MeteringEngine::register_meter` | Full definition roundtrip, replay and changed-identity conflict |
