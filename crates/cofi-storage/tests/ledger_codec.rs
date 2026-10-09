@@ -210,3 +210,53 @@ fn invalid_domain_facts_and_fractional_json_numbers_fail_closed() {
         Err(CodecError::InvalidDomain(_))
     ));
 }
+
+#[test]
+fn ledger_codec_rejects_oversized_original_fact_before_deserialization() {
+    let (asset, _, journal) = accounts_and_entry();
+    for mut fact in [
+        encode_account(&asset).unwrap(),
+        encode_entry(&journal).unwrap(),
+    ] {
+        // Trailing JSON whitespace is syntactically valid and used to pass the
+        // codec without any intake-size restriction.
+        fact.resize(1024 * 1024, b' ');
+        assert!(
+            decode_fact(&fact).is_ok(),
+            "exact 1MiB must remain admissible"
+        );
+        fact.push(b' ');
+        assert!(matches!(
+            decode_fact(&fact),
+            Err(CodecError::InvalidPayload(_))
+        ));
+        assert!(matches!(
+            replay_ledger([fact.as_slice()]),
+            Err(CodecError::InvalidPayload(_))
+        ));
+    }
+}
+
+#[test]
+fn ledger_codec_rejects_oversized_encoded_original_journal() {
+    let base = entry("big-entry", "big-key", 1);
+    let postings = base
+        .postings()
+        .iter()
+        .cloned()
+        .cycle()
+        .take(40_000)
+        .collect();
+    let journal = JournalEntry::new(
+        JournalEntryId::new("big-entry").unwrap(),
+        postings,
+        10,
+        11,
+        EntryMetadata::new(None, None).unwrap(),
+    )
+    .unwrap();
+    assert!(matches!(
+        encode_entry(&journal),
+        Err(CodecError::InvalidPayload(_))
+    ));
+}
