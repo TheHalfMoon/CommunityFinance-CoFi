@@ -457,3 +457,105 @@ fn staged_distributions_rebuild_original_private_ledger_and_reject_false_history
         .is_err()
     );
 }
+
+#[test]
+fn staged_distribution_rejects_changed_original_genesis_journal_with_equal_balances() {
+    let (registry, genesis) = base_registry_and_ledger(1_000);
+    let mut substituted = Ledger::new();
+    for account in genesis.accounts() {
+        substituted.register_account(account.clone()).unwrap();
+    }
+    // Same original seed identity, timestamps and postings; only original
+    // immutable metadata differs. Count and all account balances stay equal.
+    let forged_seed = JournalEntry::new(
+        JournalEntryId::new("seed:distribution-bank").unwrap(),
+        vec![
+            Posting::new(account_id("bank-cash"), usd(), Side::Debit, 1_000).unwrap(),
+            Posting::new(account_id("opening-equity"), usd(), Side::Credit, 1_000).unwrap(),
+        ],
+        1_700_000_001_000,
+        1_700_000_001_001,
+        EntryMetadata::new(
+            Some("forged-seed-distribution-bank".to_owned()),
+            Some("seed-distribution-bank".to_owned()),
+        )
+        .unwrap(),
+    )
+    .unwrap();
+    substituted.commit(forged_seed).unwrap();
+    seed_source_fund(&registry, &mut substituted, 1_000);
+    assert_eq!(substituted.entry_count(), genesis.entry_count());
+    // Both iterators cover original genesis journals, in sorted ID order.
+    let original_ids: Vec<_> = genesis.entries().map(|entry| entry.id().as_str()).collect();
+    let mut sorted_ids = original_ids.clone();
+    sorted_ids.sort_unstable();
+    assert_eq!(original_ids, sorted_ids);
+    assert_eq!(original_ids.len(), genesis.entry_count());
+    assert!(!genesis.entries().eq(substituted.entries()));
+    assert_ne!(
+        substituted.entry(&JournalEntryId::new("seed:distribution-bank").unwrap()),
+        genesis.entry(&JournalEntryId::new("seed:distribution-bank").unwrap())
+    );
+    for account in genesis.accounts() {
+        assert_eq!(
+            substituted.balance(account.id()),
+            genesis.balance(account.id())
+        );
+    }
+
+    let split = rule(vec![leg("fund-alpha", 6_000), leg("fund-beta", 4_000)]);
+    let first = event("verified-source-a", "verified-business-a", 600);
+    let second = event("verified-source-b", "verified-business-b", 400);
+    let b1 = encode_distribution(&DistributionFact::new(first.clone(), split.clone())).unwrap();
+    let b2 = encode_distribution(&DistributionFact::new(second.clone(), split.clone())).unwrap();
+
+    let mut forged_stage_one = substituted.clone();
+    RevenueDistributionBridge::new()
+        .apply(&registry, &first, &split, &mut forged_stage_one)
+        .unwrap();
+    let mut forged_stage_two = forged_stage_one.clone();
+    RevenueDistributionBridge::new()
+        .apply(&registry, &second, &split, &mut forged_stage_two)
+        .unwrap();
+
+    let mut legitimate_stage_one = genesis.clone();
+    RevenueDistributionBridge::new()
+        .apply(&registry, &first, &split, &mut legitimate_stage_one)
+        .unwrap();
+    let mut legitimate_stage_two = legitimate_stage_one.clone();
+    RevenueDistributionBridge::new()
+        .apply(&registry, &second, &split, &mut legitimate_stage_two)
+        .unwrap();
+
+    let normal = [
+        DistributionStage {
+            source: b1.as_slice(),
+            reference: &legitimate_stage_one,
+        },
+        DistributionStage {
+            source: b2.as_slice(),
+            reference: &legitimate_stage_two,
+        },
+    ];
+    assert!(
+        rebuild_staged_distribution_history(&normal, &registry, &genesis, &legitimate_stage_two)
+            .is_ok()
+    );
+
+    let forged = [
+        DistributionStage {
+            source: b1.as_slice(),
+            reference: &forged_stage_one,
+        },
+        DistributionStage {
+            source: b2.as_slice(),
+            reference: &forged_stage_two,
+        },
+    ];
+    assert!(
+        rebuild_staged_distribution_history(&forged, &registry, &genesis, &forged_stage_two)
+            .is_err(),
+        "immutable preexisting genesis journals must match at each reference checkpoint"
+    );
+    assert_eq!(genesis.entry_count(), 2);
+}

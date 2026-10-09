@@ -731,6 +731,20 @@ This partial source-order result does not complete #34 or G001 #22,
 does not qualify G002–G008 or production billing, and never permits live
 financial actions.
 
+### Full inherited journal parity hardening (Issue #92)
+
+The original Ledger now exposes a read-only deterministic `entries()`
+inventory in journal ID order. Staged revenue distribution reconstruction
+compares **every original journal**, including inherited genesis journals,
+with each caller-supplied after-stage Ledger and final reference, in addition
+to original event/journal IDs, exact counts, full account inventories and
+running balances. This rejects substituted original seed metadata or source
+journal identity with unchanged account balances and total journal count.
+It does not prove the external genesis Ledger, original source checkpoint,
+reference snapshots or historical acceptance completeness are authentic.
+No financial/provider actions are introduced; #40, #22 and G002–G008
+remain OPEN.
+
 ### Staged original distribution and journal state reconstruction (Issue #90)
 
 The bounded `rebuild_staged_distribution_history` rebuilds accepted original
