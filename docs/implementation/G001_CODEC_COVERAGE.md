@@ -710,6 +710,27 @@ completeness, immutable external custody, tenant-global cutoff, or source
 authenticity, nor is it a PostgreSQL G002 store. Issue #81, parent #22 and
 G002-G008 remain OPEN; no provider/live-money effect is enabled.
 
+### Caller-ordered P21 → P22 → P23 billing acceptance (Issue #88)
+
+The bounded `authorized_billing_history` adapter verifies that each
+accepted P22 draft contains only **previously encountered, exact canonical
+P21 receipts** and each accepted P23 finalization embeds a **previously
+encountered, exact canonical P22 receipt** in the caller's supplied inter-kind
+sequence. Missing/late/altered/duplicated/consumed accepted ancestry fails
+closed, as do records violating bounded intake sizes. After source-order
+checks, original `replay_authorized_ratings`,
+`replay_authorized_drafts` and `replay_authorized_finalizations` construct
+only the original registry projections and checked consumption indexes. The
+adapter neither issues an invoice nor posts Ledger entries.
+
+The supplied accepted sequence is **not an independently authenticated
+tenant sequence** and cannot prove unrecorded historical omissions, usage
+cutoff, true external event origin, source custody or cross-tenant/global
+completeness. Its original contained sources remain self-contained evidence.
+This partial source-order result does not complete #34 or G001 #22,
+does not qualify G002–G008 or production billing, and never permits live
+financial actions.
+
 ## G001 closure gates
 
 1. Enumerate every accepted current transition/result across all 21 original crates.
