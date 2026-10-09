@@ -47,6 +47,7 @@ use serde::{Deserialize, Serialize};
 const CURRENT_VERSION: u64 = 1;
 const ACCOUNT_KIND: &str = "ledger.account";
 const ENTRY_KIND: &str = "ledger.entry";
+const MAX_LEDGER_FACT_BYTES: usize = 1024 * 1024;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum CodecError {
@@ -220,12 +221,18 @@ pub enum LedgerFact {
 }
 
 fn encode<T: Serialize>(kind: &str, payload: T) -> Result<Vec<u8>, CodecError> {
-    serde_json::to_vec(&Envelope {
+    let bytes = serde_json::to_vec(&Envelope {
         schema_version: CURRENT_VERSION,
         record_type: kind.to_owned(),
         payload,
     })
-    .map_err(|err| CodecError::InvalidPayload(err.to_string()))
+    .map_err(|err| CodecError::InvalidPayload(err.to_string()))?;
+    if bytes.len() > MAX_LEDGER_FACT_BYTES {
+        return Err(CodecError::InvalidPayload(
+            "ledger fact exceeds 1MiB".to_owned(),
+        ));
+    }
+    Ok(bytes)
 }
 
 pub fn encode_account(account: &Account) -> Result<Vec<u8>, CodecError> {
@@ -267,6 +274,11 @@ pub fn encode_entry(entry: &JournalEntry) -> Result<Vec<u8>, CodecError> {
 /// Reject unknown fact types and versions, then route all decoded values
 /// through the domain's existing checked public constructors.
 pub fn decode_fact(bytes: &[u8]) -> Result<LedgerFact, CodecError> {
+    if bytes.len() > MAX_LEDGER_FACT_BYTES {
+        return Err(CodecError::InvalidPayload(
+            "ledger fact exceeds 1MiB".to_owned(),
+        ));
+    }
     let header: Envelope<serde_json::Value> =
         serde_json::from_slice(bytes).map_err(|err| CodecError::InvalidPayload(err.to_string()))?;
     if header.schema_version != CURRENT_VERSION {
