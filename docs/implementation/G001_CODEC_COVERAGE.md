@@ -731,6 +731,29 @@ This partial source-order result does not complete #34 or G001 #22,
 does not qualify G002–G008 or production billing, and never permits live
 financial actions.
 
+### Staged original distribution and journal state reconstruction (Issue #90)
+
+The bounded `rebuild_staged_distribution_history` rebuilds accepted original
+distribution sources in their **caller-asserted stage order** from a supplied
+prior Ledger on a private clone. For each step, the original
+`RevenueDistributionBridge::apply` must produce a first-time `Committed`
+result. The result journal, all previously accepted distribution journals,
+journal counts, complete original account definitions and every account
+balance must match the separately supplied after-stage reference. A supplied
+final reference cutoff is checked as well, so a shortened source list fails
+when the final reference includes additional distributions. Duplicate
+accepted source/business identities, reordered facts, mutated rule/source or
+incomplete, extra-account or different-balance stages fail closed. Neither
+the caller's Ledger nor the references are modified.
+
+**Trust exclusion:** all references, prior genesis, organization/fund
+registrations, and the final cutoff are still provided by the caller. No
+external attestation, immutable source custody or independent complete
+historical journal enumeration is proven, and the function does not support
+arbitrary P23-P27 interleavings, new accounts between stages, or refunds.
+No production money effects or bank/provider calls. This bounded subgrain
+does **not** close #40, parent #22, or G002–G008.
+
 ## G001 closure gates
 
 1. Enumerate every accepted current transition/result across all 21 original crates.
