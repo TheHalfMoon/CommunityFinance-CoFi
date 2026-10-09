@@ -226,3 +226,120 @@ pub fn verify_distribution_history<'a>(
     }
     Ok(business.len())
 }
+
+/// Original accepted source plus the caller's claimed after-event Ledger.
+/// The checkpoint is comparison material, NOT an independent source witness.
+#[derive(Debug, Clone, Copy)]
+pub struct DistributionStage<'a> {
+    pub source: &'a [u8],
+    pub reference: &'a Ledger,
+}
+
+/// Read-only original-domain projection from a staged accepted source list.
+#[derive(Debug, Clone)]
+pub struct RebuiltDistributionHistory {
+    ledger: Ledger,
+    count: usize,
+}
+impl RebuiltDistributionHistory {
+    #[must_use]
+    pub const fn ledger(&self) -> &Ledger {
+        &self.ledger
+    }
+    #[must_use]
+    pub const fn count(&self) -> usize {
+        self.count
+    }
+}
+
+/// Replay original revenue distribution transitions on a private genesis
+/// Ledger, comparing exact emitted journals, full account definitions and
+/// balances to each caller-provided historical checkpoint.
+///
+/// This supports ONLY source-order distribution facts with a fixed prior
+/// account inventory and a separately caller-supplied final cutoff. It is NOT
+/// an authenticated source sequence, a complete financial ledger, or a live
+/// execution path. No references or caller Ledger are mutated.
+pub fn rebuild_staged_distribution_history(
+    stages: &[DistributionStage<'_>],
+    registry: &CommunityRegistry,
+    genesis: &Ledger,
+    final_reference: &Ledger,
+) -> Result<RebuiltDistributionHistory, CodecError> {
+    use std::collections::BTreeSet;
+
+    use cofi_community::RevenueDistributionOutcome;
+
+    use crate::account_parity::verify_all_accounts;
+
+    if stages.is_empty() || stages.len() > 4096 {
+        return Err(CodecError::Replay(
+            "missing or oversized original distribution stage list".into(),
+        ));
+    }
+    let mut ledger = genesis.clone();
+    let mut event_ids = BTreeSet::<String>::new();
+    let mut business_ids = BTreeSet::<String>::new();
+    let mut accepted_journals = BTreeSet::<JournalEntryId>::new();
+    for (index, stage) in stages.iter().enumerate() {
+        let fact = decode_distribution(stage.source)?;
+        if !event_ids.insert(fact.event().source_event_id().as_str().to_owned())
+            || !business_ids.insert(fact.event().distribution_id().as_str().to_owned())
+        {
+            return Err(CodecError::Replay(
+                "duplicate accepted distribution source or business identity".into(),
+            ));
+        }
+        let outcome = RevenueDistributionBridge::new()
+            .apply(registry, fact.event(), fact.rule(), &mut ledger)
+            .map_err(|e| CodecError::Replay(e.to_string()))?;
+        let journal = match outcome {
+            RevenueDistributionOutcome::Committed { journal_entry_id } => journal_entry_id,
+            RevenueDistributionOutcome::Replayed { .. } => {
+                return Err(CodecError::Replay(
+                    "accepted distribution must be a first-time original transition".into(),
+                ));
+            }
+        };
+        if !accepted_journals.insert(journal.clone()) {
+            return Err(CodecError::Replay(
+                "duplicate accepted distribution journal identity".into(),
+            ));
+        }
+        let expected_count = genesis
+            .entry_count()
+            .checked_add(index + 1)
+            .ok_or_else(|| CodecError::Replay("original stage count overflow".into()))?;
+        if ledger.entry_count() != expected_count || stage.reference.entry_count() != expected_count
+        {
+            return Err(CodecError::Replay(
+                "original distribution stage journal count missing or augmented".into(),
+            ));
+        }
+        for id in &accepted_journals {
+            if ledger.entry(id).is_none() || ledger.entry(id) != stage.reference.entry(id) {
+                return Err(CodecError::Replay(
+                    "distribution original journal contents differ at stage".into(),
+                ));
+            }
+        }
+        verify_all_accounts(genesis, &ledger, stage.reference)?;
+    }
+    if ledger.entry_count() != final_reference.entry_count() {
+        return Err(CodecError::Replay(
+            "final distribution source count does not match declared cutoff".into(),
+        ));
+    }
+    for id in &accepted_journals {
+        if ledger.entry(id).is_none() || ledger.entry(id) != final_reference.entry(id) {
+            return Err(CodecError::Replay(
+                "final distribution original journal differs".into(),
+            ));
+        }
+    }
+    verify_all_accounts(genesis, &ledger, final_reference)?;
+    Ok(RebuiltDistributionHistory {
+        ledger,
+        count: stages.len(),
+    })
+}

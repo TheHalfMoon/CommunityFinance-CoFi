@@ -337,3 +337,123 @@ fn malformed_or_untrusted_distribution_data_fails_closed() {
         1
     );
 }
+
+use cofi_storage::distribution::{DistributionStage, rebuild_staged_distribution_history};
+
+#[test]
+fn staged_distributions_rebuild_original_private_ledger_and_reject_false_history() {
+    let (registry, genesis) = base_registry_and_ledger(1_000);
+    let rule = rule(vec![leg("fund-alpha", 6_000), leg("fund-beta", 4_000)]);
+    let one = event("distribution-source-one", "distribution-one", 600);
+    let two = event("distribution-source-two", "distribution-two", 400);
+    let b1 = encode_distribution(&DistributionFact::new(one.clone(), rule.clone())).unwrap();
+    let b2 = encode_distribution(&DistributionFact::new(two.clone(), rule.clone())).unwrap();
+
+    let mut after_first = genesis.clone();
+    RevenueDistributionBridge::new()
+        .apply(&registry, &one, &rule, &mut after_first)
+        .unwrap();
+    let mut after_second = after_first.clone();
+    RevenueDistributionBridge::new()
+        .apply(&registry, &two, &rule, &mut after_second)
+        .unwrap();
+
+    let stages = [
+        DistributionStage {
+            source: b1.as_slice(),
+            reference: &after_first,
+        },
+        DistributionStage {
+            source: b2.as_slice(),
+            reference: &after_second,
+        },
+    ];
+    let recovered =
+        rebuild_staged_distribution_history(&stages, &registry, &genesis, &after_second).unwrap();
+    assert_eq!(recovered.count(), 2);
+    assert_eq!(recovered.ledger().entry_count(), genesis.entry_count() + 2);
+    assert_eq!(
+        recovered.ledger().balance(&account_id("alpha-account")),
+        after_second.balance(&account_id("alpha-account"))
+    );
+    assert_eq!(
+        recovered.ledger().entry(
+            &JournalEntryId::new("community:revenue-distribution:distribution-one").unwrap()
+        ),
+        after_second.entry(
+            &JournalEntryId::new("community:revenue-distribution:distribution-one").unwrap()
+        )
+    );
+    assert_eq!(genesis.entry_count(), 2);
+
+    let invalid = [
+        vec![stages[1], stages[0]],
+        vec![stages[0], stages[0]],
+        vec![stages[0], stages[1], stages[1]],
+        vec![stages[1]],
+        vec![stages[0]],
+    ];
+    for (case, proposed) in invalid.into_iter().enumerate() {
+        assert!(
+            rebuild_staged_distribution_history(&proposed, &registry, &genesis, &after_second)
+                .is_err(),
+            "invalid original distribution acceptance case {case}"
+        );
+    }
+    let altered_source = event("distribution-source-two", "distribution-two", 399);
+    let altered = encode_distribution(&DistributionFact::new(altered_source, rule)).unwrap();
+    assert!(
+        rebuild_staged_distribution_history(
+            &[
+                stages[0],
+                DistributionStage {
+                    source: altered.as_slice(),
+                    reference: &after_second
+                },
+            ],
+            &registry,
+            &genesis,
+            &after_second
+        )
+        .is_err()
+    );
+    let mut false_account = after_second.clone();
+    false_account
+        .register_account(Account::new(
+            account_id("injected-stage-account"),
+            scope("org-1"),
+            AccountKind::Asset,
+            usd(),
+        ))
+        .unwrap();
+    assert!(
+        rebuild_staged_distribution_history(
+            &[
+                stages[0],
+                DistributionStage {
+                    source: b2.as_slice(),
+                    reference: &false_account
+                },
+            ],
+            &registry,
+            &genesis,
+            &after_second
+        )
+        .is_err()
+    );
+    assert!(
+        rebuild_staged_distribution_history(
+            &[
+                DistributionStage {
+                    source: b1.as_slice(),
+                    reference: &after_second
+                },
+                stages[1],
+            ],
+            &registry,
+            &genesis,
+            &after_second
+        )
+        .is_err()
+    );
+}
