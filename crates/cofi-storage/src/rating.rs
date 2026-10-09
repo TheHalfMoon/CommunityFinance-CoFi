@@ -25,6 +25,7 @@ use crate::{CodecError, parse_i64_exact, parse_i128_exact};
 const VERSION: u64 = 1;
 const PLAN_KIND: &str = "rate.plan";
 const ACCEPTANCE_KIND: &str = "rating.acceptance";
+const MAX_RATING_FACT_BYTES: usize = 1024 * 1024;
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -151,18 +152,29 @@ pub struct RatingAcceptance<'a> {
 }
 
 fn encode<T: Serialize>(kind: &str, payload: T) -> Result<Vec<u8>, CodecError> {
-    serde_json::to_vec(&Envelope {
+    let bytes = serde_json::to_vec(&Envelope {
         schema_version: VERSION,
         record_type: kind.to_owned(),
         payload,
     })
-    .map_err(|e| CodecError::InvalidPayload(e.to_string()))
+    .map_err(|e| CodecError::InvalidPayload(e.to_string()))?;
+    if bytes.len() > MAX_RATING_FACT_BYTES {
+        return Err(CodecError::InvalidPayload(
+            "rating fact exceeds 1MiB".to_owned(),
+        ));
+    }
+    Ok(bytes)
 }
 
 fn typed_record<T: for<'de> Deserialize<'de>>(
     bytes: &[u8],
     expected_kind: &str,
 ) -> Result<T, CodecError> {
+    if bytes.len() > MAX_RATING_FACT_BYTES {
+        return Err(CodecError::InvalidPayload(
+            "rating fact exceeds 1MiB".to_owned(),
+        ));
+    }
     let envelope: Envelope<serde_json::Value> =
         serde_json::from_slice(bytes).map_err(|e| CodecError::InvalidPayload(e.to_string()))?;
     if envelope.schema_version != VERSION {

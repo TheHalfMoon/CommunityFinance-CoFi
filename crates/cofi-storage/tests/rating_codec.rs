@@ -8,9 +8,10 @@ use cofi_metering::{
 use cofi_rating::{
     RatePlan, RatedCharge, RatingEventId, RatingPlanId, RatingRegistry, RatingRequest,
 };
+use cofi_storage::CodecError;
 use cofi_storage::rating::{
-    RatingAcceptance, decode_rate_plan, encode_rate_plan, encode_rating_acceptance,
-    replay_rating_acceptances,
+    RatingAcceptance, decode_accepted_rating_request, decode_rate_plan, encode_rate_plan,
+    encode_rating_acceptance, replay_rating_acceptances,
 };
 
 fn meter() -> MeterDefinition {
@@ -278,4 +279,96 @@ fn encoding_rejects_a_late_or_omitted_source_snapshot() {
         ..wrong
     };
     assert!(encode_rating_acceptance(&missing).is_err());
+}
+
+#[test]
+fn rating_codec_rejects_oversize_original_plan_before_json_parse() {
+    let original = plan(3);
+    let mut bytes = encode_rate_plan(&original).unwrap();
+    bytes.resize(1024 * 1024, b' ');
+    assert_eq!(decode_rate_plan(&bytes), Ok(original));
+    bytes.push(b' ');
+    assert!(matches!(
+        decode_rate_plan(&bytes),
+        Err(CodecError::InvalidPayload(_))
+    ));
+}
+
+#[test]
+fn rating_codec_rejects_oversize_original_plan_encoding() {
+    let original = RatePlan::new(
+        RatingPlanId::new(format!("plan-{}", "x".repeat(1024 * 1024))).unwrap(),
+        MeterId::new("messages").unwrap(),
+        Currency::new("SAR").unwrap(),
+        3,
+        2,
+        0,
+        None,
+    )
+    .unwrap();
+    assert!(matches!(
+        encode_rate_plan(&original),
+        Err(CodecError::InvalidPayload(_))
+    ));
+}
+
+#[test]
+fn rating_codec_rejects_oversize_original_accepted_rating_source() {
+    let definition = meter();
+    let events = [usage("first", 7, 20_000)];
+    let plan = plan(3);
+    let id = RatingEventId::new("rating-1").unwrap();
+    let customer = BillingCustomerId::new("customer-1").unwrap();
+    let charge = charge_for(&definition, &events, &plan, &id, &customer);
+    let original = encode_rating_acceptance(&RatingAcceptance {
+        meter: &definition,
+        events: &events,
+        plan: &plan,
+        rating_event_id: &id,
+        subject_id: &SubjectId::new("customer-subject").unwrap(),
+        billing_customer_id: &customer,
+        window_start_unix_ms: 0,
+        window_end_unix_ms: 60_000,
+        rated_at_unix_ms: 70_000,
+        accepted_charge: &charge,
+    })
+    .unwrap();
+    let mut bytes = original;
+    bytes.resize(1024 * 1024, b' ');
+    assert!(decode_accepted_rating_request(&bytes).is_ok());
+    assert!(replay_rating_acceptances([bytes.as_slice()]).is_ok());
+    bytes.push(b' ');
+    assert!(matches!(
+        decode_accepted_rating_request(&bytes),
+        Err(CodecError::InvalidPayload(_))
+    ));
+    assert!(matches!(
+        replay_rating_acceptances([bytes.as_slice()]),
+        Err(CodecError::InvalidPayload(_))
+    ));
+}
+
+#[test]
+fn rating_codec_rejects_oversize_original_accepted_rating_encoding() {
+    let definition = meter();
+    let events = [usage("first", 7, 20_000)];
+    let price_plan = plan(3);
+    let id = RatingEventId::new(format!("rating-{}", "x".repeat(1024 * 1024))).unwrap();
+    let customer = BillingCustomerId::new("customer-1").unwrap();
+    let charge = charge_for(&definition, &events, &price_plan, &id, &customer);
+    assert!(matches!(
+        encode_rating_acceptance(&RatingAcceptance {
+            meter: &definition,
+            events: &events,
+            plan: &price_plan,
+            rating_event_id: &id,
+            subject_id: &SubjectId::new("customer-subject").unwrap(),
+            billing_customer_id: &customer,
+            window_start_unix_ms: 0,
+            window_end_unix_ms: 60_000,
+            rated_at_unix_ms: 70_000,
+            accepted_charge: &charge,
+        }),
+        Err(CodecError::InvalidPayload(_))
+    ));
 }
