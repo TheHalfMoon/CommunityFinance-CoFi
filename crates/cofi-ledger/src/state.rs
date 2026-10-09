@@ -133,6 +133,12 @@ impl Ledger {
         self.entries.get(id)
     }
 
+    /// Read-only deterministic inventory of every immutable original journal,
+    /// including genesis entries and unrelated historical transactions.
+    pub fn entries(&self) -> impl ExactSizeIterator<Item = &JournalEntry> {
+        self.entries.values()
+    }
+
     #[must_use]
     pub fn balance(&self, id: &AccountId) -> Option<AccountBalance> {
         self.balances.get(id).copied()

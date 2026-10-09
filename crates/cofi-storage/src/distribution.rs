@@ -323,6 +323,14 @@ pub fn rebuild_staged_distribution_history(
                 ));
             }
         }
+        // A matching count, emitted distribution journal and running balances
+        // do not prove that preexisting genesis journals were not substituted
+        // (for example, original seed metadata altered with equal postings).
+        if !ledger.entries().eq(stage.reference.entries()) {
+            return Err(CodecError::Replay(
+                "original journal inventory/content differs at distribution stage".into(),
+            ));
+        }
         verify_all_accounts(genesis, &ledger, stage.reference)?;
     }
     if ledger.entry_count() != final_reference.entry_count() {
@@ -336,6 +344,11 @@ pub fn rebuild_staged_distribution_history(
                 "final distribution original journal differs".into(),
             ));
         }
+    }
+    if !ledger.entries().eq(final_reference.entries()) {
+        return Err(CodecError::Replay(
+            "final original journal inventory/content differs".into(),
+        ));
     }
     verify_all_accounts(genesis, &ledger, final_reference)?;
     Ok(RebuiltDistributionHistory {
