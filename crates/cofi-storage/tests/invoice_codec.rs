@@ -8,6 +8,7 @@ use cofi_metering::{
     UsageEventId, UsageValue, WindowSize,
 };
 use cofi_rating::{RatePlan, RatingEventId, RatingPlanId, RatingRegistry, RatingRequest};
+use cofi_storage::CodecError;
 use cofi_storage::invoice::{decode_draft_invoice, encode_draft_invoice, replay_draft_invoices};
 use cofi_storage::rating::{RatingAcceptance, encode_rating_acceptance};
 
@@ -185,4 +186,45 @@ fn conflicting_draft_id_invoice_id_and_rebound_charge_fail_closed() {
     changed["payload"]["invoice_id"] = serde_json::json!("new-invoice");
     let other = serde_json::to_vec(&changed).unwrap();
     assert!(replay_draft_invoices([encoded.as_slice(), other.as_slice()]).is_err());
+}
+
+#[test]
+fn invoice_codec_rejects_oversize_original_fact_before_json_parse() {
+    let (charge, receipt) = rating("a", 7);
+    let original = request("1", vec![charge]);
+    let mut bytes = encode_draft_invoice(&original, &[receipt]).unwrap();
+    bytes.resize(1024 * 1024, b' ');
+    assert_eq!(decode_draft_invoice(&bytes), Ok(original));
+    bytes.push(b' ');
+    assert!(matches!(
+        decode_draft_invoice(&bytes),
+        Err(CodecError::InvalidPayload(_))
+    ));
+    assert!(matches!(
+        replay_draft_invoices([bytes.as_slice()]),
+        Err(CodecError::InvalidPayload(_))
+    ));
+}
+
+#[test]
+fn invoice_codec_rejects_oversize_original_encoded_invoice() {
+    let (charge, receipt) = rating("a", 7);
+    let huge_invoice_id = format!("invoice-{}", "x".repeat(1024 * 1024));
+    let original = request(&huge_invoice_id, vec![charge]);
+    assert!(matches!(
+        encode_draft_invoice(&original, &[receipt]),
+        Err(CodecError::InvalidPayload(_))
+    ));
+}
+
+#[test]
+fn invoice_codec_rejects_oversize_original_embedded_rating_receipt() {
+    let (charge, mut receipt) = rating("a", 7);
+    let original = request("1", vec![charge]);
+    // Without a bound here, JSON parsing silently strips the padded witness.
+    receipt.resize(1024 * 1024 + 1, b' ');
+    assert!(matches!(
+        encode_draft_invoice(&original, &[receipt]),
+        Err(CodecError::InvalidPayload(_))
+    ));
 }
