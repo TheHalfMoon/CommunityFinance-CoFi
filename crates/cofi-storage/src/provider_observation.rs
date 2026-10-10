@@ -207,6 +207,25 @@ pub enum UntrustedReconciliationDiagnostic {
 
 /// Deterministic original-domain calculation over **caller-supplied** records.
 /// The private domain result is never exposed as a clonable terminal command.
+///
+/// Only non-command diagnostics may be inspected:
+///
+/// ```
+/// use cofi_storage::provider_observation::{UnauthenticatedReconciliationOutcome, UntrustedReconciliationDiagnostic};
+/// fn inspect(candidate: &UnauthenticatedReconciliationOutcome) -> UntrustedReconciliationDiagnostic {
+///     candidate.diagnostic()
+/// }
+/// ```
+///
+/// The old public accessor must not compile, because it could expose a
+/// clonable `ReconciliationOutcome::ProviderAhead.proposed_terminal_event`:
+///
+/// ```compile_fail
+/// use cofi_storage::provider_observation::UnauthenticatedReconciliationOutcome;
+/// fn extract_terminal_event(candidate: &UnauthenticatedReconciliationOutcome) {
+///     let _ = candidate.outcome();
+/// }
+/// ```
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct UnauthenticatedReconciliationOutcome {
     outcome: ReconciliationOutcome,
