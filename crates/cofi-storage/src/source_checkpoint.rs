@@ -35,6 +35,14 @@ pub enum SupportedSourceKind {
     Submission,
     Terminal,
 }
+// Only original domain proposal identifiers may bind votes to the declared
+// organization in a caller-supplied complete genesis range. This is NOT a
+// trust anchor or an authentication of the source's accepted history.
+enum GenesisGovernanceAncestry {
+    Proposal(String),
+    ApprovalProposal(String),
+}
+
 impl SupportedSourceKind {
     const fn record_type(self) -> &'static str {
         match self {
@@ -53,8 +61,8 @@ impl SupportedSourceKind {
         key: &str,
         organization_id: &str,
         bytes: &[u8],
-    ) -> Result<(), CodecError> {
-        let expected = match self {
+    ) -> Result<Option<GenesisGovernanceAncestry>, CodecError> {
+        let (expected, ancestry) = match self {
             Self::Policy => {
                 let policy = decode_governance_policy(bytes)?;
                 // The policy has no original accepted *event* identity. This
@@ -64,7 +72,10 @@ impl SupportedSourceKind {
                         "original policy organization differs from declared scope".into(),
                     ));
                 }
-                format!("policy:{}:{}", policy.id().as_str(), policy.version())
+                (
+                    format!("policy:{}:{}", policy.id().as_str(), policy.version()),
+                    None,
+                )
             }
             Self::Proposal => {
                 let proposal = decode_governance_proposal(bytes)?;
@@ -73,12 +84,22 @@ impl SupportedSourceKind {
                         "original proposal organization differs from declared scope".into(),
                     ));
                 }
-                proposal.source_event_id().as_str().to_owned()
+                (
+                    proposal.source_event_id().as_str().to_owned(),
+                    Some(GenesisGovernanceAncestry::Proposal(
+                        proposal.id().as_str().to_owned(),
+                    )),
+                )
             }
-            Self::Approval => decode_governance_approval(bytes)?
-                .source_event_id()
-                .as_str()
-                .to_owned(),
+            Self::Approval => {
+                let approval = decode_governance_approval(bytes)?;
+                (
+                    approval.source_event_id().as_str().to_owned(),
+                    Some(GenesisGovernanceAncestry::ApprovalProposal(
+                        approval.proposal_id().as_str().to_owned(),
+                    )),
+                )
+            }
             Self::FundSpend => {
                 let spend = decode_governance_fund_spend(bytes)?;
                 if spend.organization_id().as_str() != organization_id {
@@ -86,27 +107,36 @@ impl SupportedSourceKind {
                         "original fund spend organization differs from declared scope".into(),
                     ));
                 }
-                spend.source_event_id().as_str().to_owned()
+                (spend.source_event_id().as_str().to_owned(), None)
             }
-            Self::Creation => decode_disbursement_creation(bytes)?
-                .source_event_id()
-                .as_str()
-                .to_owned(),
-            Self::Submission => decode_disbursement_submission(bytes)?
-                .source_event_id()
-                .as_str()
-                .to_owned(),
-            Self::Terminal => decode_disbursement_terminal(bytes)?
-                .source_event_id()
-                .as_str()
-                .to_owned(),
+            Self::Creation => (
+                decode_disbursement_creation(bytes)?
+                    .source_event_id()
+                    .as_str()
+                    .to_owned(),
+                None,
+            ),
+            Self::Submission => (
+                decode_disbursement_submission(bytes)?
+                    .source_event_id()
+                    .as_str()
+                    .to_owned(),
+                None,
+            ),
+            Self::Terminal => (
+                decode_disbursement_terminal(bytes)?
+                    .source_event_id()
+                    .as_str()
+                    .to_owned(),
+                None,
+            ),
         };
         if key != expected {
             return Err(CodecError::Replay(
                 "source checkpoint key does not match checked original domain fact".into(),
             ));
         }
-        Ok(())
+        Ok(ancestry)
     }
 }
 
@@ -251,6 +281,9 @@ pub fn compute_untrusted_range(
         ));
     }
     let mut seen = BTreeSet::new();
+    // A declared sequence starting at 1 has no prior accepted proposal range.
+    // Later ranges cannot prove their previous ancestry using a caller's hash.
+    let mut genesis_proposals = BTreeSet::new();
     let mut hash = Sha256::new();
     hash.update(DOMAIN);
     update_scope(&mut hash, scope);
@@ -283,11 +316,30 @@ pub fn compute_untrusted_range(
         if total > MAX_TOTAL_BYTES {
             return Err(invalid("source range exceeds total byte bound"));
         }
-        fact.kind.check_original_identity(
+        let ancestry = fact.kind.check_original_identity(
             fact.source_record_key,
             scope.organization_id,
             fact.bytes,
         )?;
+        if first == 1 {
+            match ancestry {
+                Some(GenesisGovernanceAncestry::Proposal(id)) => {
+                    if !genesis_proposals.insert(id) {
+                        return Err(CodecError::Replay(
+                            "duplicate original proposal identity in genesis range".into(),
+                        ));
+                    }
+                }
+                Some(GenesisGovernanceAncestry::ApprovalProposal(proposal_id))
+                    if !genesis_proposals.contains(&proposal_id) =>
+                {
+                    return Err(CodecError::Replay(
+                        "genesis vote has no earlier proposal in declared organization".into(),
+                    ));
+                }
+                Some(GenesisGovernanceAncestry::ApprovalProposal(_)) | None => {}
+            }
+        }
         frame(&mut hash, fact.sequence.as_bytes());
         frame(&mut hash, fact.kind.record_type().as_bytes());
         frame(&mut hash, fact.source_record_key.as_bytes());

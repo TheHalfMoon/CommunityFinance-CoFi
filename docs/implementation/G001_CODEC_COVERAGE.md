@@ -697,7 +697,12 @@ overflowing sequences, changed scopes, source-ID mismatch, changed digests,
 unknown versions/fields and oversized records. Original policy identity is
 derived from its checked policy ID/version; this is **not** an externally
 accepted policy-event identity. Other financial/authority registries are
-not admitted by this bounded partial inspector.
+not admitted by this bounded partial inspector. For a caller-declared range
+beginning at sequence 1, every governance approval additionally requires the
+original proposal identity to have appeared **earlier in the same declared
+organization**; duplicate original proposal identities and late/foreign vote
+ancestry fail closed. Later ranges cannot use a caller-provided predecessor
+digest as a substitute for independently authenticated earlier proposals.
 
 **Security boundary:** `UnauthenticatedRange` is expressly *not* a
 `TrustedSourceCheckpoint`. A caller can forge a coherent dataset and

@@ -1163,6 +1163,103 @@ fn source_checkpoint_checks_range_but_never_authenticates_self_declared_history(
 }
 
 #[test]
+fn genesis_checkpoint_rejects_votes_without_matching_prior_proposal() {
+    let (policy, proposal, votes) = sources();
+    let mut foreign_vote: serde_json::Value = serde_json::from_slice(&votes[0]).unwrap();
+    // The event identity is unchanged and the declared organization is org-a.
+    // The original vote has NO organization field; its proposal ancestor must
+    // bind it to the declared organization in a complete genesis range.
+    foreign_vote["payload"]["proposal_id"] = serde_json::json!("foreign-proposal");
+    let foreign_vote = serde_json::to_vec(&foreign_vote).unwrap();
+    let scope = DeclaredSourceScope {
+        authority_id: "source-a",
+        organization_id: "org-a",
+        environment_id: "test",
+        previous_digest_hex: None,
+    };
+    let policy_fact = DeclaredSourceFact {
+        sequence: "1",
+        authority_id: "source-a",
+        organization_id: "org-a",
+        environment_id: "test",
+        source_record_key: "policy:policy-a:1",
+        kind: SupportedSourceKind::Policy,
+        bytes: &policy,
+    };
+    let proposal_fact = DeclaredSourceFact {
+        sequence: "2",
+        source_record_key: "proposal-event",
+        kind: SupportedSourceKind::Proposal,
+        bytes: &proposal,
+        ..policy_fact
+    };
+    let valid_vote = DeclaredSourceFact {
+        sequence: "3",
+        source_record_key: "v-1",
+        kind: SupportedSourceKind::Approval,
+        bytes: &votes[0],
+        ..policy_fact
+    };
+    let foreign_vote_fact = DeclaredSourceFact {
+        bytes: &foreign_vote,
+        ..valid_vote
+    };
+    assert!(compute_untrusted_range(scope, &[policy_fact, proposal_fact, valid_vote]).is_ok());
+    assert!(
+        compute_untrusted_range(scope, &[policy_fact, proposal_fact, foreign_vote_fact]).is_err(),
+        "genesis must not allow a vote to claim an unrelated proposal"
+    );
+    let vote_before_proposal = DeclaredSourceFact {
+        sequence: "2",
+        ..valid_vote
+    };
+    let late_proposal = DeclaredSourceFact {
+        sequence: "3",
+        ..proposal_fact
+    };
+    assert!(
+        compute_untrusted_range(scope, &[policy_fact, vote_before_proposal, late_proposal])
+            .is_err(),
+        "a later proposal cannot supply already-accepted vote ancestry"
+    );
+
+    // Two different source event IDs must not re-register the same original
+    // proposal identity in a declared complete genesis stream.
+    let mut duplicate_proposal: serde_json::Value = serde_json::from_slice(&proposal).unwrap();
+    duplicate_proposal["payload"]["source_event_id"] = serde_json::json!("proposal-event-2");
+    let duplicate_proposal = serde_json::to_vec(&duplicate_proposal).unwrap();
+    let duplicate = DeclaredSourceFact {
+        sequence: "3",
+        source_record_key: "proposal-event-2",
+        bytes: &duplicate_proposal,
+        ..proposal_fact
+    };
+    assert!(
+        compute_untrusted_range(scope, &[policy_fact, proposal_fact, duplicate]).is_err(),
+        "distinct proposal events must not mask a reused original proposal ID"
+    );
+
+    // A non-genesis range may depend on a prior range, but that previous
+    // hash is caller-controlled; it does NOT prove the vote's tenant ancestry.
+    let continuation = DeclaredSourceScope {
+        previous_digest_hex: Some(
+            "0000000000000000000000000000000000000000000000000000000000000000",
+        ),
+        ..scope
+    };
+    let single = DeclaredSourceFact {
+        sequence: "4",
+        ..foreign_vote_fact
+    };
+    let self_consistent = compute_untrusted_range(continuation, &[single]).unwrap();
+    assert!(
+        self_consistent
+            .require_independent_source_authentication()
+            .is_err()
+    );
+}
+
+#[test]
 fn checkpoint_cannot_relabel_original_financial_organization() {
     let (policy, proposal, _) = sources();
     let spend_bytes = encode_governance_fund_spend(&spend()).unwrap();
