@@ -195,19 +195,41 @@ pub fn check_untrusted_case_observation_pair(
     Ok((case, observation))
 }
 
+/// A diagnostic-only projection of a caller-supplied reconciliation result.
+/// In particular, ProviderAhead never exposes its proposed terminal event.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum UntrustedReconciliationDiagnostic {
+    PendingAgreement,
+    ProviderAhead,
+    TerminalAgreement,
+    Discrepancy,
+}
+
 /// Deterministic original-domain calculation over **caller-supplied** records.
-/// The result is purposely non-admissible without an independently authenticated
-/// provider observation, canonical disbursement and complete source cutoff.
+/// The private domain result is never exposed as a clonable terminal command.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct UnauthenticatedReconciliationOutcome {
     outcome: ReconciliationOutcome,
 }
 
 impl UnauthenticatedReconciliationOutcome {
-    /// Inspect the computed candidate; this does NOT authorize settlement.
+    /// Only a diagnostic projection is visible to untrusted callers.
     #[must_use]
-    pub const fn outcome(&self) -> &ReconciliationOutcome {
-        &self.outcome
+    pub const fn diagnostic(&self) -> UntrustedReconciliationDiagnostic {
+        match self.outcome {
+            ReconciliationOutcome::PendingAgreement { .. } => {
+                UntrustedReconciliationDiagnostic::PendingAgreement
+            }
+            ReconciliationOutcome::ProviderAhead { .. } => {
+                UntrustedReconciliationDiagnostic::ProviderAhead
+            }
+            ReconciliationOutcome::TerminalAgreement { .. } => {
+                UntrustedReconciliationDiagnostic::TerminalAgreement
+            }
+            ReconciliationOutcome::Discrepancy { .. } => {
+                UntrustedReconciliationDiagnostic::Discrepancy
+            }
+        }
     }
 
     /// No local consistency or synthetic case can prove external source custody.
