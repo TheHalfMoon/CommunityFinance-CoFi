@@ -368,6 +368,81 @@ fn submitted_engine(
 }
 
 #[test]
+fn caller_supplied_case_and_observation_can_only_recompute_untrusted_outcome() {
+    use cofi_storage::provider_observation::{
+        encode_provider_observation, recompute_untrusted_reconciliation,
+    };
+    use cofi_storage::reconciliation_case::encode_reconciliation_case;
+
+    let fixture = fixture();
+    let ledger_before = ledger_snapshot(&fixture);
+    let engine = submitted_engine(&fixture, &fixture.spend1, "d-1", 1_500);
+    let original_disbursement = engine.disbursement(&disbursement_id("d-1")).unwrap();
+    let original_case = case("case-untrusted", "d-1", "request-d-1", 1_530);
+    let case_bytes = encode_reconciliation_case(&original_case).unwrap();
+    for observation in [
+        accepted("d-1", "request-d-1", 1_520),
+        settled_observation("d-1", "request-d-1", "1", 1_520),
+        failed_observation("d-1", "request-d-1", "1", 1_520),
+    ] {
+        let bytes = encode_provider_observation(&observation).unwrap();
+        let replay =
+            recompute_untrusted_reconciliation(&case_bytes, &bytes, original_disbursement).unwrap();
+        let expected = ReconciliationEngine::new()
+            .reconcile(&original_case, original_disbursement, &observation)
+            .unwrap();
+        assert_eq!(replay.outcome(), &expected);
+        // A replay of entirely caller-supplied records must NEVER become
+        // authenticated provider evidence or admitted terminal settlement.
+        assert!(replay.require_independent_source_authentication().is_err());
+    }
+    let foreign = accepted("d-other", "request-d-1", 1_520);
+    assert!(
+        recompute_untrusted_reconciliation(
+            &case_bytes,
+            &encode_provider_observation(&foreign).unwrap(),
+            original_disbursement,
+        )
+        .is_err()
+    );
+    let foreign_request = accepted("d-1", "request-other", 1_520);
+    assert!(
+        recompute_untrusted_reconciliation(
+            &case_bytes,
+            &encode_provider_observation(&foreign_request).unwrap(),
+            original_disbursement,
+        )
+        .is_err()
+    );
+    let late = accepted("d-1", "request-d-1", 1_531);
+    assert!(
+        recompute_untrusted_reconciliation(
+            &case_bytes,
+            &encode_provider_observation(&late).unwrap(),
+            original_disbursement,
+        )
+        .is_err()
+    );
+    // Even when the case and observation agree with each other, the original
+    // engine must independently reject mismatched canonical disbursement IDs.
+    let other_engine = submitted_engine(&fixture, &fixture.spend2, "d-2", 1_700);
+    let other_disbursement = other_engine.disbursement(&disbursement_id("d-2")).unwrap();
+    assert!(
+        recompute_untrusted_reconciliation(
+            &case_bytes,
+            &encode_provider_observation(&accepted("d-1", "request-d-1", 1_520)).unwrap(),
+            other_disbursement,
+        )
+        .is_err()
+    );
+    assert_eq!(
+        original_disbursement.status(),
+        DisbursementStatus::Submitted
+    );
+    assert_eq!(ledger_snapshot(&fixture), ledger_before);
+}
+
+#[test]
 fn reconciliation_case_id_rejects_empty_values() {
     assert!(ReconciliationCaseId::new("").is_err());
     assert!(ReconciliationCaseId::new("   ").is_err());

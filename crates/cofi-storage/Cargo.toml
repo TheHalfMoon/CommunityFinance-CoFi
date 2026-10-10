@@ -19,6 +19,8 @@ cofi-rating = { path = "../cofi-rating" }
 cofi-subscriptions = { path = "../cofi-subscriptions" }
 cofi-invoicing = { path = "../cofi-invoicing" }
 cofi-audit = { path = "../cofi-audit" }
+cofi-reconciliation = { path = "../cofi-reconciliation" }
+cofi-provider-contract = { path = "../cofi-provider-contract" }
 cofi-rating-authorization = { path = "../cofi-rating-authorization" }
 cofi-invoice-authorization = { path = "../cofi-invoice-authorization" }
 cofi-finalization-authorization = { path = "../cofi-finalization-authorization" }

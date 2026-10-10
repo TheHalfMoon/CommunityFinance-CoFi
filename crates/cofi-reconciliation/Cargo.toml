@@ -11,6 +11,7 @@ cofi-disbursements = { path = "../cofi-disbursements" }
 cofi-provider-contract = { path = "../cofi-provider-contract" }
 
 [dev-dependencies]
+cofi-storage = { path = "../cofi-storage" }
 cofi-community = { path = "../cofi-community" }
 cofi-governance = { path = "../cofi-governance" }
 cofi-ledger = { path = "../cofi-ledger" }

@@ -41,6 +41,8 @@ API, provider execution, or live-money capability is introduced here.
 | Authorized invoice finalization from accepted P22 draft history | cofi-finalization-authorization::AuthorizedFinalizationRegistry | authorized.finalization v1 | Decode original accepted P22 authorized.draft, reconstruct AuthorizedFinalizationRequest, invoke original AuthorizedFinalizationRegistry::finalize, verify original invoice/scope/customer/total and finalization event/times | 3 tests: exact finalization/BillingEvent parity, tampered source/time/amount/ID and double finalization rejected |
 | Accepted draft invoice with frozen rating-line receipts | cofi-invoicing::DraftInvoiceRequest | invoice.draft v1 | Reconstruct every RatedCharge through original rating.acceptance; exact original billing event, invoice, customer/scope and interval; checked DraftInvoiceRequest::new and DraftInvoiceRegistry::assemble | Two-line amount parity, duplicate/missing receipt, changed identity, scope, total and charge-bound conflict tests |
 | Derived draft invoice indexes/charge bindings | cofi-invoicing::DraftInvoiceRegistry | Never persisted directly | Existing canonical assemble method, plus to_billing_event projection | Parity of invoices/events/charge binding count and replay semantics |
+| Original caller-supplied provider observation transport (NOT authenticated) | `cofi-provider-contract::ProviderObservation` | `provider.observation` v1 | Exact typed `Accepted`, `Settled`, and `Failed` original variants through original checked IDs and constructors; strict kind-specific fields and `i64` time, separate non-authoritative case/observation binding | Four focused tests cover all three original kinds at `i64::MIN/MAX`, malformed schema, invalid IDs and kind-specific variants, rejection of forged settlement or outcome fields, case/observation ID/request/time mismatch. **No provider signature/source cutoff or status acceptance is inferred**; original `ReconciliationEngine` with independently verified canonical disbursement remains mandatory |
+| Original reconciliation **case context only** | `cofi-reconciliation::ReconciliationCase` | `reconciliation.case` v1 | Checked original `ReconciliationCaseId`, `DisbursementId` and `ProviderRequestReference` constructors plus exact decimal-string `i64` timestamp; **does not** store provider observations or outcome authority | Three focused tests: original case roundtrip and `i64` boundaries, unsupported version/type/unknown/duplicate fields, invalid IDs/numeric forms/oversized bytes, and no synthesized observation/outcome; actual original `ReconciliationEngine` replay on independently authenticated observations and canonical disbursements remains **unimplemented** |
 | Accepted reconciliation audit event | cofi-audit::AuditEvent | audit.reconciliation v1 (cofi-audit canonical codec; cofi-storage re-export) | Original audit position/attribution/times/action/resource/typed reconciliation projection; AuditEvent::new and recomputed canonical SHA-256 digest parity | 6 targeted tests: two interleaved streams, original event/digest parity, bad digest/IDs/time/version/type/payload, changed duplicate, missing ancestor, oversized and duplicate JSON keys |
 | Audit stream/index/tail projections | cofi-audit::AuditLog | Derived only | Existing AuditLog::append, verify_stream, checked previous digest and sequence; no second hash algorithm | Original stream/event counts, tail and event parity |
 
@@ -785,3 +787,12 @@ does **not** close #40, parent #22, or G002–G008.
 No new production acceptance boundary exists until G002–G008 and their gates pass.
 No network effects may run during replay or retry. Account balances and authority
 indexes must not be populated from unchecked persistence DTOs.
+
+Original `ReconciliationEngine::reconcile` can be rerun using
+`recompute_untrusted_reconciliation` on decoded original case/observation and a
+supplied original `Disbursement`, returning an `UnauthenticatedReconciliationOutcome`
+that must fail `require_independent_source_authentication`. This produces a
+**non-authoritative candidate** only, never a provider receipt, consumed source
+index, real settlement, canonical ledger balance, or admitted reconciliation.
+The original reconciliation integration fixture explicitly proves candidate
+parity for accepted/settled/failed observations and no ledger mutation.
