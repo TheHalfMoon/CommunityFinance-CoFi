@@ -450,6 +450,234 @@ fn caller_supplied_case_and_observation_can_only_recompute_untrusted_outcome() {
 }
 
 #[test]
+fn untrusted_first_time_batch_requires_distinct_cases_and_provider_events() {
+    use cofi_storage::provider_observation::{
+        UntrustedReconciliationRecord, encode_provider_observation,
+        recompute_untrusted_first_time_reconciliation_batch,
+    };
+    use cofi_storage::reconciliation_case::encode_reconciliation_case;
+
+    let fixture = fixture();
+    let ledger_before = ledger_snapshot(&fixture);
+    let engine1 = submitted_engine(&fixture, &fixture.spend1, "d-1", 1_500);
+    let engine2 = submitted_engine(&fixture, &fixture.spend2, "d-2", 1_700);
+    let d1 = engine1.disbursement(&disbursement_id("d-1")).unwrap();
+    let d2 = engine2.disbursement(&disbursement_id("d-2")).unwrap();
+    let case1 = case("case-1", "d-1", "request-d-1", 1_530);
+    let case2 = case("case-2", "d-2", "request-d-2", 1_730);
+    let case1_bytes = encode_reconciliation_case(&case1).unwrap();
+    let case2_bytes = encode_reconciliation_case(&case2).unwrap();
+    let obs1 = accepted("d-1", "request-d-1", 1_520);
+    let obs2 = accepted("d-2", "request-d-2", 1_720);
+    let obs1_bytes = encode_provider_observation(&obs1).unwrap();
+    let obs2_bytes = encode_provider_observation(&obs2).unwrap();
+    let r1 = UntrustedReconciliationRecord {
+        case_bytes: &case1_bytes,
+        observation_bytes: &obs1_bytes,
+        disbursement: d1,
+    };
+    let r2 = UntrustedReconciliationRecord {
+        case_bytes: &case2_bytes,
+        observation_bytes: &obs2_bytes,
+        disbursement: d2,
+    };
+    let replay = recompute_untrusted_first_time_reconciliation_batch(&[r1, r2]).unwrap();
+    assert_eq!(replay.outcomes().len(), 2);
+    // Original-engine domain parity remains checked through the diagnostic
+    // category only. Untrusted callers must not extract terminal commands.
+    use cofi_storage::provider_observation::UntrustedReconciliationDiagnostic as D;
+    assert_eq!(replay.outcomes()[0].diagnostic(), D::PendingAgreement);
+    assert_eq!(replay.outcomes()[1].diagnostic(), D::PendingAgreement);
+    assert!(matches!(
+        ReconciliationEngine::new().reconcile(&case1, d1, &obs1),
+        Ok(ReconciliationOutcome::PendingAgreement { .. })
+    ));
+    assert!(matches!(
+        ReconciliationEngine::new().reconcile(&case2, d2, &obs2),
+        Ok(ReconciliationOutcome::PendingAgreement { .. })
+    ));
+    assert!(replay.require_independent_source_authentication().is_err());
+    assert_eq!(ledger_snapshot(&fixture), ledger_before);
+    assert_eq!(d1.status(), DisbursementStatus::Submitted);
+    assert_eq!(d2.status(), DisbursementStatus::Submitted);
+    // A second case can be otherwise domain-valid but not a first-time case.
+    let reused_case = case("case-1", "d-2", "request-d-2", 1_730);
+    let reused_case_bytes = encode_reconciliation_case(&reused_case).unwrap();
+    let duplicate = UntrustedReconciliationRecord {
+        case_bytes: &reused_case_bytes,
+        ..r2
+    };
+    assert!(
+        recompute_untrusted_first_time_reconciliation_batch(&[r1, duplicate]).is_err(),
+        "one original case identity cannot be accepted twice"
+    );
+    // A new disbursement/case with a reused original provider event ID also
+    // passes a standalone call, but cannot be admitted as a distinct first event.
+    let reused_provider = ProviderObservation::accepted(
+        disbursement_id("d-2"),
+        request("request-d-2"),
+        provider_event("accepted-d-1"),
+        1_720,
+    );
+    assert!(
+        ReconciliationEngine::new()
+            .reconcile(&case2, d2, &reused_provider)
+            .is_ok()
+    );
+    let reused_provider_bytes = encode_provider_observation(&reused_provider).unwrap();
+    let duplicate = UntrustedReconciliationRecord {
+        observation_bytes: &reused_provider_bytes,
+        ..r2
+    };
+    assert!(
+        recompute_untrusted_first_time_reconciliation_batch(&[r1, duplicate]).is_err(),
+        "provider event replay across disbursements must be detected"
+    );
+    let too_many = vec![r1; 4097];
+    assert!(
+        recompute_untrusted_first_time_reconciliation_batch(&too_many)
+            .unwrap_err()
+            .to_string()
+            .contains("record count"),
+        "overbudget record count must fail before any domain work"
+    );
+    let oversized = vec![b' '; 1024 * 1024];
+    let oversized_record = UntrustedReconciliationRecord {
+        case_bytes: &oversized,
+        observation_bytes: &[],
+        disbursement: d1,
+    };
+    let too_many_bytes = vec![oversized_record; 17];
+    assert!(
+        recompute_untrusted_first_time_reconciliation_batch(&too_many_bytes)
+            .unwrap_err()
+            .to_string()
+            .contains("16 MiB"),
+        "overbudget bytes must fail before individual JSON decoding"
+    );
+    assert!(recompute_untrusted_first_time_reconciliation_batch(&[]).is_err());
+}
+
+#[test]
+fn untrusted_first_time_batch_checks_terminal_and_settlement_consumption() {
+    use cofi_storage::provider_observation::{
+        UntrustedReconciliationRecord, encode_provider_observation,
+        recompute_untrusted_first_time_reconciliation_batch,
+    };
+    use cofi_storage::reconciliation_case::encode_reconciliation_case;
+    let fixture = fixture();
+    let engine1 = submitted_engine(&fixture, &fixture.spend1, "d-1", 1_500);
+    let engine2 = submitted_engine(&fixture, &fixture.spend2, "d-2", 1_700);
+    let d1 = engine1.disbursement(&disbursement_id("d-1")).unwrap();
+    let d2 = engine2.disbursement(&disbursement_id("d-2")).unwrap();
+    let c1 =
+        encode_reconciliation_case(&case("case-terminal-1", "d-1", "request-d-1", 1_530)).unwrap();
+    let c2 =
+        encode_reconciliation_case(&case("case-terminal-2", "d-2", "request-d-2", 1_730)).unwrap();
+    let o1 = encode_provider_observation(&settled_observation(
+        "d-1",
+        "request-d-1",
+        "unique-1",
+        1_520,
+    ))
+    .unwrap();
+    let o2 = encode_provider_observation(&settled_observation(
+        "d-2",
+        "request-d-2",
+        "unique-2",
+        1_720,
+    ))
+    .unwrap();
+    let r1 = UntrustedReconciliationRecord {
+        case_bytes: &c1,
+        observation_bytes: &o1,
+        disbursement: d1,
+    };
+    let r2 = UntrustedReconciliationRecord {
+        case_bytes: &c2,
+        observation_bytes: &o2,
+        disbursement: d2,
+    };
+    assert_eq!(
+        recompute_untrusted_first_time_reconciliation_batch(&[r1, r2])
+            .unwrap()
+            .outcomes()
+            .len(),
+        2
+    );
+    use cofi_storage::provider_observation::UntrustedReconciliationDiagnostic as D;
+    let settled_batch = recompute_untrusted_first_time_reconciliation_batch(&[r1, r2]).unwrap();
+    assert_eq!(settled_batch.outcomes()[0].diagnostic(), D::ProviderAhead);
+    assert_eq!(settled_batch.outcomes()[1].diagnostic(), D::ProviderAhead);
+    assert!(
+        settled_batch
+            .require_independent_source_authentication()
+            .is_err()
+    );
+
+    // Different terminal outcomes remain non-command diagnostics.
+    let failed =
+        encode_provider_observation(&failed_observation("d-2", "request-d-2", "unique-2", 1_720))
+            .unwrap();
+    let mixed = recompute_untrusted_first_time_reconciliation_batch(&[
+        r1,
+        UntrustedReconciliationRecord {
+            observation_bytes: &failed,
+            ..r2
+        },
+    ])
+    .unwrap();
+    assert_eq!(mixed.outcomes()[0].diagnostic(), D::ProviderAhead);
+    assert_eq!(mixed.outcomes()[1].diagnostic(), D::ProviderAhead);
+    assert!(mixed.require_independent_source_authentication().is_err());
+
+    let duplicate_terminal = ProviderObservation::settled(
+        disbursement_id("d-2"),
+        request("request-d-2"),
+        event_id("terminal-unique-1"),
+        provider_event("provider-event-unique-2"),
+        settlement("settlement-unique-2"),
+        1_720,
+    );
+    let bytes = encode_provider_observation(&duplicate_terminal).unwrap();
+    assert!(
+        recompute_untrusted_first_time_reconciliation_batch(&[
+            r1,
+            UntrustedReconciliationRecord {
+                observation_bytes: &bytes,
+                ..r2
+            }
+        ])
+        .is_err(),
+        "same terminal event cannot appear twice in a first-time batch"
+    );
+    let duplicate_settlement = ProviderObservation::settled(
+        disbursement_id("d-2"),
+        request("request-d-2"),
+        event_id("terminal-unique-2"),
+        provider_event("provider-event-unique-2"),
+        settlement("settlement-unique-1"),
+        1_720,
+    );
+    let bytes = encode_provider_observation(&duplicate_settlement).unwrap();
+    assert!(
+        recompute_untrusted_first_time_reconciliation_batch(&[
+            r1,
+            UntrustedReconciliationRecord {
+                observation_bytes: &bytes,
+                ..r2
+            }
+        ])
+        .is_err(),
+        "same settlement receipt cannot appear twice in a first-time batch"
+    );
+    assert!(
+        recompute_untrusted_first_time_reconciliation_batch(&[r1, r1]).is_err(),
+        "duplicate full record must not be replayed"
+    );
+}
+
+#[test]
 fn reconciliation_case_id_rejects_empty_values() {
     assert!(ReconciliationCaseId::new("").is_err());
     assert!(ReconciliationCaseId::new("   ").is_err());

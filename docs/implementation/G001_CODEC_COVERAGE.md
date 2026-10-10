@@ -805,3 +805,20 @@ independently authenticated accepted replay remains **unimplemented**. Original
 `DisbursementEngine::record_terminal` is still an explicit domain mutation API,
 so every production caller must separately enforce authoritative provider/source
 custody before applying any terminal event.
+
+**First-time-only candidate batch (untrusted):**
+`recompute_untrusted_first_time_reconciliation_batch` applies the genuine
+`ReconciliationEngine` independently to each caller-provided original
+`ReconciliationCase`, `ProviderObservation` and `Disbursement` triplet. Within
+one explicitly caller-declared first-time input set it rejects reused case IDs,
+provider event IDs, terminal event IDs and settlement references, with 4096
+record / 16 MiB input limits. It intentionally is **not** a repeat-provider-
+observation replay API: provider rechecks can legitimately revisit an older
+event, and without authoritative provider namespace/tenant cutoff this local
+uniqueness index cannot itself certify any original accepted stream. Both
+single-case and batch candidates still unconditionally refuse independent
+source authentication, accepted money movement and external settlement.
+
+Batch diagnostics expose only `UntrustedReconciliationDiagnostic`, not a
+clonable terminal event or `ReconciliationOutcome`. This non-admission boundary
+must not be conflated with durable accepted-source replay.

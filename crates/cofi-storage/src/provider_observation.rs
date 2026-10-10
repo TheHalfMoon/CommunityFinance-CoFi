@@ -4,6 +4,8 @@
 //! accepted source root, full tenant cutoff or a real payment. Bind and
 //! replay only after independent provenance and canonical Disbursement check.
 
+use std::collections::BTreeSet;
+
 use cofi_disbursements::{
     Disbursement, DisbursementEventId, DisbursementId, FailureCode, ProviderEventReference,
     ProviderRequestReference, ProviderSettlementReference,
@@ -279,4 +281,136 @@ pub fn recompute_untrusted_reconciliation(
             ))
         })?;
     Ok(UnauthenticatedReconciliationOutcome { outcome })
+}
+
+/// One **caller-supplied** case, provider observation and disbursement from a
+/// proposed first-time source batch; none has authenticated source custody.
+#[derive(Clone, Copy)]
+pub struct UntrustedReconciliationRecord<'a> {
+    pub case_bytes: &'a [u8],
+    pub observation_bytes: &'a [u8],
+    pub disbursement: &'a Disbursement,
+}
+
+/// A bounded, deterministic list of original-domain candidate calculations.
+/// This has NO authority to admit any event as accepted or move real funds.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct UnauthenticatedReconciliationBatch {
+    outcomes: Vec<UnauthenticatedReconciliationOutcome>,
+}
+
+impl UnauthenticatedReconciliationBatch {
+    #[must_use]
+    pub fn outcomes(&self) -> &[UnauthenticatedReconciliationOutcome] {
+        &self.outcomes
+    }
+
+    /// Reconstructed consistency is not a substitute for externally verified
+    /// provider source, complete tenant stream or accepted ledger custody.
+    pub fn require_independent_source_authentication(
+        self,
+    ) -> Result<Vec<ReconciliationOutcome>, CodecError> {
+        Err(CodecError::Replay(
+            "UNAUTHENTICATED: first-time reconciliation source custody unverified".into(),
+        ))
+    }
+}
+
+/// Recalculate a single **caller-declared, first-time** set of unique original
+/// reconciliation cases and provider events with the original engine. This
+/// checks only internal duplicates inside *this input set*: a later provider
+/// recheck with a previously observed event is intentionally not covered by
+/// this first-time-only API. No tenant, provider namespace or complete source
+/// boundary can be independently authenticated using these DTOs alone.
+///
+/// Fail closed at 4096 records and 16 MiB aggregate serialized input, before
+/// decoding any original domain object or calculating a potential result.
+pub fn recompute_untrusted_first_time_reconciliation_batch(
+    records: &[UntrustedReconciliationRecord<'_>],
+) -> Result<UnauthenticatedReconciliationBatch, CodecError> {
+    const MAX_RECORDS: usize = 4096;
+    const MAX_BYTES: usize = 16 * 1024 * 1024;
+    if records.is_empty() || records.len() > MAX_RECORDS {
+        return Err(CodecError::Replay(
+            "invalid first-time reconciliation batch record count".into(),
+        ));
+    }
+    let mut total_bytes = 0usize;
+    for record in records {
+        total_bytes = total_bytes
+            .checked_add(record.case_bytes.len())
+            .and_then(|n| n.checked_add(record.observation_bytes.len()))
+            .ok_or_else(|| {
+                CodecError::Replay("reconciliation batch input byte count overflow".into())
+            })?;
+        if total_bytes > MAX_BYTES {
+            return Err(CodecError::Replay(
+                "reconciliation batch input exceeds 16 MiB".into(),
+            ));
+        }
+    }
+    let mut cases = BTreeSet::new();
+    let mut provider_events = BTreeSet::new();
+    let mut terminal_events = BTreeSet::new();
+    let mut settlement_receipts = BTreeSet::new();
+    let mut outcomes = Vec::with_capacity(records.len());
+    for record in records {
+        let case = decode_reconciliation_case(record.case_bytes)?;
+        let observation = decode_provider_observation(record.observation_bytes)?;
+        if !cases.insert(case.id().as_str().to_owned()) {
+            return Err(CodecError::Replay(
+                "duplicate original reconciliation case in declared first-time batch".into(),
+            ));
+        }
+        let (event, terminal, settlement) = match observation.kind() {
+            ProviderObservationKind::Accepted {
+                provider_event_reference,
+            } => (provider_event_reference, None, None),
+            ProviderObservationKind::Settled {
+                provider_event_reference,
+                lifecycle_event_id,
+                settlement_reference,
+            } => (
+                provider_event_reference,
+                Some(lifecycle_event_id),
+                Some(settlement_reference),
+            ),
+            ProviderObservationKind::Failed {
+                provider_event_reference,
+                lifecycle_event_id,
+                ..
+            } => (provider_event_reference, Some(lifecycle_event_id), None),
+        };
+        if !provider_events.insert(event.as_str().to_owned()) {
+            return Err(CodecError::Replay(
+                "reused original provider event reference in first-time batch".into(),
+            ));
+        }
+        if let Some(event) = terminal {
+            if !terminal_events.insert(event.as_str().to_owned()) {
+                return Err(CodecError::Replay(
+                    "reused original terminal event identity in first-time batch".into(),
+                ));
+            }
+        }
+        if let Some(reference) = settlement {
+            if !settlement_receipts.insert(reference.as_str().to_owned()) {
+                return Err(CodecError::Replay(
+                    "reused original provider settlement in first-time batch".into(),
+                ));
+            }
+        }
+        // The original ReconciliationEngine, not a hand-written status
+        // approximation or serialized outcome label, calculates every result.
+        // Its domain status/ID/request/timestamp guards remain mandatory.
+        let candidate = ReconciliationEngine::new()
+            .reconcile(&case, record.disbursement, &observation)
+            .map_err(|error| {
+                CodecError::Replay(format!(
+                    "original engine rejected first-time reconciliation candidate: {error}"
+                ))
+            })?;
+        outcomes.push(UnauthenticatedReconciliationOutcome { outcome: candidate });
+    }
+    Ok(UnauthenticatedReconciliationBatch { outcomes })
 }
