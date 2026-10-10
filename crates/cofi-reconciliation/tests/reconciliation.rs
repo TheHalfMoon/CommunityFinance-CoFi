@@ -533,6 +533,34 @@ fn untrusted_first_time_batch_requires_distinct_cases_and_provider_events() {
         recompute_untrusted_first_time_reconciliation_batch(&[r1, duplicate]).is_err(),
         "provider event replay across disbursements must be detected"
     );
+    // Separate case and provider-event IDs may still target the SAME
+    // submitted disbursement. The original one-case engine accepts these
+    // independently, but they are not two distinct first-time records.
+    let same_disbursement_case = case("case-same-d-1", "d-1", "request-d-1", 1_531);
+    let same_case_bytes = encode_reconciliation_case(&same_disbursement_case).unwrap();
+    let independent_provider_event = ProviderObservation::accepted(
+        disbursement_id("d-1"),
+        request("request-d-1"),
+        provider_event("accepted-d-1-second"),
+        1_521,
+    );
+    assert!(
+        ReconciliationEngine::new()
+            .reconcile(&same_disbursement_case, d1, &independent_provider_event)
+            .is_ok()
+    );
+    let independent_observation_bytes =
+        encode_provider_observation(&independent_provider_event).unwrap();
+    let duplicated_disbursement = UntrustedReconciliationRecord {
+        case_bytes: &same_case_bytes,
+        observation_bytes: &independent_observation_bytes,
+        disbursement: d1,
+    };
+    assert!(
+        recompute_untrusted_first_time_reconciliation_batch(&[r1, duplicated_disbursement,])
+            .is_err(),
+        "a declared first-time batch must not admit two independently valid observations of one disbursement"
+    );
     let too_many = vec![r1; 4097];
     assert!(
         recompute_untrusted_first_time_reconciliation_batch(&too_many)

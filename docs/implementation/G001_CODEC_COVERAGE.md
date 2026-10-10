@@ -811,7 +811,8 @@ custody before applying any terminal event.
 `ReconciliationEngine` independently to each caller-provided original
 `ReconciliationCase`, `ProviderObservation` and `Disbursement` triplet. Within
 one explicitly caller-declared first-time input set it rejects reused case IDs,
-provider event IDs, terminal event IDs and settlement references, with 4096
+disbursement IDs (even if the cases and events differ), provider event IDs,
+terminal event IDs and settlement references, with 4096
 record / 16 MiB input limits. It intentionally is **not** a repeat-provider-
 observation replay API: provider rechecks can legitimately revisit an older
 event, and without authoritative provider namespace/tenant cutoff this local
