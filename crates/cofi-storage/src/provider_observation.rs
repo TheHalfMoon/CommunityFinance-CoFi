@@ -5,11 +5,11 @@
 //! replay only after independent provenance and canonical Disbursement check.
 
 use cofi_disbursements::{
-    DisbursementEventId, DisbursementId, FailureCode, ProviderEventReference,
+    Disbursement, DisbursementEventId, DisbursementId, FailureCode, ProviderEventReference,
     ProviderRequestReference, ProviderSettlementReference,
 };
 use cofi_provider_contract::{ProviderObservation, ProviderObservationKind};
-use cofi_reconciliation::ReconciliationCase;
+use cofi_reconciliation::{ReconciliationCase, ReconciliationEngine, ReconciliationOutcome};
 use serde::{Deserialize, Serialize};
 
 use crate::reconciliation_case::decode_reconciliation_case;
@@ -193,4 +193,49 @@ pub fn check_untrusted_case_observation_pair(
         ));
     }
     Ok((case, observation))
+}
+
+/// Deterministic original-domain calculation over **caller-supplied** records.
+/// The result is purposely non-admissible without an independently authenticated
+/// provider observation, canonical disbursement and complete source cutoff.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct UnauthenticatedReconciliationOutcome {
+    outcome: ReconciliationOutcome,
+}
+
+impl UnauthenticatedReconciliationOutcome {
+    /// Inspect the computed candidate; this does NOT authorize settlement.
+    #[must_use]
+    pub const fn outcome(&self) -> &ReconciliationOutcome {
+        &self.outcome
+    }
+
+    /// No local consistency or synthetic case can prove external source custody.
+    /// An independently authenticated replay protocol must make that decision.
+    pub fn require_independent_source_authentication(
+        self,
+    ) -> Result<ReconciliationOutcome, CodecError> {
+        Err(CodecError::Replay(
+            "UNAUTHENTICATED: original provider and disbursement custody unverified".into(),
+        ))
+    }
+}
+
+/// Recompute by delegating to the real original ReconciliationEngine, rather
+/// than decoding/trusting a stored result label or bypassing the provider contract.
+/// A supplied Disbursement is NOT, by this function alone, a canonical one.
+pub fn recompute_untrusted_reconciliation(
+    case_bytes: &[u8],
+    observation_bytes: &[u8],
+    disbursement: &Disbursement,
+) -> Result<UnauthenticatedReconciliationOutcome, CodecError> {
+    let (case, observation) = check_untrusted_case_observation_pair(case_bytes, observation_bytes)?;
+    let outcome = ReconciliationEngine::new()
+        .reconcile(&case, disbursement, &observation)
+        .map_err(|error| {
+            CodecError::Replay(format!(
+                "original domain reconciliation rejected untrusted inputs: {error}"
+            ))
+        })?;
+    Ok(UnauthenticatedReconciliationOutcome { outcome })
 }

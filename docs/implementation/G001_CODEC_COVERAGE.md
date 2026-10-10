@@ -787,3 +787,12 @@ does **not** close #40, parent #22, or G002–G008.
 No new production acceptance boundary exists until G002–G008 and their gates pass.
 No network effects may run during replay or retry. Account balances and authority
 indexes must not be populated from unchecked persistence DTOs.
+
+Original `ReconciliationEngine::reconcile` can be rerun using
+`recompute_untrusted_reconciliation` on decoded original case/observation and a
+supplied original `Disbursement`, returning an `UnauthenticatedReconciliationOutcome`
+that must fail `require_independent_source_authentication`. This produces a
+**non-authoritative candidate** only, never a provider receipt, consumed source
+index, real settlement, canonical ledger balance, or admitted reconciliation.
+The original reconciliation integration fixture explicitly proves candidate
+parity for accepted/settled/failed observations and no ledger mutation.
