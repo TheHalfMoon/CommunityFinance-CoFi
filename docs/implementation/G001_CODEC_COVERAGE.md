@@ -715,6 +715,14 @@ last original approval and consume its proposal identity **at most once**.
 A duplicate original spend identity is also rejected. This does **not**
 verify actual committed ledger journal/accounts, membership eligibility or
 source completeness: those still need original authenticated registry replay.
+A *segmented complete genesis* can be inspected with
+`compute_untrusted_genesis_chain`, which checks every fragment's declared
+predecessor digest and uninterrupted sequence, rejects cross-scope segment
+splicing, preserves the same bounded total memory/byte limit as a single range,
+and **replays the concatenated original facts** so policy/proposal/approval/
+fund-spend ancestry cannot be bypassed by placing ancestors and consumers in
+different fragments. Fragment hashes and the final merged hash remain
+**entirely caller-recomputable**, not independent source authentication.
 Actual membership and role eligibility are **not** checked by this partial
 inspector; they require independent original `GovernanceEngine` replay with the
 complete authenticated `CommunityRegistry`. Later ranges cannot use a

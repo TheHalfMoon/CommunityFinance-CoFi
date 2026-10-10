@@ -22,6 +22,7 @@ use crate::governance_policy::decode_governance_policy;
 use crate::governance_proposal::decode_governance_proposal;
 
 const MAX_RECORDS: usize = 4096;
+const MAX_SEGMENTS: usize = 64;
 const MAX_RECORD_BYTES: usize = 1024 * 1024;
 const MAX_TOTAL_BYTES: usize = 16 * 1024 * 1024;
 const MAX_CHECKPOINT_BYTES: usize = 4096;
@@ -173,6 +174,14 @@ pub struct DeclaredSourceFact<'a> {
     pub source_record_key: &'a str,
     pub kind: SupportedSourceKind,
     pub bytes: &'a [u8],
+}
+
+/// A caller-declared slice of a complete genesis stream. This is not a
+/// trusted checkpoint, authoritative source manifest or durable witness.
+#[derive(Debug, Clone, Copy)]
+pub struct DeclaredSourceSegment<'a> {
+    pub scope: DeclaredSourceScope<'a>,
+    pub facts: &'a [DeclaredSourceFact<'a>],
 }
 
 #[derive(Debug, Deserialize)]
@@ -491,6 +500,70 @@ pub fn compute_untrusted_range(
         count: facts.len() as u64,
         ordered_digest_hex: hex,
     })
+}
+
+/// Check the self-declared predecessor links *and* re-check the whole
+/// concatenated genesis using the same original domain codecs.
+///
+/// Checking fragments independently would miss cross-boundary proposal,
+/// approval-quorum, spend-consumption and future disbursement ancestry. This
+/// function enforces one continuous declared authority/organization/environment,
+/// monotonically adjacent source sequences, exact previous fragment hashes,
+/// and a total stream no larger than a single bounded source range. Hashes are
+/// all calculated from **caller-supplied data**. Even a fully consistent result
+/// remains UNAUTHENTICATED and cannot authorize financial operations.
+pub fn compute_untrusted_genesis_chain(
+    segments: &[DeclaredSourceSegment<'_>],
+) -> Result<UnauthenticatedRange, CodecError> {
+    if segments.is_empty() || segments.len() > MAX_SEGMENTS {
+        return Err(invalid("invalid source segment count"));
+    }
+    let genesis = segments[0].scope;
+    if genesis.previous_digest_hex.is_some() {
+        return Err(invalid("segmented genesis cannot start with a predecessor"));
+    }
+    let mut merged: Vec<DeclaredSourceFact<'_>> = Vec::new();
+    let mut bytes_total = 0usize;
+    let mut next_sequence = 1u64;
+    let mut last_digest: Option<String> = None;
+    for segment in segments {
+        if segment.scope.authority_id != genesis.authority_id
+            || segment.scope.organization_id != genesis.organization_id
+            || segment.scope.environment_id != genesis.environment_id
+            || segment.scope.previous_digest_hex != last_digest.as_deref()
+        {
+            return Err(invalid("source segment scope or predecessor mismatch"));
+        }
+        if segment.facts.is_empty()
+            || merged
+                .len()
+                .checked_add(segment.facts.len())
+                .is_none_or(|n| n > MAX_RECORDS)
+        {
+            return Err(invalid("segmented stream exceeds source record bounds"));
+        }
+        for fact in segment.facts {
+            bytes_total = bytes_total
+                .checked_add(fact.bytes.len())
+                .ok_or_else(|| invalid("segmented stream byte size overflow"))?;
+            if bytes_total > MAX_TOTAL_BYTES {
+                return Err(invalid("segmented stream exceeds source byte bounds"));
+            }
+        }
+        if sequence(segment.facts[0].sequence)? != next_sequence {
+            return Err(invalid("source segments have a gap, overlap, or reorder"));
+        }
+        let checked = compute_untrusted_range(segment.scope, segment.facts)?;
+        next_sequence = checked
+            .last_sequence()
+            .checked_add(1)
+            .ok_or_else(|| invalid("source segment next sequence overflow"))?;
+        last_digest = Some(checked.ordered_digest_hex().to_owned());
+        merged.extend_from_slice(segment.facts);
+    }
+    // Replaying the complete declared genesis, not just checking a chain of
+    // fragment hashes, is what detects cross-segment domain ancestry errors.
+    compute_untrusted_range(genesis, &merged)
 }
 
 /// Strict declaration comparison. This returns a consistency-only result and

@@ -1574,6 +1574,214 @@ fn genesis_checkpoint_requires_original_approved_spend_ancestry() {
 }
 
 #[test]
+fn segmented_genesis_requires_actual_links_and_global_ancestry() {
+    use cofi_storage::source_checkpoint::{DeclaredSourceSegment, compute_untrusted_genesis_chain};
+    let (policy, proposal, votes) = sources();
+    let spend = encode_governance_fund_spend(&spend()).unwrap();
+    let scope = DeclaredSourceScope {
+        authority_id: "source-a",
+        organization_id: "org-a",
+        environment_id: "test",
+        previous_digest_hex: None,
+    };
+    let first = DeclaredSourceFact {
+        sequence: "1",
+        authority_id: "source-a",
+        organization_id: "org-a",
+        environment_id: "test",
+        source_record_key: "policy:policy-a:1",
+        kind: SupportedSourceKind::Policy,
+        bytes: &policy,
+    };
+    let second = DeclaredSourceFact {
+        sequence: "2",
+        source_record_key: "proposal-event",
+        kind: SupportedSourceKind::Proposal,
+        bytes: &proposal,
+        ..first
+    };
+    let third = DeclaredSourceFact {
+        sequence: "3",
+        source_record_key: "v-1",
+        kind: SupportedSourceKind::Approval,
+        bytes: &votes[0],
+        ..first
+    };
+    let fourth = DeclaredSourceFact {
+        sequence: "4",
+        source_record_key: "v-2",
+        kind: SupportedSourceKind::Approval,
+        bytes: &votes[1],
+        ..first
+    };
+    let fifth = DeclaredSourceFact {
+        sequence: "5",
+        source_record_key: "spend-event-1",
+        kind: SupportedSourceKind::FundSpend,
+        bytes: &spend,
+        ..first
+    };
+    let head = [first, second];
+    let tail = [third, fourth, fifth];
+    let partial_head = compute_untrusted_range(scope, &head).unwrap();
+    let next_scope = DeclaredSourceScope {
+        previous_digest_hex: Some(partial_head.ordered_digest_hex()),
+        ..scope
+    };
+    // A later fragment alone cannot validate ancestors it does not contain.
+    assert!(compute_untrusted_range(next_scope, &tail).is_ok());
+    let fragments = [
+        DeclaredSourceSegment {
+            scope,
+            facts: &head,
+        },
+        DeclaredSourceSegment {
+            scope: next_scope,
+            facts: &tail,
+        },
+    ];
+    let combined = compute_untrusted_genesis_chain(&fragments).unwrap();
+    assert_eq!(combined.count(), 5);
+    assert_eq!(combined.first_sequence(), 1);
+    assert_eq!(combined.last_sequence(), 5);
+    assert_eq!(
+        combined.ordered_digest_hex(),
+        compute_untrusted_range(scope, &[first, second, third, fourth, fifth])
+            .unwrap()
+            .ordered_digest_hex(),
+    );
+    assert!(
+        combined
+            .require_independent_source_authentication()
+            .is_err()
+    );
+
+    let fake_scope = DeclaredSourceScope {
+        previous_digest_hex: Some(
+            "0000000000000000000000000000000000000000000000000000000000000000",
+        ),
+        ..scope
+    };
+    // Each fragment is individually self-consistent, but the declared
+    // predecessor digest is not linked to the previous fragment.
+    assert!(compute_untrusted_range(fake_scope, &tail).is_ok());
+    assert!(
+        compute_untrusted_genesis_chain(&[
+            fragments[0],
+            DeclaredSourceSegment {
+                scope: fake_scope,
+                facts: &tail
+            }
+        ])
+        .is_err()
+    );
+    let skipped = [
+        DeclaredSourceFact {
+            sequence: "4",
+            ..third
+        },
+        DeclaredSourceFact {
+            sequence: "5",
+            ..fourth
+        },
+        DeclaredSourceFact {
+            sequence: "6",
+            ..fifth
+        },
+    ];
+    assert!(compute_untrusted_range(next_scope, &skipped).is_ok());
+    assert!(
+        compute_untrusted_genesis_chain(&[
+            fragments[0],
+            DeclaredSourceSegment {
+                scope: next_scope,
+                facts: &skipped
+            }
+        ])
+        .is_err()
+    );
+    let wrong_tenant = DeclaredSourceScope {
+        authority_id: "another-authority",
+        ..next_scope
+    };
+    assert!(compute_untrusted_range(wrong_tenant, &[third, fourth]).is_err());
+    assert!(
+        compute_untrusted_genesis_chain(&[
+            fragments[0],
+            DeclaredSourceSegment {
+                scope: wrong_tenant,
+                facts: &tail
+            }
+        ])
+        .is_err()
+    );
+    // The spend follows just one approval across this chunk boundary, but
+    // standalone later-fragment checking cannot know the earlier quorum.
+    let premature = [
+        third,
+        DeclaredSourceFact {
+            sequence: "4",
+            ..fifth
+        },
+    ];
+    assert!(compute_untrusted_range(next_scope, &premature).is_ok());
+    assert!(
+        compute_untrusted_genesis_chain(&[
+            fragments[0],
+            DeclaredSourceSegment {
+                scope: next_scope,
+                facts: &premature
+            }
+        ])
+        .is_err()
+    );
+    // A continuation containing only an unscoped original approval can look
+    // locally self-consistent under a changed claimed organization; the
+    // complete chain must reject that tenant splice.
+    let claimed_vote = DeclaredSourceFact {
+        organization_id: "org-b",
+        ..third
+    };
+    let claimed_scope = DeclaredSourceScope {
+        organization_id: "org-b",
+        ..next_scope
+    };
+    assert!(compute_untrusted_range(claimed_scope, &[claimed_vote]).is_ok());
+    assert!(
+        compute_untrusted_genesis_chain(&[
+            fragments[0],
+            DeclaredSourceSegment {
+                scope: claimed_scope,
+                facts: &[claimed_vote],
+            }
+        ])
+        .is_err()
+    );
+    // The duplicate original source key looks fine in an isolated non-genesis
+    // range but is rejected by the merged global first-time source index.
+    let repeated_proposal = DeclaredSourceFact {
+        sequence: "3",
+        ..second
+    };
+    assert!(compute_untrusted_range(next_scope, &[repeated_proposal]).is_ok());
+    assert!(
+        compute_untrusted_genesis_chain(&[
+            fragments[0],
+            DeclaredSourceSegment {
+                scope: next_scope,
+                facts: &[repeated_proposal],
+            }
+        ])
+        .is_err()
+    );
+    assert!(compute_untrusted_genesis_chain(&[fragments[0]; 65]).is_err());
+    assert!(compute_untrusted_genesis_chain(&[]).is_err());
+    assert!(
+        compute_untrusted_genesis_chain(&[DeclaredSourceSegment { scope, facts: &[] }]).is_err()
+    );
+}
+
+#[test]
 fn checkpoint_cannot_relabel_original_financial_organization() {
     let (policy, proposal, _) = sources();
     let spend_bytes = encode_governance_fund_spend(&spend()).unwrap();
