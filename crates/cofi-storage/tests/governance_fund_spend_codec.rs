@@ -1260,6 +1260,90 @@ fn genesis_checkpoint_rejects_votes_without_matching_prior_proposal() {
 }
 
 #[test]
+fn genesis_checkpoint_rejects_proposals_without_matching_prior_policy() {
+    let (policy, proposal, _) = sources();
+    let scope = DeclaredSourceScope {
+        authority_id: "source-a",
+        organization_id: "org-a",
+        environment_id: "test",
+        previous_digest_hex: None,
+    };
+    let policy_fact = DeclaredSourceFact {
+        sequence: "1",
+        authority_id: "source-a",
+        organization_id: "org-a",
+        environment_id: "test",
+        source_record_key: "policy:policy-a:1",
+        kind: SupportedSourceKind::Policy,
+        bytes: &policy,
+    };
+    let proposal_fact = DeclaredSourceFact {
+        sequence: "2",
+        source_record_key: "proposal-event",
+        kind: SupportedSourceKind::Proposal,
+        bytes: &proposal,
+        ..policy_fact
+    };
+    assert!(compute_untrusted_range(scope, &[policy_fact, proposal_fact]).is_ok());
+    let unsupported_first = DeclaredSourceFact {
+        sequence: "1",
+        ..proposal_fact
+    };
+    assert!(
+        compute_untrusted_range(scope, &[unsupported_first]).is_err(),
+        "a genesis proposal must have a previously accepted policy"
+    );
+    let later_policy = DeclaredSourceFact {
+        sequence: "2",
+        ..policy_fact
+    };
+    assert!(
+        compute_untrusted_range(scope, &[unsupported_first, later_policy]).is_err(),
+        "a later policy cannot authorize an already declared proposal"
+    );
+    let original: serde_json::Value = serde_json::from_slice(&proposal).unwrap();
+    for (field, replacement) in [
+        ("policy_id", serde_json::json!("foreign-policy")),
+        ("policy_version", serde_json::json!(2)),
+        ("community_id", serde_json::json!("other-community")),
+        ("fund_id", serde_json::json!("other-fund")),
+        ("currency", serde_json::json!("USD")),
+        ("amount_minor", serde_json::json!("1001")),
+    ] {
+        let mut altered = original.clone();
+        altered["payload"][field] = replacement;
+        let altered = serde_json::to_vec(&altered).unwrap();
+        let fact = DeclaredSourceFact {
+            bytes: &altered,
+            ..proposal_fact
+        };
+        assert!(
+            compute_untrusted_range(scope, &[policy_fact, fact]).is_err(),
+            "policy-proposal binding must fail closed for {field}"
+        );
+    }
+
+    // The previous checkpoint hash on a continuation is self-declared and
+    // cannot serve as independent proof of its earlier policy ancestors.
+    let continuation = DeclaredSourceScope {
+        previous_digest_hex: Some(
+            "0000000000000000000000000000000000000000000000000000000000000000",
+        ),
+        ..scope
+    };
+    let fact = DeclaredSourceFact {
+        sequence: "4",
+        ..proposal_fact
+    };
+    let consistent_but_untrusted = compute_untrusted_range(continuation, &[fact]).unwrap();
+    assert!(
+        consistent_but_untrusted
+            .require_independent_source_authentication()
+            .is_err()
+    );
+}
+
+#[test]
 fn checkpoint_cannot_relabel_original_financial_organization() {
     let (policy, proposal, _) = sources();
     let spend_bytes = encode_governance_fund_spend(&spend()).unwrap();
@@ -1284,8 +1368,13 @@ fn checkpoint_cannot_relabel_original_financial_organization() {
         ),
     ];
     for (kind, source_record_key, bytes) in cases {
+        // A proposal cannot form a valid standalone *genesis* range: it
+        // needs an earlier policy. A caller-declared continuation remains
+        // unauthenticated but is sufficient to test original organization
+        // relabeling without inventing a policy from this one fact.
+        let is_proposal = matches!(kind, SupportedSourceKind::Proposal);
         let valid = DeclaredSourceFact {
-            sequence: "1",
+            sequence: if is_proposal { "4" } else { "1" },
             authority_id: "source",
             organization_id: "org-a",
             environment_id: "test",
@@ -1297,7 +1386,8 @@ fn checkpoint_cannot_relabel_original_financial_organization() {
             authority_id: "source",
             organization_id: "org-a",
             environment_id: "test",
-            previous_digest_hex: None,
+            previous_digest_hex: is_proposal
+                .then_some("0000000000000000000000000000000000000000000000000000000000000000"),
         };
         let verified_consistency = compute_untrusted_range(valid_scope, &[valid]).unwrap();
         assert!(

@@ -6,8 +6,9 @@
 //! An independent approved source root/key and the remaining registry coverage
 //! must be implemented and qualified separately before any production admission.
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
+use cofi_governance::{SpendingApprovalPolicy, SpendingProposal};
 use serde::Deserialize;
 use sha2::{Digest, Sha256};
 
@@ -39,7 +40,8 @@ pub enum SupportedSourceKind {
 // organization in a caller-supplied complete genesis range. This is NOT a
 // trust anchor or an authentication of the source's accepted history.
 enum GenesisGovernanceAncestry {
-    Proposal(String),
+    Policy(SpendingApprovalPolicy),
+    Proposal(SpendingProposal),
     ApprovalProposal(String),
 }
 
@@ -74,7 +76,7 @@ impl SupportedSourceKind {
                 }
                 (
                     format!("policy:{}:{}", policy.id().as_str(), policy.version()),
-                    None,
+                    Some(GenesisGovernanceAncestry::Policy(policy)),
                 )
             }
             Self::Proposal => {
@@ -86,9 +88,7 @@ impl SupportedSourceKind {
                 }
                 (
                     proposal.source_event_id().as_str().to_owned(),
-                    Some(GenesisGovernanceAncestry::Proposal(
-                        proposal.id().as_str().to_owned(),
-                    )),
+                    Some(GenesisGovernanceAncestry::Proposal(proposal)),
                 )
             }
             Self::Approval => {
@@ -284,6 +284,7 @@ pub fn compute_untrusted_range(
     // A declared sequence starting at 1 has no prior accepted proposal range.
     // Later ranges cannot prove their previous ancestry using a caller's hash.
     let mut genesis_proposals = BTreeSet::new();
+    let mut genesis_policies = BTreeMap::new();
     let mut hash = Sha256::new();
     hash.update(DOMAIN);
     update_scope(&mut hash, scope);
@@ -323,8 +324,35 @@ pub fn compute_untrusted_range(
         )?;
         if first == 1 {
             match ancestry {
-                Some(GenesisGovernanceAncestry::Proposal(id)) => {
-                    if !genesis_proposals.insert(id) {
+                Some(GenesisGovernanceAncestry::Policy(policy)) => {
+                    let key = (policy.id().as_str().to_owned(), policy.version());
+                    if genesis_policies.insert(key, policy).is_some() {
+                        return Err(CodecError::Replay(
+                            "duplicate original policy identity/version in genesis range".into(),
+                        ));
+                    }
+                }
+                Some(GenesisGovernanceAncestry::Proposal(proposal)) => {
+                    let policy_key = (
+                        proposal.policy_id().as_str().to_owned(),
+                        proposal.policy_version(),
+                    );
+                    let policy = genesis_policies.get(&policy_key).ok_or_else(|| {
+                        CodecError::Replay(
+                            "genesis proposal has no earlier original policy/version".into(),
+                        )
+                    })?;
+                    if policy.organization_id() != proposal.organization_id()
+                        || policy.community_id() != proposal.community_id()
+                        || policy.fund_id() != proposal.fund_id()
+                        || policy.currency() != proposal.currency()
+                        || proposal.amount_minor() > policy.max_amount_minor()
+                    {
+                        return Err(CodecError::Replay(
+                            "genesis proposal conflicts with original policy boundary".into(),
+                        ));
+                    }
+                    if !genesis_proposals.insert(proposal.id().as_str().to_owned()) {
                         return Err(CodecError::Replay(
                             "duplicate original proposal identity in genesis range".into(),
                         ));
