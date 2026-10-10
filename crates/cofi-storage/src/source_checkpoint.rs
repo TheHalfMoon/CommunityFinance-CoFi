@@ -18,6 +18,7 @@ use crate::governance_approval::decode_governance_approval;
 use crate::governance_fund_spend::decode_governance_fund_spend;
 use crate::governance_policy::decode_governance_policy;
 use crate::governance_proposal::decode_governance_proposal;
+use crate::source_checkpoint_disbursement::GenesisDisbursementLineage;
 
 const MAX_RECORDS: usize = 4096;
 const MAX_RECORD_BYTES: usize = 1024 * 1024;
@@ -251,6 +252,9 @@ pub fn compute_untrusted_range(
         ));
     }
     let mut seen = BTreeSet::new();
+    // Only complete caller-declared genesis ranges can supply prior in-range
+    // lifecycle facts. This does not prove independent source custody.
+    let mut genesis_disbursements = GenesisDisbursementLineage::default();
     let mut hash = Sha256::new();
     hash.update(DOMAIN);
     update_scope(&mut hash, scope);
@@ -288,6 +292,9 @@ pub fn compute_untrusted_range(
             scope.organization_id,
             fact.bytes,
         )?;
+        if first == 1 {
+            genesis_disbursements.check(fact.kind, fact.bytes)?;
+        }
         frame(&mut hash, fact.sequence.as_bytes());
         frame(&mut hash, fact.kind.record_type().as_bytes());
         frame(&mut hash, fact.source_record_key.as_bytes());

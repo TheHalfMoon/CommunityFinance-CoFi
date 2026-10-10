@@ -33,6 +33,7 @@ pub mod payout_evidence;
 pub mod rating;
 pub mod revenue_split_rule;
 pub mod source_checkpoint;
+mod source_checkpoint_disbursement;
 pub mod subscription;
 
 use std::error::Error;
