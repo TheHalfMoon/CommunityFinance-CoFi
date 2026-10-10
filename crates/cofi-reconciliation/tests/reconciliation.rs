@@ -391,7 +391,14 @@ fn caller_supplied_case_and_observation_can_only_recompute_untrusted_outcome() {
         let expected = ReconciliationEngine::new()
             .reconcile(&original_case, original_disbursement, &observation)
             .unwrap();
-        assert_eq!(replay.outcome(), &expected);
+        use cofi_storage::provider_observation::UntrustedReconciliationDiagnostic as D;
+        let expected_diagnostic = match expected {
+            ReconciliationOutcome::PendingAgreement { .. } => D::PendingAgreement,
+            ReconciliationOutcome::ProviderAhead { .. } => D::ProviderAhead,
+            ReconciliationOutcome::TerminalAgreement { .. } => D::TerminalAgreement,
+            ReconciliationOutcome::Discrepancy { .. } => D::Discrepancy,
+        };
+        assert_eq!(replay.diagnostic(), expected_diagnostic);
         // A replay of entirely caller-supplied records must NEVER become
         // authenticated provider evidence or admitted terminal settlement.
         assert!(replay.require_independent_source_authentication().is_err());
