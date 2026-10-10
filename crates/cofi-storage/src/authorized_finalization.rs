@@ -17,6 +17,8 @@ use crate::{CodecError, parse_i64_exact, parse_i128_exact};
 
 const VERSION: u64 = 1;
 const KIND: &str = "authorized.finalization";
+const MAX_AUTHORIZED_FACT_BYTES: usize = 1024 * 1024;
+const MAX_SOURCE_RECEIPT_BYTES: usize = 1024 * 1024;
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -41,6 +43,11 @@ struct FinalizationRecord {
 }
 
 fn typed(bytes: &[u8]) -> Result<FinalizationRecord, CodecError> {
+    if bytes.len() > MAX_AUTHORIZED_FACT_BYTES {
+        return Err(CodecError::InvalidPayload(
+            "authorized evidence exceeds 1MiB".to_owned(),
+        ));
+    }
     let header: Envelope<serde_json::Value> =
         serde_json::from_slice(bytes).map_err(|e| CodecError::InvalidPayload(e.to_string()))?;
     if header.schema_version != VERSION {
@@ -103,6 +110,11 @@ pub fn encode_authorized_finalization(
     p22_receipt: &[u8],
     accepted: &AuthorizedFinalization,
 ) -> Result<Vec<u8>, CodecError> {
+    if p22_receipt.len() > MAX_SOURCE_RECEIPT_BYTES {
+        return Err(CodecError::InvalidPayload(
+            "P22 source receipt exceeds 1MiB".to_owned(),
+        ));
+    }
     let source: serde_json::Value = serde_json::from_slice(p22_receipt)
         .map_err(|e| CodecError::InvalidPayload(e.to_string()))?;
     let record = FinalizationRecord {
@@ -137,12 +149,18 @@ pub fn encode_authorized_finalization(
             "P23 source and accepted authorization disagree".to_owned(),
         ));
     }
-    serde_json::to_vec(&Envelope {
+    let bytes = serde_json::to_vec(&Envelope {
         schema_version: VERSION,
         record_type: KIND.to_owned(),
         payload: record,
     })
-    .map_err(|e| CodecError::InvalidPayload(e.to_string()))
+    .map_err(|e| CodecError::InvalidPayload(e.to_string()))?;
+    if bytes.len() > MAX_AUTHORIZED_FACT_BYTES {
+        return Err(CodecError::InvalidPayload(
+            "authorized evidence exceeds 1MiB".to_owned(),
+        ));
+    }
+    Ok(bytes)
 }
 
 pub fn decode_authorized_finalization(bytes: &[u8]) -> Result<AuthorizedFinalization, CodecError> {

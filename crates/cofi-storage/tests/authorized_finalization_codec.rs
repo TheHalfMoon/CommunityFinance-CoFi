@@ -10,6 +10,7 @@ use cofi_rating::{RatePlan, RatingEventId, RatingPlanId};
 use cofi_rating_authorization::{
     AuthorizedRating, AuthorizedRatingRegistry, AuthorizedRatingRequest,
 };
+use cofi_storage::CodecError;
 use cofi_storage::authorized_rating::encode_authorized_rating;
 use cofi_storage::rating::{RatingAcceptance, encode_rating_acceptance};
 use cofi_subscriptions::{
@@ -319,4 +320,23 @@ fn accepted_billing_stream_requires_original_p21_then_p22_then_p23() {
         replay_ordered_authorized_billing_history([p21_only, Draft(tampered.as_slice()), p23_only])
             .is_err()
     );
+}
+
+#[test]
+fn p23_rejects_oversize_outer_fact_and_independent_p22_receipt() {
+    let (request, source, accepted) = finalization_fixture();
+    let mut encoded = encode_authorized_finalization(&request, &source, &accepted).unwrap();
+    encoded.resize(1024 * 1024, b' ');
+    assert_eq!(decode_authorized_finalization(&encoded).unwrap(), accepted);
+    encoded.push(b' ');
+    assert!(matches!(
+        decode_authorized_finalization(&encoded),
+        Err(CodecError::InvalidPayload(_))
+    ));
+    let mut oversized = source;
+    oversized.resize(1024 * 1024 + 1, b' ');
+    assert!(matches!(
+        encode_authorized_finalization(&request, &oversized, &accepted),
+        Err(CodecError::InvalidPayload(_))
+    ));
 }
