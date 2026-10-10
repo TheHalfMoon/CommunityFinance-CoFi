@@ -30,6 +30,7 @@ pub mod governance_proposal;
 pub mod invoice;
 pub mod metering;
 pub mod payout_evidence;
+pub mod provider_observation;
 pub mod rating;
 pub mod reconciliation_case;
 pub mod revenue_split_rule;
