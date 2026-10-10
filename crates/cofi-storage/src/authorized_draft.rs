@@ -18,6 +18,8 @@ use crate::{CodecError, parse_i64_exact, parse_i128_exact};
 
 const VERSION: u64 = 1;
 const KIND: &str = "authorized.draft";
+const MAX_AUTHORIZED_FACT_BYTES: usize = 1024 * 1024;
+const MAX_SOURCE_RECEIPT_BYTES: usize = 1024 * 1024;
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -44,6 +46,11 @@ struct DraftRecord {
 }
 
 fn typed(bytes: &[u8]) -> Result<DraftRecord, CodecError> {
+    if bytes.len() > MAX_AUTHORIZED_FACT_BYTES {
+        return Err(CodecError::InvalidPayload(
+            "authorized evidence exceeds 1MiB".to_owned(),
+        ));
+    }
     let header: Envelope<serde_json::Value> =
         serde_json::from_slice(bytes).map_err(|e| CodecError::InvalidPayload(e.to_string()))?;
     if header.schema_version != VERSION {
@@ -112,7 +119,14 @@ pub fn encode_authorized_draft(
 ) -> Result<Vec<u8>, CodecError> {
     let authorizations = source_p21_receipts
         .iter()
-        .map(|b| serde_json::from_slice(b).map_err(|e| CodecError::InvalidPayload(e.to_string())))
+        .map(|b| {
+            if b.len() > MAX_SOURCE_RECEIPT_BYTES {
+                return Err(CodecError::InvalidPayload(
+                    "P21 source receipt exceeds 1MiB".to_owned(),
+                ));
+            }
+            serde_json::from_slice(b).map_err(|e| CodecError::InvalidPayload(e.to_string()))
+        })
         .collect::<Result<Vec<serde_json::Value>, CodecError>>()?;
     let record = DraftRecord {
         event_id: request.event_id().as_str().to_owned(),
@@ -138,12 +152,18 @@ pub fn encode_authorized_draft(
             "P22 encoding conflicts with checked original authorization".to_owned(),
         ));
     }
-    serde_json::to_vec(&Envelope {
+    let bytes = serde_json::to_vec(&Envelope {
         schema_version: VERSION,
         record_type: KIND.to_owned(),
         payload: record,
     })
-    .map_err(|e| CodecError::InvalidPayload(e.to_string()))
+    .map_err(|e| CodecError::InvalidPayload(e.to_string()))?;
+    if bytes.len() > MAX_AUTHORIZED_FACT_BYTES {
+        return Err(CodecError::InvalidPayload(
+            "authorized evidence exceeds 1MiB".to_owned(),
+        ));
+    }
+    Ok(bytes)
 }
 
 pub fn decode_authorized_draft(bytes: &[u8]) -> Result<AuthorizedDraft, CodecError> {

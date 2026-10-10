@@ -20,6 +20,8 @@ use crate::subscription::{decode_subscription_request, encode_subscription_reque
 
 const VERSION: u64 = 1;
 const KIND: &str = "authorized.rating";
+const MAX_AUTHORIZED_FACT_BYTES: usize = 1024 * 1024;
+const MAX_SOURCE_RECEIPT_BYTES: usize = 1024 * 1024;
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -42,6 +44,11 @@ struct AuthorizedRatingRecord {
 }
 
 fn typed_record(bytes: &[u8]) -> Result<AuthorizedRatingRecord, CodecError> {
+    if bytes.len() > MAX_AUTHORIZED_FACT_BYTES {
+        return Err(CodecError::InvalidPayload(
+            "authorized evidence exceeds 1MiB".to_owned(),
+        ));
+    }
     let header: Envelope<serde_json::Value> =
         serde_json::from_slice(bytes).map_err(|e| CodecError::InvalidPayload(e.to_string()))?;
     if header.schema_version != VERSION {
@@ -150,6 +157,11 @@ pub fn encode_authorized_rating(
     let subscription_json: serde_json::Value =
         serde_json::from_slice(&encode_subscription_request(subscription)?)
             .map_err(|e| CodecError::InvalidPayload(e.to_string()))?;
+    if rating_receipt.len() > MAX_SOURCE_RECEIPT_BYTES {
+        return Err(CodecError::InvalidPayload(
+            "rating source receipt exceeds 1MiB".to_owned(),
+        ));
+    }
     let rating_json: serde_json::Value = serde_json::from_slice(rating_receipt)
         .map_err(|e| CodecError::InvalidPayload(e.to_string()))?;
     let source_ids = source_event_ids(&rating_json)?;
@@ -168,6 +180,11 @@ pub fn encode_authorized_rating(
         payload: record,
     })
     .map_err(|e| CodecError::InvalidPayload(e.to_string()))?;
+    if bytes.len() > MAX_AUTHORIZED_FACT_BYTES {
+        return Err(CodecError::InvalidPayload(
+            "authorized evidence exceeds 1MiB".to_owned(),
+        ));
+    }
     if decode_authorized_rating(&bytes)? != *accepted {
         return Err(CodecError::Replay(
             "accepted authorization mismatches canonical replay of source evidence".to_owned(),

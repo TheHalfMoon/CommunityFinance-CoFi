@@ -10,6 +10,7 @@ use cofi_rating::{RatePlan, RatingEventId, RatingPlanId};
 use cofi_rating_authorization::{
     AuthorizedRating, AuthorizedRatingRegistry, AuthorizedRatingRequest,
 };
+use cofi_storage::CodecError;
 use cofi_storage::authorized_rating::{
     decode_authorized_rating, encode_authorized_rating, replay_authorized_ratings,
 };
@@ -259,4 +260,23 @@ fn encoder_cannot_claim_wrong_accepted_authorization() {
     )
     .unwrap();
     assert!(encode_authorized_rating(&different_subscription, &f.evidence, &f.accepted).is_err());
+}
+
+#[test]
+fn p21_rejects_oversize_outer_fact_and_independent_rating_source() {
+    let f = fixture();
+    let mut encoded = encode_authorized_rating(&f.subscription, &f.evidence, &f.accepted).unwrap();
+    encoded.resize(1024 * 1024, b' ');
+    assert_eq!(decode_authorized_rating(&encoded).unwrap(), f.accepted);
+    encoded.push(b' ');
+    assert!(matches!(
+        decode_authorized_rating(&encoded),
+        Err(CodecError::InvalidPayload(_))
+    ));
+    let mut source = f.evidence.clone();
+    source.resize(1024 * 1024 + 1, b' ');
+    assert!(matches!(
+        encode_authorized_rating(&f.subscription, &source, &f.accepted),
+        Err(CodecError::InvalidPayload(_))
+    ));
 }
