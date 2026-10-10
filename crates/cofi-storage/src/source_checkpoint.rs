@@ -9,6 +9,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use cofi_governance::{SpendingApproval, SpendingApprovalPolicy, SpendingProposal};
+use cofi_spending::ApprovedFundSpendEvent;
 use serde::Deserialize;
 use sha2::{Digest, Sha256};
 
@@ -43,16 +44,18 @@ enum GenesisGovernanceAncestry {
     Policy(SpendingApprovalPolicy),
     Proposal(SpendingProposal),
     Approval(SpendingApproval),
+    FundSpend(ApprovedFundSpendEvent),
 }
 
 // A caller-declared genesis record is not a trusted accepted registry.
 // Track only the original policy-proposal temporal and consumption boundaries;
 // active membership and vote-role eligibility require CommunityRegistry replay.
 struct GenesisProposalState {
-    created_at_unix_ms: i64,
-    expires_at_unix_ms: i64,
+    original: SpendingProposal,
     required_approvals: usize,
     seen_approvers: BTreeSet<String>,
+    latest_approval_unix_ms: Option<i64>,
+    spent: bool,
 }
 
 impl SupportedSourceKind {
@@ -115,7 +118,10 @@ impl SupportedSourceKind {
                         "original fund spend organization differs from declared scope".into(),
                     ));
                 }
-                (spend.source_event_id().as_str().to_owned(), None)
+                (
+                    spend.source_event_id().as_str().to_owned(),
+                    Some(GenesisGovernanceAncestry::FundSpend(spend)),
+                )
             }
             Self::Creation => (
                 decode_disbursement_creation(bytes)?
@@ -293,6 +299,7 @@ pub fn compute_untrusted_range(
     // Later ranges cannot prove their previous ancestry using a caller's hash.
     let mut genesis_proposals = BTreeMap::new();
     let mut genesis_approval_ids = BTreeSet::new();
+    let mut genesis_spend_ids = BTreeSet::new();
     let mut genesis_policies = BTreeMap::new();
     let mut hash = Sha256::new();
     hash.update(DOMAIN);
@@ -366,10 +373,11 @@ pub fn compute_untrusted_range(
                         .insert(
                             original_id,
                             GenesisProposalState {
-                                created_at_unix_ms: proposal.created_at_unix_ms(),
-                                expires_at_unix_ms: proposal.expires_at_unix_ms(),
+                                original: proposal,
                                 required_approvals: usize::from(policy.required_approvals()),
                                 seen_approvers: BTreeSet::new(),
+                                latest_approval_unix_ms: None,
+                                spent: false,
                             },
                         )
                         .is_some()
@@ -389,7 +397,9 @@ pub fn compute_untrusted_range(
                             )
                         })?;
                     let at = approval.approved_at_unix_ms();
-                    if at < proposal.created_at_unix_ms || at > proposal.expires_at_unix_ms {
+                    if at < proposal.original.created_at_unix_ms()
+                        || at > proposal.original.expires_at_unix_ms()
+                    {
                         return Err(CodecError::Replay(
                             "genesis vote outside original proposal validity".into(),
                         ));
@@ -412,6 +422,54 @@ pub fn compute_untrusted_range(
                             "duplicate original party approval for proposal".into(),
                         ));
                     }
+                    proposal.latest_approval_unix_ms = Some(
+                        proposal
+                            .latest_approval_unix_ms
+                            .map_or(at, |previous| previous.max(at)),
+                    );
+                }
+                Some(GenesisGovernanceAncestry::FundSpend(spend)) => {
+                    let proposal = genesis_proposals
+                        .get_mut(spend.proposal_id().as_str())
+                        .ok_or_else(|| {
+                            CodecError::Replay(
+                                "genesis fund spend has no earlier original proposal".into(),
+                            )
+                        })?;
+                    let original = &proposal.original;
+                    if proposal.seen_approvers.len() != proposal.required_approvals
+                        || proposal.latest_approval_unix_ms.is_none()
+                    {
+                        return Err(CodecError::Replay(
+                            "genesis fund spend precedes original approval quorum".into(),
+                        ));
+                    }
+                    if spend.organization_id() != original.organization_id()
+                        || spend.community_id() != original.community_id()
+                        || spend.fund_id() != original.fund_id()
+                        || spend.currency() != original.currency()
+                        || spend.amount_minor() != original.amount_minor()
+                        || spend.purpose_reference() != original.purpose_reference()
+                    {
+                        return Err(CodecError::Replay(
+                            "genesis fund spend differs from original proposal snapshot".into(),
+                        ));
+                    }
+                    if spend.executed_at_unix_ms()
+                        < proposal.latest_approval_unix_ms.unwrap_or(i64::MAX)
+                    {
+                        return Err(CodecError::Replay(
+                            "genesis fund spend executed before original approvals".into(),
+                        ));
+                    }
+                    if proposal.spent
+                        || !genesis_spend_ids.insert(spend.spend_id().as_str().to_owned())
+                    {
+                        return Err(CodecError::Replay(
+                            "duplicate original fund spend consumption in genesis".into(),
+                        ));
+                    }
+                    proposal.spent = true;
                 }
                 None => {}
             }

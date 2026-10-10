@@ -708,6 +708,13 @@ duplicate original proposal identities and late/foreign vote ancestry fail
 closed. Earlier original proposals also bound vote timestamps, unique original
 approval identities, one vote per approver/target proposal and the original
 policy quorum; late, repeated or post-quorum first-time votes fail closed.
+An original `governance.fund_spend` in genesis must follow the original
+proposal's complete approval quorum, match its original organization,
+community, fund, currency, amount and purpose, execute no earlier than the
+last original approval and consume its proposal identity **at most once**.
+A duplicate original spend identity is also rejected. This does **not**
+verify actual committed ledger journal/accounts, membership eligibility or
+source completeness: those still need original authenticated registry replay.
 Actual membership and role eligibility are **not** checked by this partial
 inspector; they require independent original `GovernanceEngine` replay with the
 complete authenticated `CommunityRegistry`. Later ranges cannot use a

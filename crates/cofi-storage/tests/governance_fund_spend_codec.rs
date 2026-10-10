@@ -1455,6 +1455,125 @@ fn genesis_checkpoint_rejects_invalid_approval_lifecycle_and_identity() {
 }
 
 #[test]
+fn genesis_checkpoint_requires_original_approved_spend_ancestry() {
+    let (policy, proposal, votes) = sources();
+    let spend = encode_governance_fund_spend(&spend()).unwrap();
+    let scope = DeclaredSourceScope {
+        authority_id: "source-a",
+        organization_id: "org-a",
+        environment_id: "test",
+        previous_digest_hex: None,
+    };
+    let first = DeclaredSourceFact {
+        sequence: "1",
+        authority_id: "source-a",
+        organization_id: "org-a",
+        environment_id: "test",
+        source_record_key: "policy:policy-a:1",
+        kind: SupportedSourceKind::Policy,
+        bytes: &policy,
+    };
+    let second = DeclaredSourceFact {
+        sequence: "2",
+        source_record_key: "proposal-event",
+        kind: SupportedSourceKind::Proposal,
+        bytes: &proposal,
+        ..first
+    };
+    let third = DeclaredSourceFact {
+        sequence: "3",
+        source_record_key: "v-1",
+        kind: SupportedSourceKind::Approval,
+        bytes: &votes[0],
+        ..first
+    };
+    let fourth = DeclaredSourceFact {
+        sequence: "4",
+        source_record_key: "v-2",
+        kind: SupportedSourceKind::Approval,
+        bytes: &votes[1],
+        ..first
+    };
+    let fifth = DeclaredSourceFact {
+        sequence: "5",
+        source_record_key: "spend-event-1",
+        kind: SupportedSourceKind::FundSpend,
+        bytes: &spend,
+        ..first
+    };
+    assert!(compute_untrusted_range(scope, &[first, second, third, fourth, fifth]).is_ok());
+    let premature = DeclaredSourceFact {
+        sequence: "4",
+        ..fifth
+    };
+    assert!(
+        compute_untrusted_range(scope, &[first, second, third, premature]).is_err(),
+        "genesis spend must follow original approval quorum"
+    );
+    let orphan = DeclaredSourceFact {
+        sequence: "1",
+        ..fifth
+    };
+    assert!(
+        compute_untrusted_range(scope, &[orphan]).is_err(),
+        "genesis spend must refer to a prior original proposal"
+    );
+    let base: serde_json::Value = serde_json::from_slice(&spend).unwrap();
+    for (field, val) in [
+        ("proposal_id", serde_json::json!("foreign-proposal")),
+        ("community_id", serde_json::json!("other-community")),
+        ("fund_id", serde_json::json!("other-fund")),
+        ("currency", serde_json::json!("USD")),
+        ("amount_minor", serde_json::json!("751")),
+        ("purpose_reference", serde_json::json!("not-the-proposal")),
+        ("executed_at_unix_ms", serde_json::json!("1499")),
+    ] {
+        let mut altered = base.clone();
+        altered["payload"][field] = val;
+        let record = serde_json::to_vec(&altered).unwrap();
+        let event = DeclaredSourceFact {
+            bytes: &record,
+            ..fifth
+        };
+        assert!(
+            compute_untrusted_range(scope, &[first, second, third, fourth, event]).is_err(),
+            "original spend ancestry should reject {field}"
+        );
+    }
+    let mut different_spend = base;
+    different_spend["payload"]["source_event_id"] = serde_json::json!("spend-event-2");
+    different_spend["payload"]["spend_id"] = serde_json::json!("spend-2");
+    let record = serde_json::to_vec(&different_spend).unwrap();
+    let second_spend = DeclaredSourceFact {
+        sequence: "6",
+        source_record_key: "spend-event-2",
+        bytes: &record,
+        ..fifth
+    };
+    assert!(
+        compute_untrusted_range(scope, &[first, second, third, fourth, fifth, second_spend])
+            .is_err(),
+        "second distinct spend must not consume the same proposal twice"
+    );
+    let continuation = DeclaredSourceScope {
+        previous_digest_hex: Some(
+            "0000000000000000000000000000000000000000000000000000000000000000",
+        ),
+        ..scope
+    };
+    let later = DeclaredSourceFact {
+        sequence: "7",
+        ..fifth
+    };
+    assert!(
+        compute_untrusted_range(continuation, &[later])
+            .unwrap()
+            .require_independent_source_authentication()
+            .is_err()
+    );
+}
+
+#[test]
 fn checkpoint_cannot_relabel_original_financial_organization() {
     let (policy, proposal, _) = sources();
     let spend_bytes = encode_governance_fund_spend(&spend()).unwrap();
@@ -1479,13 +1598,16 @@ fn checkpoint_cannot_relabel_original_financial_organization() {
         ),
     ];
     for (kind, source_record_key, bytes) in cases {
-        // A proposal cannot form a valid standalone *genesis* range: it
-        // needs an earlier policy. A caller-declared continuation remains
-        // unauthenticated but is sufficient to test original organization
-        // relabeling without inventing a policy from this one fact.
-        let is_proposal = matches!(kind, SupportedSourceKind::Proposal);
+        // A standalone proposal or fund spend cannot form a valid *genesis*
+        // range: both need earlier original governance ancestors. A declared
+        // continuation remains unauthenticated, but still exposes attempts to
+        // relabel the decoded original financial organization.
+        let needs_ancestors = matches!(
+            kind,
+            SupportedSourceKind::Proposal | SupportedSourceKind::FundSpend
+        );
         let valid = DeclaredSourceFact {
-            sequence: if is_proposal { "4" } else { "1" },
+            sequence: if needs_ancestors { "4" } else { "1" },
             authority_id: "source",
             organization_id: "org-a",
             environment_id: "test",
@@ -1497,7 +1619,7 @@ fn checkpoint_cannot_relabel_original_financial_organization() {
             authority_id: "source",
             organization_id: "org-a",
             environment_id: "test",
-            previous_digest_hex: is_proposal
+            previous_digest_hex: needs_ancestors
                 .then_some("0000000000000000000000000000000000000000000000000000000000000000"),
         };
         let verified_consistency = compute_untrusted_range(valid_scope, &[valid]).unwrap();
