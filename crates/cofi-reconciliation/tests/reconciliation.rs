@@ -561,6 +561,68 @@ fn untrusted_first_time_batch_requires_distinct_cases_and_provider_events() {
             .is_err(),
         "a declared first-time batch must not admit two independently valid observations of one disbursement"
     );
+    // The original DisbursementEngine forbids reusing one provider request
+    // reference across two disbursements. Prove the canonical submit index
+    // rejects the second request before exercising the untrusted batch.
+    let mut canonical_engine = DisbursementEngine::new();
+    create_ready(
+        &mut canonical_engine,
+        &fixture,
+        &fixture.spend1,
+        "d-1",
+        1_500,
+    );
+    create_ready(
+        &mut canonical_engine,
+        &fixture,
+        &fixture.spend2,
+        "d-2",
+        1_700,
+    );
+    submit_ready(&mut canonical_engine, "d-1", "request-d-1", 1_510);
+    assert!(
+        canonical_engine
+            .submit(DisbursementSubmission::new(
+                event_id("submit-d-2"),
+                disbursement_id("d-2"),
+                request("request-d-1"),
+                1_710,
+            ))
+            .is_err()
+    );
+    // Two independently supplied engines can each accept the request, but
+    // a *first-time batch* must reject the resulting collision.
+    let mut independently_submitted = DisbursementEngine::new();
+    create_ready(
+        &mut independently_submitted,
+        &fixture,
+        &fixture.spend2,
+        "d-2",
+        1_700,
+    );
+    submit_ready(&mut independently_submitted, "d-2", "request-d-1", 1_710);
+    let alias_disbursement = independently_submitted
+        .disbursement(&disbursement_id("d-2"))
+        .unwrap();
+    let alias_case = case("case-2-alias", "d-2", "request-d-1", 1_730);
+    let alias_case_bytes = encode_reconciliation_case(&alias_case).unwrap();
+    let alias_observation = accepted("d-2", "request-d-1", 1_720);
+    let alias_observation_bytes = encode_provider_observation(&alias_observation).unwrap();
+    assert!(
+        ReconciliationEngine::new()
+            .reconcile(&alias_case, alias_disbursement, &alias_observation)
+            .is_ok()
+    );
+    let alias_record = UntrustedReconciliationRecord {
+        case_bytes: &alias_case_bytes,
+        observation_bytes: &alias_observation_bytes,
+        disbursement: alias_disbursement,
+    };
+    assert!(
+        recompute_untrusted_first_time_reconciliation_batch(&[r1, alias_record]).is_err(),
+        "one provider request must not be bound to two disbursements in a first-time batch"
+    );
+
     let too_many = vec![r1; 4097];
     assert!(
         recompute_untrusted_first_time_reconciliation_batch(&too_many)

@@ -329,7 +329,8 @@ impl UnauthenticatedReconciliationBatch {
 }
 
 /// Recalculate a single **caller-declared, first-time** set of unique original
-/// reconciliation cases, disbursements and provider events with the original engine. This
+/// reconciliation cases, disbursements, provider requests and provider events
+/// with the original engine. This
 /// checks only internal duplicates inside *this input set*: a later provider
 /// recheck with a previously observed event is intentionally not covered by
 /// this first-time-only API. No tenant, provider namespace or complete source
@@ -363,6 +364,7 @@ pub fn recompute_untrusted_first_time_reconciliation_batch(
     }
     let mut cases = BTreeSet::new();
     let mut disbursements = BTreeSet::new();
+    let mut provider_requests = BTreeSet::new();
     let mut provider_events = BTreeSet::new();
     let mut terminal_events = BTreeSet::new();
     let mut settlement_receipts = BTreeSet::new();
@@ -381,6 +383,15 @@ pub fn recompute_untrusted_first_time_reconciliation_batch(
         if !disbursements.insert(record.disbursement.id().as_str().to_owned()) {
             return Err(CodecError::Replay(
                 "duplicate original disbursement in declared first-time batch".into(),
+            ));
+        }
+        // A canonical DisbursementEngine maintains a unique provider-request
+        // index across submitted disbursements. Recomputing caller-supplied
+        // records independently must preserve that first-time invariant even
+        // when each disbursement came from a different engine instance.
+        if !provider_requests.insert(case.provider_request_reference().as_str().to_owned()) {
+            return Err(CodecError::Replay(
+                "reused original provider request reference in first-time batch".into(),
             ));
         }
         let (event, terminal, settlement) = match observation.kind() {
