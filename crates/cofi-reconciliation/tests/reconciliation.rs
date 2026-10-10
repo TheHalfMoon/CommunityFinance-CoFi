@@ -637,6 +637,13 @@ fn untrusted_first_time_batch_checks_terminal_and_settlement_consumption() {
     let settled_batch = recompute_untrusted_first_time_reconciliation_batch(&[r1, r2]).unwrap();
     assert_eq!(settled_batch.outcomes()[0].diagnostic(), D::ProviderAhead);
     assert_eq!(settled_batch.outcomes()[1].diagnostic(), D::ProviderAhead);
+    // Logging a caller-supplied candidate must never serialize its private
+    // proposed terminal event, settlement receipt or provider source IDs.
+    let diagnostics = format!("{settled_batch:?}");
+    assert!(diagnostics.contains("ProviderAhead"));
+    assert!(!diagnostics.contains("proposed_terminal_event"));
+    assert!(!diagnostics.contains("terminal-unique-1"));
+    assert!(!diagnostics.contains("settlement-unique-1"));
     assert!(
         settled_batch
             .require_independent_source_authentication()

@@ -228,9 +228,21 @@ pub enum UntrustedReconciliationDiagnostic {
 ///     let _ = candidate.outcome();
 /// }
 /// ```
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct UnauthenticatedReconciliationOutcome {
     outcome: ReconciliationOutcome,
+}
+
+// Never derive Debug for this wrapper. The original ProviderAhead outcome
+// contains a proposed terminal event whose identifiers must remain opaque to
+// untrusted callers, including logging and diagnostic serialization.
+impl std::fmt::Debug for UnauthenticatedReconciliationOutcome {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_struct("UnauthenticatedReconciliationOutcome")
+            .field("diagnostic", &self.diagnostic())
+            .finish()
+    }
 }
 
 impl UnauthenticatedReconciliationOutcome {

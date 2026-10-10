@@ -821,5 +821,8 @@ single-case and batch candidates still unconditionally refuse independent
 source authentication, accepted money movement and external settlement.
 
 Batch diagnostics expose only `UntrustedReconciliationDiagnostic`, not a
-clonable terminal event or `ReconciliationOutcome`. This non-admission boundary
-must not be conflated with durable accepted-source replay.
+clonable terminal event or `ReconciliationOutcome`. The `Debug` representation
+of both individual and batch unauthenticated outcomes is diagnostic-only and
+must not disclose underlying proposed terminal events, provider identifiers,
+or settlement receipt references. This non-admission boundary must not be
+conflated with durable accepted-source replay.
