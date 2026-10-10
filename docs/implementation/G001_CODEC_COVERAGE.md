@@ -699,6 +699,18 @@ derived from its checked policy ID/version; this is **not** an externally
 accepted policy-event identity. Other financial/authority registries are
 not admitted by this bounded partial inspector.
 
+**Disbursement genesis order (additional bounded check):** Within a
+caller-declared range starting at sequence `1`, each original disbursement
+submission must follow its own checked creation, each terminal must follow a
+checked submission, and their original timestamps cannot go backwards.
+Duplicate creation IDs, second submission/terminal transitions and duplicate
+provider request/event/settlement references across disbursements are rejected.
+These are only source-order consistency checks, not proof that a creation
+belongs to a particular approved fund spend, original tenant, provider receipt
+or complete accepted source stream. Original `DisbursementEngine` replay with a
+verified spend/journal and independently authenticated stream is still required;
+non-genesis continuations deliberately retain `UNAUTHENTICATED` status.
+
 **Security boundary:** `UnauthenticatedRange` is expressly *not* a
 `TrustedSourceCheckpoint`. A caller can forge a coherent dataset and
 self-compute its matching digest. The method
