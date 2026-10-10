@@ -1163,6 +1163,625 @@ fn source_checkpoint_checks_range_but_never_authenticates_self_declared_history(
 }
 
 #[test]
+fn genesis_checkpoint_rejects_votes_without_matching_prior_proposal() {
+    let (policy, proposal, votes) = sources();
+    let mut foreign_vote: serde_json::Value = serde_json::from_slice(&votes[0]).unwrap();
+    // The event identity is unchanged and the declared organization is org-a.
+    // The original vote has NO organization field; its proposal ancestor must
+    // bind it to the declared organization in a complete genesis range.
+    foreign_vote["payload"]["proposal_id"] = serde_json::json!("foreign-proposal");
+    let foreign_vote = serde_json::to_vec(&foreign_vote).unwrap();
+    let scope = DeclaredSourceScope {
+        authority_id: "source-a",
+        organization_id: "org-a",
+        environment_id: "test",
+        previous_digest_hex: None,
+    };
+    let policy_fact = DeclaredSourceFact {
+        sequence: "1",
+        authority_id: "source-a",
+        organization_id: "org-a",
+        environment_id: "test",
+        source_record_key: "policy:policy-a:1",
+        kind: SupportedSourceKind::Policy,
+        bytes: &policy,
+    };
+    let proposal_fact = DeclaredSourceFact {
+        sequence: "2",
+        source_record_key: "proposal-event",
+        kind: SupportedSourceKind::Proposal,
+        bytes: &proposal,
+        ..policy_fact
+    };
+    let valid_vote = DeclaredSourceFact {
+        sequence: "3",
+        source_record_key: "v-1",
+        kind: SupportedSourceKind::Approval,
+        bytes: &votes[0],
+        ..policy_fact
+    };
+    let foreign_vote_fact = DeclaredSourceFact {
+        bytes: &foreign_vote,
+        ..valid_vote
+    };
+    assert!(compute_untrusted_range(scope, &[policy_fact, proposal_fact, valid_vote]).is_ok());
+    assert!(
+        compute_untrusted_range(scope, &[policy_fact, proposal_fact, foreign_vote_fact]).is_err(),
+        "genesis must not allow a vote to claim an unrelated proposal"
+    );
+    let vote_before_proposal = DeclaredSourceFact {
+        sequence: "2",
+        ..valid_vote
+    };
+    let late_proposal = DeclaredSourceFact {
+        sequence: "3",
+        ..proposal_fact
+    };
+    assert!(
+        compute_untrusted_range(scope, &[policy_fact, vote_before_proposal, late_proposal])
+            .is_err(),
+        "a later proposal cannot supply already-accepted vote ancestry"
+    );
+
+    // Two different source event IDs must not re-register the same original
+    // proposal identity in a declared complete genesis stream.
+    let mut duplicate_proposal: serde_json::Value = serde_json::from_slice(&proposal).unwrap();
+    duplicate_proposal["payload"]["source_event_id"] = serde_json::json!("proposal-event-2");
+    let duplicate_proposal = serde_json::to_vec(&duplicate_proposal).unwrap();
+    let duplicate = DeclaredSourceFact {
+        sequence: "3",
+        source_record_key: "proposal-event-2",
+        bytes: &duplicate_proposal,
+        ..proposal_fact
+    };
+    assert!(
+        compute_untrusted_range(scope, &[policy_fact, proposal_fact, duplicate]).is_err(),
+        "distinct proposal events must not mask a reused original proposal ID"
+    );
+
+    // A non-genesis range may depend on a prior range, but that previous
+    // hash is caller-controlled; it does NOT prove the vote's tenant ancestry.
+    let continuation = DeclaredSourceScope {
+        previous_digest_hex: Some(
+            "0000000000000000000000000000000000000000000000000000000000000000",
+        ),
+        ..scope
+    };
+    let single = DeclaredSourceFact {
+        sequence: "4",
+        ..foreign_vote_fact
+    };
+    let self_consistent = compute_untrusted_range(continuation, &[single]).unwrap();
+    assert!(
+        self_consistent
+            .require_independent_source_authentication()
+            .is_err()
+    );
+}
+
+#[test]
+fn genesis_checkpoint_rejects_proposals_without_matching_prior_policy() {
+    let (policy, proposal, _) = sources();
+    let scope = DeclaredSourceScope {
+        authority_id: "source-a",
+        organization_id: "org-a",
+        environment_id: "test",
+        previous_digest_hex: None,
+    };
+    let policy_fact = DeclaredSourceFact {
+        sequence: "1",
+        authority_id: "source-a",
+        organization_id: "org-a",
+        environment_id: "test",
+        source_record_key: "policy:policy-a:1",
+        kind: SupportedSourceKind::Policy,
+        bytes: &policy,
+    };
+    let proposal_fact = DeclaredSourceFact {
+        sequence: "2",
+        source_record_key: "proposal-event",
+        kind: SupportedSourceKind::Proposal,
+        bytes: &proposal,
+        ..policy_fact
+    };
+    assert!(compute_untrusted_range(scope, &[policy_fact, proposal_fact]).is_ok());
+    let unsupported_first = DeclaredSourceFact {
+        sequence: "1",
+        ..proposal_fact
+    };
+    assert!(
+        compute_untrusted_range(scope, &[unsupported_first]).is_err(),
+        "a genesis proposal must have a previously accepted policy"
+    );
+    let later_policy = DeclaredSourceFact {
+        sequence: "2",
+        ..policy_fact
+    };
+    assert!(
+        compute_untrusted_range(scope, &[unsupported_first, later_policy]).is_err(),
+        "a later policy cannot authorize an already declared proposal"
+    );
+    let original: serde_json::Value = serde_json::from_slice(&proposal).unwrap();
+    for (field, replacement) in [
+        ("policy_id", serde_json::json!("foreign-policy")),
+        ("policy_version", serde_json::json!(2)),
+        ("community_id", serde_json::json!("other-community")),
+        ("fund_id", serde_json::json!("other-fund")),
+        ("currency", serde_json::json!("USD")),
+        ("amount_minor", serde_json::json!("1001")),
+    ] {
+        let mut altered = original.clone();
+        altered["payload"][field] = replacement;
+        let altered = serde_json::to_vec(&altered).unwrap();
+        let fact = DeclaredSourceFact {
+            bytes: &altered,
+            ..proposal_fact
+        };
+        assert!(
+            compute_untrusted_range(scope, &[policy_fact, fact]).is_err(),
+            "policy-proposal binding must fail closed for {field}"
+        );
+    }
+
+    // The previous checkpoint hash on a continuation is self-declared and
+    // cannot serve as independent proof of its earlier policy ancestors.
+    let continuation = DeclaredSourceScope {
+        previous_digest_hex: Some(
+            "0000000000000000000000000000000000000000000000000000000000000000",
+        ),
+        ..scope
+    };
+    let fact = DeclaredSourceFact {
+        sequence: "4",
+        ..proposal_fact
+    };
+    let consistent_but_untrusted = compute_untrusted_range(continuation, &[fact]).unwrap();
+    assert!(
+        consistent_but_untrusted
+            .require_independent_source_authentication()
+            .is_err()
+    );
+}
+
+#[test]
+fn genesis_checkpoint_rejects_invalid_approval_lifecycle_and_identity() {
+    let (policy, proposal, votes) = sources();
+    let scope = DeclaredSourceScope {
+        authority_id: "source-a",
+        organization_id: "org-a",
+        environment_id: "test",
+        previous_digest_hex: None,
+    };
+    let first = DeclaredSourceFact {
+        sequence: "1",
+        authority_id: "source-a",
+        organization_id: "org-a",
+        environment_id: "test",
+        source_record_key: "policy:policy-a:1",
+        kind: SupportedSourceKind::Policy,
+        bytes: &policy,
+    };
+    let second = DeclaredSourceFact {
+        sequence: "2",
+        source_record_key: "proposal-event",
+        kind: SupportedSourceKind::Proposal,
+        bytes: &proposal,
+        ..first
+    };
+    let third = DeclaredSourceFact {
+        sequence: "3",
+        source_record_key: "v-1",
+        kind: SupportedSourceKind::Approval,
+        bytes: &votes[0],
+        ..first
+    };
+    let fourth = DeclaredSourceFact {
+        sequence: "4",
+        source_record_key: "v-2",
+        kind: SupportedSourceKind::Approval,
+        bytes: &votes[1],
+        ..first
+    };
+    assert!(compute_untrusted_range(scope, &[first, second, third, fourth]).is_ok());
+    let original: serde_json::Value = serde_json::from_slice(&votes[0]).unwrap();
+    for (field, replacement) in [
+        ("approved_at_unix_ms", serde_json::json!("999")),
+        ("approved_at_unix_ms", serde_json::json!("2001")),
+    ] {
+        let mut altered = original.clone();
+        altered["payload"][field] = replacement;
+        let bytes = serde_json::to_vec(&altered).unwrap();
+        let event = DeclaredSourceFact {
+            bytes: &bytes,
+            ..third
+        };
+        assert!(
+            compute_untrusted_range(scope, &[first, second, event]).is_err(),
+            "invalid original approval time must not pass declared genesis"
+        );
+    }
+    let original_second: serde_json::Value = serde_json::from_slice(&votes[1]).unwrap();
+    for (field, replacement) in [
+        ("id", serde_json::json!("vote-1")),
+        ("approver_party_id", serde_json::json!("owner")),
+    ] {
+        let mut altered = original_second.clone();
+        altered["payload"][field] = replacement;
+        let bytes = serde_json::to_vec(&altered).unwrap();
+        let event = DeclaredSourceFact {
+            bytes: &bytes,
+            ..fourth
+        };
+        assert!(
+            compute_untrusted_range(scope, &[first, second, third, event]).is_err(),
+            "duplicate original approval identity or same-party vote must fail: {field}"
+        );
+    }
+    // Even a new event/id/party cannot vote after the original policy's
+    // configured approval quorum is already reached.
+    let mut after_quorum = original_second;
+    after_quorum["payload"]["source_event_id"] = serde_json::json!("v-3");
+    after_quorum["payload"]["id"] = serde_json::json!("vote-3");
+    after_quorum["payload"]["approver_party_id"] = serde_json::json!("member");
+    let encoded = serde_json::to_vec(&after_quorum).unwrap();
+    let fifth = DeclaredSourceFact {
+        sequence: "5",
+        source_record_key: "v-3",
+        bytes: &encoded,
+        ..fourth
+    };
+    assert!(
+        compute_untrusted_range(scope, &[first, second, third, fourth, fifth]).is_err(),
+        "an additional vote after original quorum is not a valid first acceptance"
+    );
+    // Non-genesis continuation is still consistency-only: it cannot prove
+    // earlier accepted proposal/party/quorum ancestry using a supplied hash.
+    let continuation = DeclaredSourceScope {
+        previous_digest_hex: Some(
+            "0000000000000000000000000000000000000000000000000000000000000000",
+        ),
+        ..scope
+    };
+    let untrusted = DeclaredSourceFact {
+        sequence: "6",
+        ..fifth
+    };
+    assert!(
+        compute_untrusted_range(continuation, &[untrusted])
+            .unwrap()
+            .require_independent_source_authentication()
+            .is_err()
+    );
+}
+
+#[test]
+fn genesis_checkpoint_requires_original_approved_spend_ancestry() {
+    let (policy, proposal, votes) = sources();
+    let spend = encode_governance_fund_spend(&spend()).unwrap();
+    let scope = DeclaredSourceScope {
+        authority_id: "source-a",
+        organization_id: "org-a",
+        environment_id: "test",
+        previous_digest_hex: None,
+    };
+    let first = DeclaredSourceFact {
+        sequence: "1",
+        authority_id: "source-a",
+        organization_id: "org-a",
+        environment_id: "test",
+        source_record_key: "policy:policy-a:1",
+        kind: SupportedSourceKind::Policy,
+        bytes: &policy,
+    };
+    let second = DeclaredSourceFact {
+        sequence: "2",
+        source_record_key: "proposal-event",
+        kind: SupportedSourceKind::Proposal,
+        bytes: &proposal,
+        ..first
+    };
+    let third = DeclaredSourceFact {
+        sequence: "3",
+        source_record_key: "v-1",
+        kind: SupportedSourceKind::Approval,
+        bytes: &votes[0],
+        ..first
+    };
+    let fourth = DeclaredSourceFact {
+        sequence: "4",
+        source_record_key: "v-2",
+        kind: SupportedSourceKind::Approval,
+        bytes: &votes[1],
+        ..first
+    };
+    let fifth = DeclaredSourceFact {
+        sequence: "5",
+        source_record_key: "spend-event-1",
+        kind: SupportedSourceKind::FundSpend,
+        bytes: &spend,
+        ..first
+    };
+    assert!(compute_untrusted_range(scope, &[first, second, third, fourth, fifth]).is_ok());
+    let premature = DeclaredSourceFact {
+        sequence: "4",
+        ..fifth
+    };
+    assert!(
+        compute_untrusted_range(scope, &[first, second, third, premature]).is_err(),
+        "genesis spend must follow original approval quorum"
+    );
+    let orphan = DeclaredSourceFact {
+        sequence: "1",
+        ..fifth
+    };
+    assert!(
+        compute_untrusted_range(scope, &[orphan]).is_err(),
+        "genesis spend must refer to a prior original proposal"
+    );
+    let base: serde_json::Value = serde_json::from_slice(&spend).unwrap();
+    for (field, val) in [
+        ("proposal_id", serde_json::json!("foreign-proposal")),
+        ("community_id", serde_json::json!("other-community")),
+        ("fund_id", serde_json::json!("other-fund")),
+        ("currency", serde_json::json!("USD")),
+        ("amount_minor", serde_json::json!("751")),
+        ("purpose_reference", serde_json::json!("not-the-proposal")),
+        ("executed_at_unix_ms", serde_json::json!("1499")),
+    ] {
+        let mut altered = base.clone();
+        altered["payload"][field] = val;
+        let record = serde_json::to_vec(&altered).unwrap();
+        let event = DeclaredSourceFact {
+            bytes: &record,
+            ..fifth
+        };
+        assert!(
+            compute_untrusted_range(scope, &[first, second, third, fourth, event]).is_err(),
+            "original spend ancestry should reject {field}"
+        );
+    }
+    let mut different_spend = base;
+    different_spend["payload"]["source_event_id"] = serde_json::json!("spend-event-2");
+    different_spend["payload"]["spend_id"] = serde_json::json!("spend-2");
+    let record = serde_json::to_vec(&different_spend).unwrap();
+    let second_spend = DeclaredSourceFact {
+        sequence: "6",
+        source_record_key: "spend-event-2",
+        bytes: &record,
+        ..fifth
+    };
+    assert!(
+        compute_untrusted_range(scope, &[first, second, third, fourth, fifth, second_spend])
+            .is_err(),
+        "second distinct spend must not consume the same proposal twice"
+    );
+    let continuation = DeclaredSourceScope {
+        previous_digest_hex: Some(
+            "0000000000000000000000000000000000000000000000000000000000000000",
+        ),
+        ..scope
+    };
+    let later = DeclaredSourceFact {
+        sequence: "7",
+        ..fifth
+    };
+    assert!(
+        compute_untrusted_range(continuation, &[later])
+            .unwrap()
+            .require_independent_source_authentication()
+            .is_err()
+    );
+}
+
+#[test]
+fn segmented_genesis_requires_actual_links_and_global_ancestry() {
+    use cofi_storage::source_checkpoint::{DeclaredSourceSegment, compute_untrusted_genesis_chain};
+    let (policy, proposal, votes) = sources();
+    let spend = encode_governance_fund_spend(&spend()).unwrap();
+    let scope = DeclaredSourceScope {
+        authority_id: "source-a",
+        organization_id: "org-a",
+        environment_id: "test",
+        previous_digest_hex: None,
+    };
+    let first = DeclaredSourceFact {
+        sequence: "1",
+        authority_id: "source-a",
+        organization_id: "org-a",
+        environment_id: "test",
+        source_record_key: "policy:policy-a:1",
+        kind: SupportedSourceKind::Policy,
+        bytes: &policy,
+    };
+    let second = DeclaredSourceFact {
+        sequence: "2",
+        source_record_key: "proposal-event",
+        kind: SupportedSourceKind::Proposal,
+        bytes: &proposal,
+        ..first
+    };
+    let third = DeclaredSourceFact {
+        sequence: "3",
+        source_record_key: "v-1",
+        kind: SupportedSourceKind::Approval,
+        bytes: &votes[0],
+        ..first
+    };
+    let fourth = DeclaredSourceFact {
+        sequence: "4",
+        source_record_key: "v-2",
+        kind: SupportedSourceKind::Approval,
+        bytes: &votes[1],
+        ..first
+    };
+    let fifth = DeclaredSourceFact {
+        sequence: "5",
+        source_record_key: "spend-event-1",
+        kind: SupportedSourceKind::FundSpend,
+        bytes: &spend,
+        ..first
+    };
+    let head = [first, second];
+    let tail = [third, fourth, fifth];
+    let partial_head = compute_untrusted_range(scope, &head).unwrap();
+    let next_scope = DeclaredSourceScope {
+        previous_digest_hex: Some(partial_head.ordered_digest_hex()),
+        ..scope
+    };
+    // A later fragment alone cannot validate ancestors it does not contain.
+    assert!(compute_untrusted_range(next_scope, &tail).is_ok());
+    let fragments = [
+        DeclaredSourceSegment {
+            scope,
+            facts: &head,
+        },
+        DeclaredSourceSegment {
+            scope: next_scope,
+            facts: &tail,
+        },
+    ];
+    let combined = compute_untrusted_genesis_chain(&fragments).unwrap();
+    assert_eq!(combined.count(), 5);
+    assert_eq!(combined.first_sequence(), 1);
+    assert_eq!(combined.last_sequence(), 5);
+    assert_eq!(
+        combined.ordered_digest_hex(),
+        compute_untrusted_range(scope, &[first, second, third, fourth, fifth])
+            .unwrap()
+            .ordered_digest_hex(),
+    );
+    assert!(
+        combined
+            .require_independent_source_authentication()
+            .is_err()
+    );
+
+    let fake_scope = DeclaredSourceScope {
+        previous_digest_hex: Some(
+            "0000000000000000000000000000000000000000000000000000000000000000",
+        ),
+        ..scope
+    };
+    // Each fragment is individually self-consistent, but the declared
+    // predecessor digest is not linked to the previous fragment.
+    assert!(compute_untrusted_range(fake_scope, &tail).is_ok());
+    assert!(
+        compute_untrusted_genesis_chain(&[
+            fragments[0],
+            DeclaredSourceSegment {
+                scope: fake_scope,
+                facts: &tail
+            }
+        ])
+        .is_err()
+    );
+    let skipped = [
+        DeclaredSourceFact {
+            sequence: "4",
+            ..third
+        },
+        DeclaredSourceFact {
+            sequence: "5",
+            ..fourth
+        },
+        DeclaredSourceFact {
+            sequence: "6",
+            ..fifth
+        },
+    ];
+    assert!(compute_untrusted_range(next_scope, &skipped).is_ok());
+    assert!(
+        compute_untrusted_genesis_chain(&[
+            fragments[0],
+            DeclaredSourceSegment {
+                scope: next_scope,
+                facts: &skipped
+            }
+        ])
+        .is_err()
+    );
+    let wrong_tenant = DeclaredSourceScope {
+        authority_id: "another-authority",
+        ..next_scope
+    };
+    assert!(compute_untrusted_range(wrong_tenant, &[third, fourth]).is_err());
+    assert!(
+        compute_untrusted_genesis_chain(&[
+            fragments[0],
+            DeclaredSourceSegment {
+                scope: wrong_tenant,
+                facts: &tail
+            }
+        ])
+        .is_err()
+    );
+    // The spend follows just one approval across this chunk boundary, but
+    // standalone later-fragment checking cannot know the earlier quorum.
+    let premature = [
+        third,
+        DeclaredSourceFact {
+            sequence: "4",
+            ..fifth
+        },
+    ];
+    assert!(compute_untrusted_range(next_scope, &premature).is_ok());
+    assert!(
+        compute_untrusted_genesis_chain(&[
+            fragments[0],
+            DeclaredSourceSegment {
+                scope: next_scope,
+                facts: &premature
+            }
+        ])
+        .is_err()
+    );
+    // A continuation containing only an unscoped original approval can look
+    // locally self-consistent under a changed claimed organization; the
+    // complete chain must reject that tenant splice.
+    let claimed_vote = DeclaredSourceFact {
+        organization_id: "org-b",
+        ..third
+    };
+    let claimed_scope = DeclaredSourceScope {
+        organization_id: "org-b",
+        ..next_scope
+    };
+    assert!(compute_untrusted_range(claimed_scope, &[claimed_vote]).is_ok());
+    assert!(
+        compute_untrusted_genesis_chain(&[
+            fragments[0],
+            DeclaredSourceSegment {
+                scope: claimed_scope,
+                facts: &[claimed_vote],
+            }
+        ])
+        .is_err()
+    );
+    // The duplicate original source key looks fine in an isolated non-genesis
+    // range but is rejected by the merged global first-time source index.
+    let repeated_proposal = DeclaredSourceFact {
+        sequence: "3",
+        ..second
+    };
+    assert!(compute_untrusted_range(next_scope, &[repeated_proposal]).is_ok());
+    assert!(
+        compute_untrusted_genesis_chain(&[
+            fragments[0],
+            DeclaredSourceSegment {
+                scope: next_scope,
+                facts: &[repeated_proposal],
+            }
+        ])
+        .is_err()
+    );
+    assert!(compute_untrusted_genesis_chain(&[fragments[0]; 65]).is_err());
+    assert!(compute_untrusted_genesis_chain(&[]).is_err());
+    assert!(
+        compute_untrusted_genesis_chain(&[DeclaredSourceSegment { scope, facts: &[] }]).is_err()
+    );
+}
+
+#[test]
 fn checkpoint_cannot_relabel_original_financial_organization() {
     let (policy, proposal, _) = sources();
     let spend_bytes = encode_governance_fund_spend(&spend()).unwrap();
@@ -1187,8 +1806,16 @@ fn checkpoint_cannot_relabel_original_financial_organization() {
         ),
     ];
     for (kind, source_record_key, bytes) in cases {
+        // A standalone proposal or fund spend cannot form a valid *genesis*
+        // range: both need earlier original governance ancestors. A declared
+        // continuation remains unauthenticated, but still exposes attempts to
+        // relabel the decoded original financial organization.
+        let needs_ancestors = matches!(
+            kind,
+            SupportedSourceKind::Proposal | SupportedSourceKind::FundSpend
+        );
         let valid = DeclaredSourceFact {
-            sequence: "1",
+            sequence: if needs_ancestors { "4" } else { "1" },
             authority_id: "source",
             organization_id: "org-a",
             environment_id: "test",
@@ -1200,7 +1827,8 @@ fn checkpoint_cannot_relabel_original_financial_organization() {
             authority_id: "source",
             organization_id: "org-a",
             environment_id: "test",
-            previous_digest_hex: None,
+            previous_digest_hex: needs_ancestors
+                .then_some("0000000000000000000000000000000000000000000000000000000000000000"),
         };
         let verified_consistency = compute_untrusted_range(valid_scope, &[valid]).unwrap();
         assert!(

@@ -697,7 +697,37 @@ overflowing sequences, changed scopes, source-ID mismatch, changed digests,
 unknown versions/fields and oversized records. Original policy identity is
 derived from its checked policy ID/version; this is **not** an externally
 accepted policy-event identity. Other financial/authority registries are
-not admitted by this bounded partial inspector.
+not admitted by this bounded partial inspector. For a caller-declared range
+beginning at sequence 1, every original proposal requires a **previously
+encountered matching original policy ID/version** in the same organization,
+community, fund, currency and amount limit. Missing/late policy ancestry,
+mismatched original policy boundaries and duplicate policy registrations fail
+closed. Every governance approval additionally requires its original proposal
+identity to have appeared **earlier in the same declared organization**;
+duplicate original proposal identities and late/foreign vote ancestry fail
+closed. Earlier original proposals also bound vote timestamps, unique original
+approval identities, one vote per approver/target proposal and the original
+policy quorum; late, repeated or post-quorum first-time votes fail closed.
+An original `governance.fund_spend` in genesis must follow the original
+proposal's complete approval quorum, match its original organization,
+community, fund, currency, amount and purpose, execute no earlier than the
+last original approval and consume its proposal identity **at most once**.
+A duplicate original spend identity is also rejected. This does **not**
+verify actual committed ledger journal/accounts, membership eligibility or
+source completeness: those still need original authenticated registry replay.
+A *segmented complete genesis* can be inspected with
+`compute_untrusted_genesis_chain`, which checks every fragment's declared
+predecessor digest and uninterrupted sequence, rejects cross-scope segment
+splicing, preserves the same bounded total memory/byte limit as a single range,
+and **replays the concatenated original facts** so policy/proposal/approval/
+fund-spend ancestry cannot be bypassed by placing ancestors and consumers in
+different fragments. Fragment hashes and the final merged hash remain
+**entirely caller-recomputable**, not independent source authentication.
+Actual membership and role eligibility are **not** checked by this partial
+inspector; they require independent original `GovernanceEngine` replay with the
+complete authenticated `CommunityRegistry`. Later ranges cannot use a
+caller-provided predecessor
+digest as a substitute for independently authenticated earlier proposals.
 
 **Security boundary:** `UnauthenticatedRange` is expressly *not* a
 `TrustedSourceCheckpoint`. A caller can forge a coherent dataset and

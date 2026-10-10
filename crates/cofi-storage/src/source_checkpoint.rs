@@ -6,8 +6,10 @@
 //! An independent approved source root/key and the remaining registry coverage
 //! must be implemented and qualified separately before any production admission.
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
+use cofi_governance::{SpendingApproval, SpendingApprovalPolicy, SpendingProposal};
+use cofi_spending::ApprovedFundSpendEvent;
 use serde::Deserialize;
 use sha2::{Digest, Sha256};
 
@@ -20,6 +22,7 @@ use crate::governance_policy::decode_governance_policy;
 use crate::governance_proposal::decode_governance_proposal;
 
 const MAX_RECORDS: usize = 4096;
+const MAX_SEGMENTS: usize = 64;
 const MAX_RECORD_BYTES: usize = 1024 * 1024;
 const MAX_TOTAL_BYTES: usize = 16 * 1024 * 1024;
 const MAX_CHECKPOINT_BYTES: usize = 4096;
@@ -35,6 +38,27 @@ pub enum SupportedSourceKind {
     Submission,
     Terminal,
 }
+// Only original domain proposal identifiers may bind votes to the declared
+// organization in a caller-supplied complete genesis range. This is NOT a
+// trust anchor or an authentication of the source's accepted history.
+enum GenesisGovernanceAncestry {
+    Policy(SpendingApprovalPolicy),
+    Proposal(SpendingProposal),
+    Approval(SpendingApproval),
+    FundSpend(ApprovedFundSpendEvent),
+}
+
+// A caller-declared genesis record is not a trusted accepted registry.
+// Track only the original policy-proposal temporal and consumption boundaries;
+// active membership and vote-role eligibility require CommunityRegistry replay.
+struct GenesisProposalState {
+    original: SpendingProposal,
+    required_approvals: usize,
+    seen_approvers: BTreeSet<String>,
+    latest_approval_unix_ms: Option<i64>,
+    spent: bool,
+}
+
 impl SupportedSourceKind {
     const fn record_type(self) -> &'static str {
         match self {
@@ -53,8 +77,8 @@ impl SupportedSourceKind {
         key: &str,
         organization_id: &str,
         bytes: &[u8],
-    ) -> Result<(), CodecError> {
-        let expected = match self {
+    ) -> Result<Option<GenesisGovernanceAncestry>, CodecError> {
+        let (expected, ancestry) = match self {
             Self::Policy => {
                 let policy = decode_governance_policy(bytes)?;
                 // The policy has no original accepted *event* identity. This
@@ -64,7 +88,10 @@ impl SupportedSourceKind {
                         "original policy organization differs from declared scope".into(),
                     ));
                 }
-                format!("policy:{}:{}", policy.id().as_str(), policy.version())
+                (
+                    format!("policy:{}:{}", policy.id().as_str(), policy.version()),
+                    Some(GenesisGovernanceAncestry::Policy(policy)),
+                )
             }
             Self::Proposal => {
                 let proposal = decode_governance_proposal(bytes)?;
@@ -73,12 +100,18 @@ impl SupportedSourceKind {
                         "original proposal organization differs from declared scope".into(),
                     ));
                 }
-                proposal.source_event_id().as_str().to_owned()
+                (
+                    proposal.source_event_id().as_str().to_owned(),
+                    Some(GenesisGovernanceAncestry::Proposal(proposal)),
+                )
             }
-            Self::Approval => decode_governance_approval(bytes)?
-                .source_event_id()
-                .as_str()
-                .to_owned(),
+            Self::Approval => {
+                let approval = decode_governance_approval(bytes)?;
+                (
+                    approval.source_event_id().as_str().to_owned(),
+                    Some(GenesisGovernanceAncestry::Approval(approval)),
+                )
+            }
             Self::FundSpend => {
                 let spend = decode_governance_fund_spend(bytes)?;
                 if spend.organization_id().as_str() != organization_id {
@@ -86,27 +119,39 @@ impl SupportedSourceKind {
                         "original fund spend organization differs from declared scope".into(),
                     ));
                 }
-                spend.source_event_id().as_str().to_owned()
+                (
+                    spend.source_event_id().as_str().to_owned(),
+                    Some(GenesisGovernanceAncestry::FundSpend(spend)),
+                )
             }
-            Self::Creation => decode_disbursement_creation(bytes)?
-                .source_event_id()
-                .as_str()
-                .to_owned(),
-            Self::Submission => decode_disbursement_submission(bytes)?
-                .source_event_id()
-                .as_str()
-                .to_owned(),
-            Self::Terminal => decode_disbursement_terminal(bytes)?
-                .source_event_id()
-                .as_str()
-                .to_owned(),
+            Self::Creation => (
+                decode_disbursement_creation(bytes)?
+                    .source_event_id()
+                    .as_str()
+                    .to_owned(),
+                None,
+            ),
+            Self::Submission => (
+                decode_disbursement_submission(bytes)?
+                    .source_event_id()
+                    .as_str()
+                    .to_owned(),
+                None,
+            ),
+            Self::Terminal => (
+                decode_disbursement_terminal(bytes)?
+                    .source_event_id()
+                    .as_str()
+                    .to_owned(),
+                None,
+            ),
         };
         if key != expected {
             return Err(CodecError::Replay(
                 "source checkpoint key does not match checked original domain fact".into(),
             ));
         }
-        Ok(())
+        Ok(ancestry)
     }
 }
 
@@ -129,6 +174,14 @@ pub struct DeclaredSourceFact<'a> {
     pub source_record_key: &'a str,
     pub kind: SupportedSourceKind,
     pub bytes: &'a [u8],
+}
+
+/// A caller-declared slice of a complete genesis stream. This is not a
+/// trusted checkpoint, authoritative source manifest or durable witness.
+#[derive(Debug, Clone, Copy)]
+pub struct DeclaredSourceSegment<'a> {
+    pub scope: DeclaredSourceScope<'a>,
+    pub facts: &'a [DeclaredSourceFact<'a>],
 }
 
 #[derive(Debug, Deserialize)]
@@ -251,6 +304,12 @@ pub fn compute_untrusted_range(
         ));
     }
     let mut seen = BTreeSet::new();
+    // A declared sequence starting at 1 has no prior accepted proposal range.
+    // Later ranges cannot prove their previous ancestry using a caller's hash.
+    let mut genesis_proposals = BTreeMap::new();
+    let mut genesis_approval_ids = BTreeSet::new();
+    let mut genesis_spend_ids = BTreeSet::new();
+    let mut genesis_policies = BTreeMap::new();
     let mut hash = Sha256::new();
     hash.update(DOMAIN);
     update_scope(&mut hash, scope);
@@ -283,11 +342,147 @@ pub fn compute_untrusted_range(
         if total > MAX_TOTAL_BYTES {
             return Err(invalid("source range exceeds total byte bound"));
         }
-        fact.kind.check_original_identity(
+        let ancestry = fact.kind.check_original_identity(
             fact.source_record_key,
             scope.organization_id,
             fact.bytes,
         )?;
+        if first == 1 {
+            match ancestry {
+                Some(GenesisGovernanceAncestry::Policy(policy)) => {
+                    let key = (policy.id().as_str().to_owned(), policy.version());
+                    if genesis_policies.insert(key, policy).is_some() {
+                        return Err(CodecError::Replay(
+                            "duplicate original policy identity/version in genesis range".into(),
+                        ));
+                    }
+                }
+                Some(GenesisGovernanceAncestry::Proposal(proposal)) => {
+                    let policy_key = (
+                        proposal.policy_id().as_str().to_owned(),
+                        proposal.policy_version(),
+                    );
+                    let policy = genesis_policies.get(&policy_key).ok_or_else(|| {
+                        CodecError::Replay(
+                            "genesis proposal has no earlier original policy/version".into(),
+                        )
+                    })?;
+                    if policy.organization_id() != proposal.organization_id()
+                        || policy.community_id() != proposal.community_id()
+                        || policy.fund_id() != proposal.fund_id()
+                        || policy.currency() != proposal.currency()
+                        || proposal.amount_minor() > policy.max_amount_minor()
+                    {
+                        return Err(CodecError::Replay(
+                            "genesis proposal conflicts with original policy boundary".into(),
+                        ));
+                    }
+                    let original_id = proposal.id().as_str().to_owned();
+                    if genesis_proposals
+                        .insert(
+                            original_id,
+                            GenesisProposalState {
+                                original: proposal,
+                                required_approvals: usize::from(policy.required_approvals()),
+                                seen_approvers: BTreeSet::new(),
+                                latest_approval_unix_ms: None,
+                                spent: false,
+                            },
+                        )
+                        .is_some()
+                    {
+                        return Err(CodecError::Replay(
+                            "duplicate original proposal identity in genesis range".into(),
+                        ));
+                    }
+                }
+                Some(GenesisGovernanceAncestry::Approval(approval)) => {
+                    let proposal = genesis_proposals
+                        .get_mut(approval.proposal_id().as_str())
+                        .ok_or_else(|| {
+                            CodecError::Replay(
+                                "genesis vote has no earlier proposal in declared organization"
+                                    .into(),
+                            )
+                        })?;
+                    let at = approval.approved_at_unix_ms();
+                    if at < proposal.original.created_at_unix_ms()
+                        || at > proposal.original.expires_at_unix_ms()
+                    {
+                        return Err(CodecError::Replay(
+                            "genesis vote outside original proposal validity".into(),
+                        ));
+                    }
+                    if proposal.seen_approvers.len() >= proposal.required_approvals {
+                        return Err(CodecError::Replay(
+                            "genesis vote after original approval quorum".into(),
+                        ));
+                    }
+                    if !genesis_approval_ids.insert(approval.id().as_str().to_owned()) {
+                        return Err(CodecError::Replay(
+                            "duplicate original approval identity in genesis range".into(),
+                        ));
+                    }
+                    if !proposal
+                        .seen_approvers
+                        .insert(approval.approver_party_id().as_str().to_owned())
+                    {
+                        return Err(CodecError::Replay(
+                            "duplicate original party approval for proposal".into(),
+                        ));
+                    }
+                    proposal.latest_approval_unix_ms = Some(
+                        proposal
+                            .latest_approval_unix_ms
+                            .map_or(at, |previous| previous.max(at)),
+                    );
+                }
+                Some(GenesisGovernanceAncestry::FundSpend(spend)) => {
+                    let proposal = genesis_proposals
+                        .get_mut(spend.proposal_id().as_str())
+                        .ok_or_else(|| {
+                            CodecError::Replay(
+                                "genesis fund spend has no earlier original proposal".into(),
+                            )
+                        })?;
+                    let original = &proposal.original;
+                    if proposal.seen_approvers.len() != proposal.required_approvals
+                        || proposal.latest_approval_unix_ms.is_none()
+                    {
+                        return Err(CodecError::Replay(
+                            "genesis fund spend precedes original approval quorum".into(),
+                        ));
+                    }
+                    if spend.organization_id() != original.organization_id()
+                        || spend.community_id() != original.community_id()
+                        || spend.fund_id() != original.fund_id()
+                        || spend.currency() != original.currency()
+                        || spend.amount_minor() != original.amount_minor()
+                        || spend.purpose_reference() != original.purpose_reference()
+                    {
+                        return Err(CodecError::Replay(
+                            "genesis fund spend differs from original proposal snapshot".into(),
+                        ));
+                    }
+                    if spend.executed_at_unix_ms()
+                        < proposal.latest_approval_unix_ms.unwrap_or(i64::MAX)
+                    {
+                        return Err(CodecError::Replay(
+                            "genesis fund spend executed before original approvals".into(),
+                        ));
+                    }
+                    if proposal.spent
+                        || !genesis_spend_ids.insert(spend.spend_id().as_str().to_owned())
+                    {
+                        return Err(CodecError::Replay(
+                            "duplicate original fund spend consumption in genesis".into(),
+                        ));
+                    }
+                    proposal.spent = true;
+                }
+                None => {}
+            }
+        }
         frame(&mut hash, fact.sequence.as_bytes());
         frame(&mut hash, fact.kind.record_type().as_bytes());
         frame(&mut hash, fact.source_record_key.as_bytes());
@@ -305,6 +500,70 @@ pub fn compute_untrusted_range(
         count: facts.len() as u64,
         ordered_digest_hex: hex,
     })
+}
+
+/// Check the self-declared predecessor links *and* re-check the whole
+/// concatenated genesis using the same original domain codecs.
+///
+/// Checking fragments independently would miss cross-boundary proposal,
+/// approval-quorum, spend-consumption and future disbursement ancestry. This
+/// function enforces one continuous declared authority/organization/environment,
+/// monotonically adjacent source sequences, exact previous fragment hashes,
+/// and a total stream no larger than a single bounded source range. Hashes are
+/// all calculated from **caller-supplied data**. Even a fully consistent result
+/// remains UNAUTHENTICATED and cannot authorize financial operations.
+pub fn compute_untrusted_genesis_chain(
+    segments: &[DeclaredSourceSegment<'_>],
+) -> Result<UnauthenticatedRange, CodecError> {
+    if segments.is_empty() || segments.len() > MAX_SEGMENTS {
+        return Err(invalid("invalid source segment count"));
+    }
+    let genesis = segments[0].scope;
+    if genesis.previous_digest_hex.is_some() {
+        return Err(invalid("segmented genesis cannot start with a predecessor"));
+    }
+    let mut merged: Vec<DeclaredSourceFact<'_>> = Vec::new();
+    let mut bytes_total = 0usize;
+    let mut next_sequence = 1u64;
+    let mut last_digest: Option<String> = None;
+    for segment in segments {
+        if segment.scope.authority_id != genesis.authority_id
+            || segment.scope.organization_id != genesis.organization_id
+            || segment.scope.environment_id != genesis.environment_id
+            || segment.scope.previous_digest_hex != last_digest.as_deref()
+        {
+            return Err(invalid("source segment scope or predecessor mismatch"));
+        }
+        if segment.facts.is_empty()
+            || merged
+                .len()
+                .checked_add(segment.facts.len())
+                .is_none_or(|n| n > MAX_RECORDS)
+        {
+            return Err(invalid("segmented stream exceeds source record bounds"));
+        }
+        for fact in segment.facts {
+            bytes_total = bytes_total
+                .checked_add(fact.bytes.len())
+                .ok_or_else(|| invalid("segmented stream byte size overflow"))?;
+            if bytes_total > MAX_TOTAL_BYTES {
+                return Err(invalid("segmented stream exceeds source byte bounds"));
+            }
+        }
+        if sequence(segment.facts[0].sequence)? != next_sequence {
+            return Err(invalid("source segments have a gap, overlap, or reorder"));
+        }
+        let checked = compute_untrusted_range(segment.scope, segment.facts)?;
+        next_sequence = checked
+            .last_sequence()
+            .checked_add(1)
+            .ok_or_else(|| invalid("source segment next sequence overflow"))?;
+        last_digest = Some(checked.ordered_digest_hex().to_owned());
+        merged.extend_from_slice(segment.facts);
+    }
+    // Replaying the complete declared genesis, not just checking a chain of
+    // fragment hashes, is what detects cross-segment domain ancestry errors.
+    compute_untrusted_range(genesis, &merged)
 }
 
 /// Strict declaration comparison. This returns a consistency-only result and
