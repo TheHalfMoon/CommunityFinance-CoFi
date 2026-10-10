@@ -705,7 +705,13 @@ mismatched original policy boundaries and duplicate policy registrations fail
 closed. Every governance approval additionally requires its original proposal
 identity to have appeared **earlier in the same declared organization**;
 duplicate original proposal identities and late/foreign vote ancestry fail
-closed. Later ranges cannot use a caller-provided predecessor
+closed. Earlier original proposals also bound vote timestamps, unique original
+approval identities, one vote per approver/target proposal and the original
+policy quorum; late, repeated or post-quorum first-time votes fail closed.
+Actual membership and role eligibility are **not** checked by this partial
+inspector; they require independent original `GovernanceEngine` replay with the
+complete authenticated `CommunityRegistry`. Later ranges cannot use a
+caller-provided predecessor
 digest as a substitute for independently authenticated earlier proposals.
 
 **Security boundary:** `UnauthenticatedRange` is expressly *not* a

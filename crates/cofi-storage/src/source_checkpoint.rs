@@ -8,7 +8,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use cofi_governance::{SpendingApprovalPolicy, SpendingProposal};
+use cofi_governance::{SpendingApproval, SpendingApprovalPolicy, SpendingProposal};
 use serde::Deserialize;
 use sha2::{Digest, Sha256};
 
@@ -42,7 +42,17 @@ pub enum SupportedSourceKind {
 enum GenesisGovernanceAncestry {
     Policy(SpendingApprovalPolicy),
     Proposal(SpendingProposal),
-    ApprovalProposal(String),
+    Approval(SpendingApproval),
+}
+
+// A caller-declared genesis record is not a trusted accepted registry.
+// Track only the original policy-proposal temporal and consumption boundaries;
+// active membership and vote-role eligibility require CommunityRegistry replay.
+struct GenesisProposalState {
+    created_at_unix_ms: i64,
+    expires_at_unix_ms: i64,
+    required_approvals: usize,
+    seen_approvers: BTreeSet<String>,
 }
 
 impl SupportedSourceKind {
@@ -95,9 +105,7 @@ impl SupportedSourceKind {
                 let approval = decode_governance_approval(bytes)?;
                 (
                     approval.source_event_id().as_str().to_owned(),
-                    Some(GenesisGovernanceAncestry::ApprovalProposal(
-                        approval.proposal_id().as_str().to_owned(),
-                    )),
+                    Some(GenesisGovernanceAncestry::Approval(approval)),
                 )
             }
             Self::FundSpend => {
@@ -283,7 +291,8 @@ pub fn compute_untrusted_range(
     let mut seen = BTreeSet::new();
     // A declared sequence starting at 1 has no prior accepted proposal range.
     // Later ranges cannot prove their previous ancestry using a caller's hash.
-    let mut genesis_proposals = BTreeSet::new();
+    let mut genesis_proposals = BTreeMap::new();
+    let mut genesis_approval_ids = BTreeSet::new();
     let mut genesis_policies = BTreeMap::new();
     let mut hash = Sha256::new();
     hash.update(DOMAIN);
@@ -352,20 +361,59 @@ pub fn compute_untrusted_range(
                             "genesis proposal conflicts with original policy boundary".into(),
                         ));
                     }
-                    if !genesis_proposals.insert(proposal.id().as_str().to_owned()) {
+                    let original_id = proposal.id().as_str().to_owned();
+                    if genesis_proposals
+                        .insert(
+                            original_id,
+                            GenesisProposalState {
+                                created_at_unix_ms: proposal.created_at_unix_ms(),
+                                expires_at_unix_ms: proposal.expires_at_unix_ms(),
+                                required_approvals: usize::from(policy.required_approvals()),
+                                seen_approvers: BTreeSet::new(),
+                            },
+                        )
+                        .is_some()
+                    {
                         return Err(CodecError::Replay(
                             "duplicate original proposal identity in genesis range".into(),
                         ));
                     }
                 }
-                Some(GenesisGovernanceAncestry::ApprovalProposal(proposal_id))
-                    if !genesis_proposals.contains(&proposal_id) =>
-                {
-                    return Err(CodecError::Replay(
-                        "genesis vote has no earlier proposal in declared organization".into(),
-                    ));
+                Some(GenesisGovernanceAncestry::Approval(approval)) => {
+                    let proposal = genesis_proposals
+                        .get_mut(approval.proposal_id().as_str())
+                        .ok_or_else(|| {
+                            CodecError::Replay(
+                                "genesis vote has no earlier proposal in declared organization"
+                                    .into(),
+                            )
+                        })?;
+                    let at = approval.approved_at_unix_ms();
+                    if at < proposal.created_at_unix_ms || at > proposal.expires_at_unix_ms {
+                        return Err(CodecError::Replay(
+                            "genesis vote outside original proposal validity".into(),
+                        ));
+                    }
+                    if proposal.seen_approvers.len() >= proposal.required_approvals {
+                        return Err(CodecError::Replay(
+                            "genesis vote after original approval quorum".into(),
+                        ));
+                    }
+                    if !genesis_approval_ids.insert(approval.id().as_str().to_owned()) {
+                        return Err(CodecError::Replay(
+                            "duplicate original approval identity in genesis range".into(),
+                        ));
+                    }
+                    if !proposal
+                        .seen_approvers
+                        .insert(approval.approver_party_id().as_str().to_owned())
+                    {
+                        return Err(CodecError::Replay(
+                            "duplicate original party approval for proposal".into(),
+                        ));
+                    }
                 }
-                Some(GenesisGovernanceAncestry::ApprovalProposal(_)) | None => {}
+                None => {}
             }
         }
         frame(&mut hash, fact.sequence.as_bytes());

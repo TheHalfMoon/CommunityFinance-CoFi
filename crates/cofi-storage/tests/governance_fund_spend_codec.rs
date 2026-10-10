@@ -1344,6 +1344,117 @@ fn genesis_checkpoint_rejects_proposals_without_matching_prior_policy() {
 }
 
 #[test]
+fn genesis_checkpoint_rejects_invalid_approval_lifecycle_and_identity() {
+    let (policy, proposal, votes) = sources();
+    let scope = DeclaredSourceScope {
+        authority_id: "source-a",
+        organization_id: "org-a",
+        environment_id: "test",
+        previous_digest_hex: None,
+    };
+    let first = DeclaredSourceFact {
+        sequence: "1",
+        authority_id: "source-a",
+        organization_id: "org-a",
+        environment_id: "test",
+        source_record_key: "policy:policy-a:1",
+        kind: SupportedSourceKind::Policy,
+        bytes: &policy,
+    };
+    let second = DeclaredSourceFact {
+        sequence: "2",
+        source_record_key: "proposal-event",
+        kind: SupportedSourceKind::Proposal,
+        bytes: &proposal,
+        ..first
+    };
+    let third = DeclaredSourceFact {
+        sequence: "3",
+        source_record_key: "v-1",
+        kind: SupportedSourceKind::Approval,
+        bytes: &votes[0],
+        ..first
+    };
+    let fourth = DeclaredSourceFact {
+        sequence: "4",
+        source_record_key: "v-2",
+        kind: SupportedSourceKind::Approval,
+        bytes: &votes[1],
+        ..first
+    };
+    assert!(compute_untrusted_range(scope, &[first, second, third, fourth]).is_ok());
+    let original: serde_json::Value = serde_json::from_slice(&votes[0]).unwrap();
+    for (field, replacement) in [
+        ("approved_at_unix_ms", serde_json::json!("999")),
+        ("approved_at_unix_ms", serde_json::json!("2001")),
+    ] {
+        let mut altered = original.clone();
+        altered["payload"][field] = replacement;
+        let bytes = serde_json::to_vec(&altered).unwrap();
+        let event = DeclaredSourceFact {
+            bytes: &bytes,
+            ..third
+        };
+        assert!(
+            compute_untrusted_range(scope, &[first, second, event]).is_err(),
+            "invalid original approval time must not pass declared genesis"
+        );
+    }
+    let original_second: serde_json::Value = serde_json::from_slice(&votes[1]).unwrap();
+    for (field, replacement) in [
+        ("id", serde_json::json!("vote-1")),
+        ("approver_party_id", serde_json::json!("owner")),
+    ] {
+        let mut altered = original_second.clone();
+        altered["payload"][field] = replacement;
+        let bytes = serde_json::to_vec(&altered).unwrap();
+        let event = DeclaredSourceFact {
+            bytes: &bytes,
+            ..fourth
+        };
+        assert!(
+            compute_untrusted_range(scope, &[first, second, third, event]).is_err(),
+            "duplicate original approval identity or same-party vote must fail: {field}"
+        );
+    }
+    // Even a new event/id/party cannot vote after the original policy's
+    // configured approval quorum is already reached.
+    let mut after_quorum = original_second;
+    after_quorum["payload"]["source_event_id"] = serde_json::json!("v-3");
+    after_quorum["payload"]["id"] = serde_json::json!("vote-3");
+    after_quorum["payload"]["approver_party_id"] = serde_json::json!("member");
+    let encoded = serde_json::to_vec(&after_quorum).unwrap();
+    let fifth = DeclaredSourceFact {
+        sequence: "5",
+        source_record_key: "v-3",
+        bytes: &encoded,
+        ..fourth
+    };
+    assert!(
+        compute_untrusted_range(scope, &[first, second, third, fourth, fifth]).is_err(),
+        "an additional vote after original quorum is not a valid first acceptance"
+    );
+    // Non-genesis continuation is still consistency-only: it cannot prove
+    // earlier accepted proposal/party/quorum ancestry using a supplied hash.
+    let continuation = DeclaredSourceScope {
+        previous_digest_hex: Some(
+            "0000000000000000000000000000000000000000000000000000000000000000",
+        ),
+        ..scope
+    };
+    let untrusted = DeclaredSourceFact {
+        sequence: "6",
+        ..fifth
+    };
+    assert!(
+        compute_untrusted_range(continuation, &[untrusted])
+            .unwrap()
+            .require_independent_source_authentication()
+            .is_err()
+    );
+}
+
+#[test]
 fn checkpoint_cannot_relabel_original_financial_organization() {
     let (policy, proposal, _) = sources();
     let spend_bytes = encode_governance_fund_spend(&spend()).unwrap();
