@@ -623,6 +623,71 @@ fn untrusted_first_time_batch_requires_distinct_cases_and_provider_events() {
         "one provider request must not be bound to two disbursements in a first-time batch"
     );
 
+    // Reusing one accepted creation source event for different disbursements
+    // is rejected by the original unified DisbursementEngine. Two separate
+    // engines can each hold that same event; the diagnostic first-time batch
+    // must not mistake them for two distinct creation facts.
+    let mut shared_source_engine = DisbursementEngine::new();
+    create_ready(
+        &mut shared_source_engine,
+        &fixture,
+        &fixture.spend1,
+        "d-1",
+        1_500,
+    );
+    let reused_creation = DisbursementCreation::new(
+        event_id("create-d-1"),
+        disbursement_id("d-2"),
+        beneficiary("beneficiary-d-2"),
+        destination("destination-d-2"),
+        1_700,
+    );
+    assert!(
+        shared_source_engine
+            .create(
+                &fixture.registry,
+                &fixture.governance,
+                &fixture.ledger,
+                &fixture.spend2,
+                reused_creation.clone(),
+            )
+            .is_err()
+    );
+
+    let mut independent_creation_engine = DisbursementEngine::new();
+    independent_creation_engine
+        .create(
+            &fixture.registry,
+            &fixture.governance,
+            &fixture.ledger,
+            &fixture.spend2,
+            reused_creation,
+        )
+        .unwrap();
+    submit_ready(
+        &mut independent_creation_engine,
+        "d-2",
+        "request-d-2",
+        1_710,
+    );
+    let same_creation_d2 = independent_creation_engine
+        .disbursement(&disbursement_id("d-2"))
+        .unwrap();
+    let independent_creation_candidate = UntrustedReconciliationRecord {
+        disbursement: same_creation_d2,
+        ..r2
+    };
+    assert!(
+        ReconciliationEngine::new()
+            .reconcile(&case2, same_creation_d2, &obs2)
+            .is_ok()
+    );
+    assert!(
+        recompute_untrusted_first_time_reconciliation_batch(&[r1, independent_creation_candidate,])
+            .is_err(),
+        "one original creation event must not bind different disbursements in a first-time batch"
+    );
+
     let too_many = vec![r1; 4097];
     assert!(
         recompute_untrusted_first_time_reconciliation_batch(&too_many)
@@ -727,6 +792,38 @@ fn untrusted_first_time_batch_checks_terminal_and_settlement_consumption() {
     assert_eq!(mixed.outcomes()[0].diagnostic(), D::ProviderAhead);
     assert_eq!(mixed.outcomes()[1].diagnostic(), D::ProviderAhead);
     assert!(mixed.require_independent_source_authentication().is_err());
+
+    // A terminal event from one disbursement cannot reuse the creation
+    // event identity belonging to another original disbursement.
+    let terminal_overlaps_creation = ProviderObservation::settled(
+        disbursement_id("d-1"),
+        request("request-d-1"),
+        event_id("create-d-2"),
+        provider_event("provider-event-terminal-overlap"),
+        settlement("settlement-terminal-overlap"),
+        1_520,
+    );
+    assert!(
+        ReconciliationEngine::new()
+            .reconcile(
+                &case("case-terminal-1", "d-1", "request-d-1", 1_530),
+                d1,
+                &terminal_overlaps_creation,
+            )
+            .is_ok()
+    );
+    let collision_bytes = encode_provider_observation(&terminal_overlaps_creation).unwrap();
+    assert!(
+        recompute_untrusted_first_time_reconciliation_batch(&[
+            UntrustedReconciliationRecord {
+                observation_bytes: &collision_bytes,
+                ..r1
+            },
+            r2
+        ])
+        .is_err(),
+        "a terminal event must not share a source identity with another disbursement creation"
+    );
 
     let duplicate_terminal = ProviderObservation::settled(
         disbursement_id("d-2"),

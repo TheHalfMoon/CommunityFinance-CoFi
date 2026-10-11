@@ -366,7 +366,7 @@ pub fn recompute_untrusted_first_time_reconciliation_batch(
     let mut disbursements = BTreeSet::new();
     let mut provider_requests = BTreeSet::new();
     let mut provider_events = BTreeSet::new();
-    let mut terminal_events = BTreeSet::new();
+    let mut disbursement_events = BTreeSet::new();
     let mut settlement_receipts = BTreeSet::new();
     let mut outcomes = Vec::with_capacity(records.len());
     for record in records {
@@ -383,6 +383,21 @@ pub fn recompute_untrusted_first_time_reconciliation_batch(
         if !disbursements.insert(record.disbursement.id().as_str().to_owned()) {
             return Err(CodecError::Replay(
                 "duplicate original disbursement in declared first-time batch".into(),
+            ));
+        }
+        // Original DisbursementEngine indexes creation, submission and terminal
+        // source events in one collision domain. A Disbursement exposes its
+        // original creation identity; it does not expose the accepted submission
+        // source ID, so this remains a deliberately partial consistency check.
+        if !disbursement_events.insert(
+            record
+                .disbursement
+                .creation_source_event_id()
+                .as_str()
+                .to_owned(),
+        ) {
+            return Err(CodecError::Replay(
+                "reused original disbursement creation event in first-time batch".into(),
             ));
         }
         // A canonical DisbursementEngine maintains a unique provider-request
@@ -419,9 +434,10 @@ pub fn recompute_untrusted_first_time_reconciliation_batch(
             ));
         }
         if let Some(event) = terminal {
-            if !terminal_events.insert(event.as_str().to_owned()) {
+            if !disbursement_events.insert(event.as_str().to_owned()) {
                 return Err(CodecError::Replay(
-                    "reused original terminal event identity in first-time batch".into(),
+                    "reused original creation or terminal event identity in first-time batch"
+                        .into(),
                 ));
             }
         }

@@ -813,7 +813,8 @@ custody before applying any terminal event.
 one explicitly caller-declared first-time input set it rejects reused case IDs,
 disbursement IDs (even if the cases and events differ), provider request
 references (as enforced by the original DisbursementEngine submission index),
-provider event IDs, terminal event IDs and settlement references, with 4096
+provider event IDs, original disbursement creation event IDs and terminal
+event IDs (including cross-kind collisions), and settlement references, with 4096
 record / 16 MiB input limits. It intentionally is **not** a repeat-provider-
 observation replay API: provider rechecks can legitimately revisit an older
 event, and without authoritative provider namespace/tenant cutoff this local
@@ -827,3 +828,12 @@ of both individual and batch unauthenticated outcomes is diagnostic-only and
 must not disclose underlying proposed terminal events, provider identifiers,
 or settlement receipt references. This non-admission boundary must not be
 conflated with durable accepted-source replay.
+
+The caller-provided `Disbursement` exposes its original creation source event
+ID for batch-level collision checks without inventing a new accepted source.
+Submission *source event IDs* are not exposed by a `Disbursement` snapshot:
+the true unified creation/submission/terminal accepted-event namespace cannot
+be completely checked using these candidate DTOs. Only an independently
+authenticated canonical source stream and complete original lifecycle event
+replay can close that remaining gap; neither this accessor nor the batch
+consistency checks can authorize any money movement.
