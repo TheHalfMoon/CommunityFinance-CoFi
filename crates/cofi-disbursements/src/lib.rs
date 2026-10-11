@@ -233,6 +233,12 @@ impl Disbursement {
     pub const fn id(&self) -> &DisbursementId {
         self.creation.id()
     }
+    /// The original, immutable source event of this disbursement's creation.
+    /// This is an identity accessor, not independent source authentication.
+    #[must_use]
+    pub const fn creation_source_event_id(&self) -> &DisbursementEventId {
+        self.creation.source_event_id()
+    }
     #[must_use]
     pub const fn spend(&self) -> &VerifiedFundSpend {
         &self.spend
